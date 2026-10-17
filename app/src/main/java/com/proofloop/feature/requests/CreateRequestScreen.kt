@@ -12,6 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.animation.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -374,14 +375,20 @@ fun CreateRequestScreen(
                     }
 
                     // Error Message
-                    if (uiState.errorMessage != null) {
-                        Spacer(modifier = Modifier.height(14.dp))
-                        NeoTag(
-                            text = uiState.errorMessage ?: "",
-                            backgroundColor = ProofCoral,
-                            contentColor = ProofWhite,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                    AnimatedVisibility(
+                        visible = uiState.errorMessage != null,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        Column {
+                            Spacer(modifier = Modifier.height(14.dp))
+                            NeoTag(
+                                text = uiState.errorMessage ?: "",
+                                backgroundColor = ProofCoral,
+                                contentColor = ProofWhite,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -393,7 +400,8 @@ fun CreateRequestScreen(
                         backgroundColor = ProofCobalt,
                         contentColor = ProofWhite,
                         icon = Icons.Default.Search,
-                        enabled = !uiState.isLoading
+                        enabled = !uiState.isLoading,
+                        isLoading = uiState.isLoading
                     )
                 }
 

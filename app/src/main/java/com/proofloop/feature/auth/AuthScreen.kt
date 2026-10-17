@@ -211,7 +211,8 @@ fun AuthScreen(
                     backgroundColor = ProofCobalt,
                     contentColor = ProofWhite,
                     icon = Icons.AutoMirrored.Filled.ArrowForward,
-                    enabled = !uiState.isLoading
+                    enabled = !uiState.isLoading,
+                    isLoading = uiState.isLoading
                 )
             }
 

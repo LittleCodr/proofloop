@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.animation.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -88,6 +89,17 @@ fun StudentHomeScreen(
                         backgroundColor = ProofCobalt,
                         icon = Icons.Default.Add
                     )
+                }
+
+                AnimatedVisibility(
+                    visible = uiState.isLoading,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(14.dp))
+                        NeoLoadingIndicator("Updating student dashboard...")
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

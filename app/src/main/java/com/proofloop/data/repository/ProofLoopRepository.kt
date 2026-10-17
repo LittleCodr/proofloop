@@ -8,6 +8,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.UUID
@@ -67,6 +68,11 @@ class ProofLoopRepository(
     private val memoryRequests = mutableMapOf<String, HelpRequest>()
     private val memoryConnections = mutableMapOf<String, Connection>()
     private val memoryOutcomes = mutableMapOf<String, Outcome>()
+
+    // Reactive triggers for offline-first flow propagation
+    private val connectionsUpdateTrigger = MutableStateFlow(0)
+    private val outcomesUpdateTrigger = MutableStateFlow(0)
+    private val requestsUpdateTrigger = MutableStateFlow(0)
 
     init {
         seedDemoData()
@@ -277,6 +283,7 @@ class ProofLoopRepository(
         val finalRequest = request.copy(id = id, createdAt = System.currentTimeMillis())
         
         memoryRequests[id] = finalRequest
+        requestsUpdateTrigger.value++
 
         try {
             withTimeoutOrNull(1000L) {
@@ -288,8 +295,11 @@ class ProofLoopRepository(
     }
 
     override fun getStudentHelpRequests(studentId: String): Flow<List<HelpRequest>> = callbackFlow {
-        // Emit memory requests
-        trySend(memoryRequests.values.filter { it.studentId == studentId }.sortedByDescending { it.createdAt })
+        val job = launch {
+            requestsUpdateTrigger.collect {
+                trySend(memoryRequests.values.filter { it.studentId == studentId }.sortedByDescending { it.createdAt })
+            }
+        }
 
         var registration: ListenerRegistration? = null
         try {
@@ -309,7 +319,10 @@ class ProofLoopRepository(
             trySend(memoryRequests.values.filter { it.studentId == studentId }.sortedByDescending { it.createdAt })
         }
 
-        awaitClose { registration?.remove() }
+        awaitClose {
+            job.cancel()
+            registration?.remove()
+        }
     }
 
     override suspend fun getHelpRequestById(requestId: String): HelpRequest? {
@@ -360,6 +373,7 @@ class ProofLoopRepository(
         )
 
         memoryConnections[id] = connection
+        connectionsUpdateTrigger.value++
 
         try {
             withTimeoutOrNull(1000L) {
@@ -371,7 +385,11 @@ class ProofLoopRepository(
     }
 
     override fun getConnectionsForStudent(studentId: String): Flow<List<Connection>> = callbackFlow {
-        trySend(memoryConnections.values.filter { it.studentId == studentId }.sortedByDescending { it.updatedAt })
+        val job = launch {
+            connectionsUpdateTrigger.collect {
+                trySend(memoryConnections.values.filter { it.studentId == studentId }.sortedByDescending { it.updatedAt })
+            }
+        }
 
         var registration: ListenerRegistration? = null
         try {
@@ -391,11 +409,18 @@ class ProofLoopRepository(
             trySend(memoryConnections.values.filter { it.studentId == studentId }.sortedByDescending { it.updatedAt })
         }
 
-        awaitClose { registration?.remove() }
+        awaitClose {
+            job.cancel()
+            registration?.remove()
+        }
     }
 
     override fun getIncomingConnectionsForAlumni(alumniId: String): Flow<List<Connection>> = callbackFlow {
-        trySend(memoryConnections.values.filter { it.alumniId == alumniId && it.status == ConnectionStatus.PENDING.name }.sortedByDescending { it.createdAt })
+        val job = launch {
+            connectionsUpdateTrigger.collect {
+                trySend(memoryConnections.values.filter { it.alumniId == alumniId && it.status == ConnectionStatus.PENDING.name }.sortedByDescending { it.createdAt })
+            }
+        }
 
         var registration: ListenerRegistration? = null
         try {
@@ -416,11 +441,18 @@ class ProofLoopRepository(
             trySend(memoryConnections.values.filter { it.alumniId == alumniId && it.status == ConnectionStatus.PENDING.name }.sortedByDescending { it.createdAt })
         }
 
-        awaitClose { registration?.remove() }
+        awaitClose {
+            job.cancel()
+            registration?.remove()
+        }
     }
 
     override fun getAcceptedConnectionsForAlumni(alumniId: String): Flow<List<Connection>> = callbackFlow {
-        trySend(memoryConnections.values.filter { it.alumniId == alumniId && it.status == ConnectionStatus.ACCEPTED.name }.sortedByDescending { it.updatedAt })
+        val job = launch {
+            connectionsUpdateTrigger.collect {
+                trySend(memoryConnections.values.filter { it.alumniId == alumniId && it.status == ConnectionStatus.ACCEPTED.name }.sortedByDescending { it.updatedAt })
+            }
+        }
 
         var registration: ListenerRegistration? = null
         try {
@@ -441,11 +473,18 @@ class ProofLoopRepository(
             trySend(memoryConnections.values.filter { it.alumniId == alumniId && it.status == ConnectionStatus.ACCEPTED.name }.sortedByDescending { it.updatedAt })
         }
 
-        awaitClose { registration?.remove() }
+        awaitClose {
+            job.cancel()
+            registration?.remove()
+        }
     }
 
     override fun getConnectionById(connectionId: String): Flow<Connection?> = callbackFlow {
-        trySend(memoryConnections[connectionId])
+        val job = launch {
+            connectionsUpdateTrigger.collect {
+                trySend(memoryConnections[connectionId])
+            }
+        }
 
         var registration: ListenerRegistration? = null
         try {
@@ -465,7 +504,10 @@ class ProofLoopRepository(
             trySend(memoryConnections[connectionId])
         }
 
-        awaitClose { registration?.remove() }
+        awaitClose {
+            job.cancel()
+            registration?.remove()
+        }
     }
 
     override suspend fun respondToConnection(
@@ -501,12 +543,16 @@ class ProofLoopRepository(
                 createdAt = System.currentTimeMillis()
             )
             memoryOutcomes[connectionId] = outcome
+            outcomesUpdateTrigger.value++
+
             try {
                 withTimeoutOrNull(1000L) {
                     firestore?.collection("outcomes")?.document(outcome.id)?.set(outcome)?.await()
                 }
             } catch (_: Exception) {}
         }
+
+        connectionsUpdateTrigger.value++
 
         try {
             withTimeoutOrNull(1000L) {
@@ -533,12 +579,16 @@ class ProofLoopRepository(
         if (outcome != null) {
             val updatedOutcome = outcome.copy(actionDescription = actionText.trim())
             memoryOutcomes[connectionId] = updatedOutcome
+            outcomesUpdateTrigger.value++
+
             try {
                 withTimeoutOrNull(1000L) {
                     firestore?.collection("outcomes")?.document(outcome.id)?.update("actionDescription", actionText.trim())?.await()
                 }
             } catch (_: Exception) {}
         }
+
+        connectionsUpdateTrigger.value++
 
         try {
             withTimeoutOrNull(1000L) {
@@ -559,7 +609,11 @@ class ProofLoopRepository(
     // ==========================================
 
     override fun getOutcomeForConnection(connectionId: String): Flow<Outcome?> = callbackFlow {
-        trySend(memoryOutcomes[connectionId])
+        val job = launch {
+            outcomesUpdateTrigger.collect {
+                trySend(memoryOutcomes[connectionId])
+            }
+        }
 
         var registration: ListenerRegistration? = null
         try {
@@ -580,7 +634,10 @@ class ProofLoopRepository(
             trySend(memoryOutcomes[connectionId])
         }
 
-        awaitClose { registration?.remove() }
+        awaitClose {
+            job.cancel()
+            registration?.remove()
+        }
     }
 
     override suspend fun studentMarkComplete(connectionId: String, currentUserId: String): Result<Unit> {
@@ -605,6 +662,7 @@ class ProofLoopRepository(
             completedAt = System.currentTimeMillis()
         )
         memoryOutcomes[connectionId] = updated
+        outcomesUpdateTrigger.value++
 
         try {
             withTimeoutOrNull(1000L) {
@@ -632,6 +690,7 @@ class ProofLoopRepository(
             completedAt = outcome.completedAt ?: System.currentTimeMillis()
         )
         memoryOutcomes[connectionId] = updated
+        outcomesUpdateTrigger.value++
 
         try {
             withTimeoutOrNull(1000L) {
@@ -648,8 +707,12 @@ class ProofLoopRepository(
     }
 
     override fun getCompletedOutcomesForStudent(studentId: String): Flow<List<Outcome>> = callbackFlow {
-        val completed = memoryOutcomes.values.filter { it.studentId == studentId && (it.studentCompleted || it.alumniConfirmed) }
-        trySend(completed)
-        awaitClose {}
+        val job = launch {
+            outcomesUpdateTrigger.collect {
+                val completed = memoryOutcomes.values.filter { it.studentId == studentId && (it.studentCompleted || it.alumniConfirmed) }
+                trySend(completed)
+            }
+        }
+        awaitClose { job.cancel() }
     }
 }

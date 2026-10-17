@@ -67,7 +67,10 @@ class ConnectionWorkspaceViewModel(
         viewModelScope.launch {
             val result = repository.updateAgreedAction(conn.id, text)
             if (result.isSuccess) {
-                _uiState.value = _uiState.value.copy(feedbackMessage = "Agreed next action saved successfully!")
+                _uiState.value = _uiState.value.copy(
+                    connection = conn.copy(agreedNextAction = text),
+                    feedbackMessage = "Agreed next action saved successfully!"
+                )
             } else {
                 _uiState.value = _uiState.value.copy(
                     errorMessage = result.exceptionOrNull()?.localizedMessage ?: "Failed to save action"
@@ -89,7 +92,15 @@ class ConnectionWorkspaceViewModel(
         viewModelScope.launch {
             val result = repository.studentMarkComplete(conn.id, user.uid)
             if (result.isSuccess) {
+                val currentOutcome = _uiState.value.outcome ?: Outcome(
+                    id = "out_${conn.id}",
+                    connectionId = conn.id,
+                    studentId = conn.studentId,
+                    alumniId = conn.alumniId,
+                    actionDescription = conn.agreedNextAction
+                )
                 _uiState.value = _uiState.value.copy(
+                    outcome = currentOutcome.copy(studentCompleted = true, completedAt = System.currentTimeMillis()),
                     feedbackMessage = "Action marked complete! Alumnus can now confirm the outcome."
                 )
             } else {
@@ -113,7 +124,15 @@ class ConnectionWorkspaceViewModel(
         viewModelScope.launch {
             val result = repository.alumniConfirmOutcome(conn.id, user.uid)
             if (result.isSuccess) {
+                val currentOutcome = _uiState.value.outcome ?: Outcome(
+                    id = "out_${conn.id}",
+                    connectionId = conn.id,
+                    studentId = conn.studentId,
+                    alumniId = conn.alumniId,
+                    actionDescription = conn.agreedNextAction
+                )
                 _uiState.value = _uiState.value.copy(
+                    outcome = currentOutcome.copy(alumniConfirmed = true),
                     feedbackMessage = "Interaction outcome independently confirmed! Full loop closed."
                 )
             } else {

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.animation.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -139,15 +140,26 @@ fun AlumniInboxScreen(
                 }
 
                 // Feedback Banner
-                if (uiState.feedbackMessage != null) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    NeoCard(backgroundColor = ProofAcidLime, shadowOffset = 2.dp) {
-                        Text(
-                            text = uiState.feedbackMessage ?: "",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ProofInk
-                        )
+                AnimatedVisibility(
+                    visible = uiState.feedbackMessage != null,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        NeoCard(backgroundColor = ProofAcidLime, shadowOffset = 2.dp) {
+                            Text(
+                                text = uiState.feedbackMessage ?: "",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = ProofInk
+                            )
+                        }
                     }
+                }
+
+                if (uiState.isLoading) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    NeoLoadingIndicator("Syncing alumni portal...")
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))

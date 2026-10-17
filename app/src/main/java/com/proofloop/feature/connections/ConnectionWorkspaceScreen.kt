@@ -100,7 +100,10 @@ fun ConnectionWorkspaceScreen(
                 Spacer(modifier = Modifier.height(14.dp))
 
                 // Connection Details Card
-                if (conn != null) {
+                if (conn == null && uiState.isLoading) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    NeoLoadingIndicator("Loading session workspace...")
+                } else if (conn != null) {
                     NeoCard(
                         backgroundColor = ProofWhite,
                         shadowOffset = 3.dp
@@ -169,30 +172,42 @@ fun ConnectionWorkspaceScreen(
                 }
 
                 // Feedback Banner
-                if (uiState.feedbackMessage != null) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    NeoCard(backgroundColor = ProofAcidLime, shadowOffset = 2.dp) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Check, contentDescription = null, tint = ProofInk)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = uiState.feedbackMessage ?: "",
-                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ProofInk
-                            )
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = uiState.feedbackMessage != null,
+                    enter = androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn(),
+                    exit = androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut()
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        NeoCard(backgroundColor = ProofAcidLime, shadowOffset = 2.dp) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Check, contentDescription = null, tint = ProofInk)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = uiState.feedbackMessage ?: "",
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofInk
+                                )
+                            }
                         }
                     }
                 }
 
                 // Error Banner
-                if (uiState.errorMessage != null) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    NeoCard(backgroundColor = ProofCoral, shadowOffset = 2.dp) {
-                        Text(
-                            text = uiState.errorMessage ?: "",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ProofWhite
-                        )
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = uiState.errorMessage != null,
+                    enter = androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn(),
+                    exit = androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut()
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        NeoCard(backgroundColor = ProofCoral, shadowOffset = 2.dp) {
+                            Text(
+                                text = uiState.errorMessage ?: "",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = ProofWhite
+                            )
+                        }
                     }
                 }
 

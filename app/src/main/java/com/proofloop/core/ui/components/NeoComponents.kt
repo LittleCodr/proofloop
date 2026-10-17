@@ -1,6 +1,7 @@
 package com.proofloop.core.ui.components
 
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +34,65 @@ import androidx.compose.ui.unit.sp
 import com.proofloop.core.ui.theme.*
 
 /**
- * Neo-Brutalist Card with crisp dark border and hard offset shadow.
+ * Neo-Brutalist rotating square spinner.
+ */
+@Composable
+fun NeoSpinner(
+    modifier: Modifier = Modifier,
+    size: Dp = 24.dp,
+    color: Color = ProofAcidLime
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "spinnerTransition")
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(700, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "spinnerAngle"
+    )
+
+    Box(
+        modifier = modifier
+            .size(size)
+            .graphicsLayer { rotationZ = angle }
+            .border(2.dp, ProofBorder, RoundedCornerShape(3.dp))
+            .background(color, RoundedCornerShape(3.dp))
+    )
+}
+
+/**
+ * Neo-Brutalist Loading Indicator with message.
+ */
+@Composable
+fun NeoLoadingIndicator(
+    message: String = "Loading...",
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        NeoSpinner(size = 32.dp, color = ProofAcidLime)
+        Spacer(modifier = Modifier.height(14.dp))
+        Text(
+            text = message.uppercase(),
+            style = MaterialTheme.typography.labelMedium.copy(
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Black,
+                letterSpacing = 1.sp
+            ),
+            color = ProofInk
+        )
+    }
+}
+
+/**
+ * Neo-Brutalist Card with crisp dark border, hard offset shadow, and tactile click depression.
  */
 @Composable
 fun NeoCard(
@@ -46,6 +106,14 @@ fun NeoCard(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val shape = RoundedCornerShape(cornerRadius)
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val translation by animateDpAsState(
+        targetValue = if (isPressed && onClick != null) 2.dp else 0.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "cardPressTranslation"
+    )
     
     Box(
         modifier = modifier
@@ -59,13 +127,18 @@ fun NeoCard(
                 .offset(x = shadowOffset, y = shadowOffset)
                 .background(shadowColor, shape)
         )
-        // Foreground card
+        // Foreground card with press elevation
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
+                .offset(x = translation, y = translation)
                 .then(
                     if (onClick != null) {
-                        Modifier.clickable(onClick = onClick)
+                        Modifier.clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = onClick
+                        )
                     } else Modifier
                 ),
             shape = shape,
@@ -83,7 +156,7 @@ fun NeoCard(
 }
 
 /**
- * Neo-Brutalist Button with hard shadow that depresses slightly on press.
+ * Neo-Brutalist Button with hard shadow and mechanical depression into the shadow on press.
  */
 @Composable
 fun NeoButton(
@@ -94,15 +167,23 @@ fun NeoButton(
     contentColor: Color = ProofWhite,
     icon: ImageVector? = null,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
     shadowOffset: Dp = 3.dp,
     cornerRadius: Dp = 8.dp
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     
-    val currentOffset by animateDpAsState(
+    val currentShadowOffset by animateDpAsState(
         targetValue = if (isPressed || !enabled) 0.dp else shadowOffset,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "buttonOffset"
+    )
+
+    val translation by animateDpAsState(
+        targetValue = if (isPressed && enabled) shadowOffset else 0.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "buttonTranslation"
     )
 
     val shape = RoundedCornerShape(cornerRadius)
@@ -111,12 +192,12 @@ fun NeoButton(
         modifier = modifier
             .padding(bottom = shadowOffset, end = shadowOffset)
     ) {
-        // Shadow (only visible if enabled and not fully pressed)
-        if (enabled && currentOffset > 0.dp) {
+        // Shadow (only visible if enabled and not pressed)
+        if (enabled && currentShadowOffset > 0.dp) {
             Box(
                 modifier = Modifier
                     .matchParentSize()
-                    .offset(x = currentOffset, y = currentOffset)
+                    .offset(x = shadowOffset, y = shadowOffset)
                     .background(ProofInk, shape)
             )
         }
@@ -124,8 +205,9 @@ fun NeoButton(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
+                .offset(x = translation, y = translation)
                 .then(
-                    if (enabled) {
+                    if (enabled && !isLoading) {
                         Modifier.clickable(
                             interactionSource = interactionSource,
                             indication = null,
@@ -144,7 +226,10 @@ fun NeoButton(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (icon != null) {
+                if (isLoading) {
+                    NeoSpinner(size = 18.dp, color = contentColor)
+                    Spacer(modifier = Modifier.width(10.dp))
+                } else if (icon != null) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
@@ -154,7 +239,7 @@ fun NeoButton(
                     Spacer(modifier = Modifier.width(8.dp))
                 }
                 Text(
-                    text = text.uppercase(),
+                    text = if (isLoading) "PROCESSING..." else text.uppercase(),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.Black,
                         fontSize = 14.sp,
@@ -298,14 +383,14 @@ fun NeoTag(
 }
 
 /**
- * Status Badge for Lifecycle states (OPEN, PENDING, ACCEPTED, DECLINED, COMPLETED, CONFIRMED).
+ * Status Badge for Lifecycle states with pop-in scale animation.
  */
 @Composable
 fun StatusBadge(
     status: String,
     modifier: Modifier = Modifier
 ) {
-    val (bg, fg, label) = when (status.uppercase()) {
+    val (targetBg, targetFg, label) = when (status.uppercase()) {
         "OPEN" -> Triple(ProofAcidLime, ProofInk, "OPEN")
         "PENDING" -> Triple(ProofLavender, ProofInk, "PENDING")
         "ACCEPTED" -> Triple(ProofCobalt, ProofWhite, "ACCEPTED")
@@ -315,10 +400,13 @@ fun StatusBadge(
         else -> Triple(ProofSurfaceMuted, ProofInk, status.uppercase())
     }
 
+    val animatedBg by animateColorAsState(targetValue = targetBg, animationSpec = tween(300), label = "badgeBg")
+    val animatedFg by animateColorAsState(targetValue = targetFg, animationSpec = tween(300), label = "badgeFg")
+
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(6.dp),
-        color = bg,
+        color = animatedBg,
         border = BorderStroke(1.5.dp, ProofBorder)
     ) {
         Row(
@@ -329,7 +417,7 @@ fun StatusBadge(
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
-                    tint = fg,
+                    tint = animatedFg,
                     modifier = Modifier.size(12.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
@@ -341,14 +429,14 @@ fun StatusBadge(
                     fontWeight = FontWeight.Black,
                     letterSpacing = 0.5.sp
                 ),
-                color = fg
+                color = animatedFg
             )
         }
     }
 }
 
 /**
- * The 5-stage Workflow Hero Graphic from Section 4.5:
+ * The 5-stage Workflow Hero Graphic with animated color and bounce transitions:
  * REQUEST → MATCH → CONNECT → ACT → CONFIRM
  */
 @Composable
@@ -383,17 +471,30 @@ fun WorkflowHero(
                 val isCurrent = stepNum == currentStep
                 val isPassed = stepNum < currentStep
 
-                val (stepBg, stepFg) = when {
+                val (targetBg, targetFg) = when {
                     isCurrent -> Pair(ProofCobalt, ProofWhite)
                     isPassed -> Pair(ProofAcidLime, ProofInk)
                     else -> Pair(ProofWhite, ProofInk)
                 }
 
+                val animatedBg by animateColorAsState(targetValue = targetBg, animationSpec = tween(350), label = "stepBg")
+                val animatedFg by animateColorAsState(targetValue = targetFg, animationSpec = tween(350), label = "stepFg")
+                val stepScale by animateFloatAsState(
+                    targetValue = if (isCurrent) 1.05f else 1.0f,
+                    animationSpec = spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioMediumBouncy),
+                    label = "stepScale"
+                )
+
                 Surface(
                     shape = RoundedCornerShape(4.dp),
-                    color = stepBg,
+                    color = animatedBg,
                     border = BorderStroke(1.5.dp, ProofBorder),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .graphicsLayer {
+                            scaleX = stepScale
+                            scaleY = stepScale
+                        }
                 ) {
                     Column(
                         modifier = Modifier.padding(vertical = 6.dp, horizontal = 2.dp),
@@ -405,7 +506,7 @@ fun WorkflowHero(
                                 fontWeight = FontWeight.Black,
                                 fontSize = 9.sp
                             ),
-                            color = stepFg
+                            color = animatedFg
                         )
                         Text(
                             text = stepName,
@@ -414,7 +515,7 @@ fun WorkflowHero(
                                 fontSize = 8.sp,
                                 letterSpacing = 0.sp
                             ),
-                            color = stepFg,
+                            color = animatedFg,
                             maxLines = 1
                         )
                     }

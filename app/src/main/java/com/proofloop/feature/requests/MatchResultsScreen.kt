@@ -112,29 +112,35 @@ fun MatchResultsScreen(
                 }
 
                 // Success Message
-                if (uiState.successMessage != null) {
-                    NeoCard(
-                        backgroundColor = ProofAcidLime,
-                        shadowOffset = 2.dp
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Check, contentDescription = null, tint = ProofInk)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = uiState.successMessage ?: "",
-                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ProofInk
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = uiState.successMessage != null,
+                    enter = androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn(),
+                    exit = androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut()
+                ) {
+                    Column {
+                        NeoCard(
+                            backgroundColor = ProofAcidLime,
+                            shadowOffset = 2.dp
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Check, contentDescription = null, tint = ProofInk)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = uiState.successMessage ?: "",
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofInk
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            NeoButton(
+                                text = "Back to Student Dashboard",
+                                onClick = onViewHome,
+                                backgroundColor = ProofInk,
+                                contentColor = ProofWhite
                             )
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        NeoButton(
-                            text = "Back to Student Dashboard",
-                            onClick = onViewHome,
-                            backgroundColor = ProofInk,
-                            contentColor = ProofWhite
-                        )
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
 
                 Text(
@@ -155,9 +161,7 @@ fun MatchResultsScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 if (uiState.isLoading) {
-                    Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = ProofCobalt)
-                    }
+                    NeoLoadingIndicator(message = "Calculating explainable matches...")
                 } else if (uiState.matches.isEmpty()) {
                     EmptyStateCard(
                         title = "No Strong Matches Yet",
