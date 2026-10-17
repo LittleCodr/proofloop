@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // 1. Private User Accounts
+    // Stored in `users/{userId}`
+    // Only the user themselves can read and update their private data.
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isAuthenticated() && request.auth.uid == userId
+                    && request.resource.data.uid == userId;
+      allow update: if isOwner(userId)
+                    // Role must be immutable to client
+                    && request.resource.data.role == resource.data.role;
+      allow delete: if false; // Accounts cannot be deleted from client directly
+    }
+
+    // 2. Discoverable Public Profiles (Opted-in Alumni)
+    // Stored in `publicProfiles/{userId}`
+    // Discoverable by authenticated users if opted in; private contacts stay in `users`
+    match /publicProfiles/{userId} {
+      allow read: if isAuthenticated() && (resource.data.acceptingRequests == true || isOwner(userId));
+      allow create: if isOwner(userId) && request.resource.data.uid == userId;
+      allow update: if isOwner(userId);
+      allow delete: if false;
+    }
+
+    // 3. Help Requests
+    // Stored in `helpRequests/{requestId}`
+    match /helpRequests/{requestId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.studentId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.studentId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.studentId == request.auth.uid;
+    }
+
+    // 4. Connections
+    // Stored in `connections/{connectionId}`
+    // Enforces that only the assigned alumnus can accept or decline.
+    match /connections/{connectionId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.studentId ||
+        request.auth.uid == resource.data.alumniId
+      );
+
+      // Student creates connection request to an eligible alumnus
+      allow create: if isAuthenticated()
+                    && request.resource.data.studentId == request.auth.uid
+                    && request.resource.data.status == 'PENDING';
+
+      // Updates:
+      // Alumnus can accept or decline
+      // Both participants can update agreed next action
+      allow update: if isAuthenticated() && (
+        // Alumnus accepts or declines
+        (request.auth.uid == resource.data.alumniId &&
+         resource.data.status == 'PENDING' &&
+         request.resource.data.status in ['ACCEPTED', 'DECLINED']) ||
+        // Participants update agreed next action
+        ((request.auth.uid == resource.data.studentId || request.auth.uid == resource.data.alumniId) &&
+         request.resource.data.status == resource.data.status)
+      );
+
+      allow delete: if false;
+    }
+
+    // 5. Outcomes
+    // Stored in `outcomes/{outcomeId}`
+    // Enforces separate permissions: student cannot confirm on behalf of alumnus.
+    match /outcomes/{outcomeId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.studentId ||
+        request.auth.uid == resource.data.alumniId
+      );
+
+      allow create: if isAuthenticated() && (
+        request.auth.uid == request.resource.data.studentId ||
+        request.auth.uid == request.resource.data.alumniId
+      );
+
+      allow update: if isAuthenticated() && (
+        // Student marks action complete (cannot set alumniConfirmed)
+        (request.auth.uid == resource.data.studentId &&
+         request.resource.data.alumniConfirmed == resource.data.alumniConfirmed) ||
+        // Alumnus independently confirms interaction outcome
+        (request.auth.uid == resource.data.alumniId &&
+         resource.data.studentCompleted == true)
+      );
+
+      allow delete: if false;
+    }
+  }
+}

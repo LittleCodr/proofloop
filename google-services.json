@@ -1,0 +1,68 @@
+{
+    "project_info": {
+        "project_number": "126227877096",
+        "project_id": "stuhlyogaa",
+        "storage_bucket": "stuhlyogaa.firebasestorage.app"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:126227877096:android:27b7bb9e8799cbd1298d5d",
+                "android_client_info": {
+                    "package_name": "com.proofloop"
+                }
+            },
+            "oauth_client": [
+                {
+                    "client_id": "126227877096-3f86uaian7kg6mgj96r935d1rj71s065.apps.googleusercontent.com",
+                    "client_type": 3
+                }
+            ],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyBda5cIa-8hWEcJAl3VGF0XTM_GD3WuUyY"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": [
+                        {
+                            "client_id": "126227877096-3f86uaian7kg6mgj96r935d1rj71s065.apps.googleusercontent.com",
+                            "client_type": 3
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:126227877096:android:becd7480d772ace3298d5d",
+                "android_client_info": {
+                    "package_name": "com.stuhlyoga.app"
+                }
+            },
+            "oauth_client": [
+                {
+                    "client_id": "126227877096-3f86uaian7kg6mgj96r935d1rj71s065.apps.googleusercontent.com",
+                    "client_type": 3
+                }
+            ],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyBda5cIa-8hWEcJAl3VGF0XTM_GD3WuUyY"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": [
+                        {
+                            "client_id": "126227877096-3f86uaian7kg6mgj96r935d1rj71s065.apps.googleusercontent.com",
+                            "client_type": 3
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}
