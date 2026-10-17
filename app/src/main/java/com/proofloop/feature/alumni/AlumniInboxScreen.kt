@@ -1,7 +1,9 @@
 package com.proofloop.feature.alumni
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,7 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.animation.*
+import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.proofloop.core.ui.components.*
 import com.proofloop.core.ui.theme.*
+import com.proofloop.data.model.LoopHealthSeverity
 
 @Composable
 fun AlumniInboxScreen(
@@ -112,7 +115,7 @@ fun AlumniInboxScreen(
                             Spacer(modifier = Modifier.width(6.dp))
                             Switch(
                                 checked = profile?.acceptingRequests ?: true,
-                                onCheckedChange = { viewModel.toggleAcceptingRequests() },
+                                onCheckedChange = { viewModel.toggleAcceptingRequests(it) },
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = ProofWhite,
                                     checkedTrackColor = ProofSignalMint,
@@ -139,11 +142,8 @@ fun AlumniInboxScreen(
                             )
                             val activeCount = uiState.acceptedConnections.count { it.status == "ACCEPTED" }
                             Text(
-                                text = "$activeCount / ${profile?.maxActiveRequests ?: 3} max",
-                                style = MaterialTheme.typography.labelMedium.copy(
-                                    fontFamily = FontFamily.Monospace,
-                                    fontWeight = FontWeight.Black
-                                ),
+                                text = "$activeCount of ${profile?.maxActiveRequests ?: 3} max",
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                                 color = if (activeCount >= (profile?.maxActiveRequests ?: 3)) ProofCoral else ProofInk
                             )
                         }
@@ -177,6 +177,117 @@ fun AlumniInboxScreen(
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                 color = ProofInk
                             )
+                        }
+                    }
+                }
+
+                // LOOP HEALTH OPERATIONAL ATTENTION PANEL FOR ALUMNI
+                if (uiState.loopHealthItems.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    NeoCard(
+                        backgroundColor = ProofPaper,
+                        borderColor = ProofInk,
+                        shadowOffset = 3.dp
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PriorityHigh,
+                                contentDescription = null,
+                                tint = ProofCoral,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "LOOP HEALTH • ACTIONS NEEDED (${uiState.loopHealthItems.size})",
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Black,
+                                    letterSpacing = 0.5.sp
+                                ),
+                                color = ProofInk
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Outstanding deliverables and pending requests awaiting your confirmation.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = ProofTextMuted
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        uiState.loopHealthItems.forEach { item ->
+                            val severityBg = when (item.severity) {
+                                LoopHealthSeverity.URGENT -> ProofCoral.copy(alpha = 0.2f)
+                                LoopHealthSeverity.ATTENTION -> ProofElectricLilac.copy(alpha = 0.35f)
+                                LoopHealthSeverity.INFO -> ProofWhite
+                            }
+
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = severityBg,
+                                border = BorderStroke(1.dp, ProofBorder),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(10.dp)) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = item.title,
+                                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                            color = ProofInk
+                                        )
+                                        NeoTag(
+                                            text = item.severity.name,
+                                            backgroundColor = if (item.severity == LoopHealthSeverity.URGENT) ProofCoral else ProofPaper
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = item.description,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = ProofInk
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Action: ${item.actionPrompt}",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = ProofPlum
+                                        )
+                                    )
+
+                                    if (item.connectionId != null) {
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.End
+                                        ) {
+                                            Surface(
+                                                shape = RoundedCornerShape(4.dp),
+                                                color = ProofWhite,
+                                                border = BorderStroke(1.dp, ProofBorder),
+                                                modifier = Modifier.clickable { onOpenWorkspaceClick(item.connectionId) }
+                                            ) {
+                                                Text(
+                                                    text = "Open Workspace →",
+                                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                                    color = ProofInk,
+                                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -268,7 +379,7 @@ fun AlumniInboxScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Monetization Placement in Feed (1 Test Banner Ad per screen)
+                // Monetization Placement in Feed
                 NeoBannerAd(
                     adTitle = "ALUMNI PERKS & RECRUITING SPONSOR",
                     modifier = Modifier.padding(vertical = 4.dp)

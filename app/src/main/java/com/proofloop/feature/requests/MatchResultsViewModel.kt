@@ -3,6 +3,7 @@ package com.proofloop.feature.requests
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proofloop.ProofLoopApp
+import com.proofloop.data.model.ExplainableMatch
 import com.proofloop.data.model.HelpRequest
 import com.proofloop.data.repository.IProofLoopRepository
 import com.proofloop.domain.matching.MatchResult
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 data class MatchResultsUiState(
     val request: HelpRequest? = null,
     val matches: List<MatchResult> = emptyList(),
+    val explainableMatches: List<ExplainableMatch> = emptyList(),
     val isLoading: Boolean = true,
     val requestedAlumniIds: Set<String> = emptySet(),
     val successMessage: String? = null,
@@ -57,9 +59,17 @@ class MatchResultsViewModel(
                     activeRequestsCountMap = activeCountMap
                 )
 
+                val explainableMatches = MatchingEngine.findExplainableMatches(
+                    request = request,
+                    student = student,
+                    candidates = candidates,
+                    activeRequestsCountMap = activeCountMap
+                )
+
                 _uiState.value = _uiState.value.copy(
                     request = request,
                     matches = rankedMatches,
+                    explainableMatches = explainableMatches,
                     isLoading = false
                 )
             }

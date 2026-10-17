@@ -1,6 +1,8 @@
 package com.proofloop.domain.matching
 
+import com.proofloop.data.model.ExplainableMatch
 import com.proofloop.data.model.HelpRequest
+import com.proofloop.data.model.MatchFitLevel
 import com.proofloop.data.model.PublicProfile
 import com.proofloop.data.model.UserAccount
 import kotlin.math.roundToInt
@@ -36,7 +38,10 @@ object MatchingEngine {
             // Filter 1: Must be opted-in
             if (!alumni.acceptingRequests) return@filter false
             
-            // Filter 2: Must not exceed capacity
+            // Filter 2: Must be verified alumnus
+            if (!alumni.isVerifiedAlumni) return@filter false
+
+            // Filter 3: Must not exceed capacity
             val currentActive = activeRequestsCountMap[alumni.uid] ?: 0
             if (currentActive >= alumni.maxActiveRequests) return@filter false
 
@@ -46,6 +51,97 @@ object MatchingEngine {
         return eligibleCandidates.map { alumni ->
             evaluateAlumnus(request, student, alumni)
         }.sortedByDescending { it.totalScore }
+    }
+
+    /**
+     * ProofLoop Intelligence: Produces human-explainable mentor recommendations
+     * backed by transparent factual evidence from profiles, explicitly surfacing missing info.
+     */
+    fun findExplainableMatches(
+        request: HelpRequest,
+        student: UserAccount?,
+        candidates: List<PublicProfile>,
+        activeRequestsCountMap: Map<String, Int> = emptyMap()
+    ): List<ExplainableMatch> {
+        val standardMatches = findMatches(request, student, candidates, activeRequestsCountMap)
+
+        return standardMatches.map { match ->
+            val alumni = match.alumni
+            val evidence = mutableListOf<String>()
+            var missingInfo: String? = null
+
+            // 1. Skill overlap evidence
+            val reqSkills = request.requiredSkills.filter { it.isNotBlank() }
+            if (reqSkills.isNotEmpty() && match.matchedSkills.isNotEmpty()) {
+                evidence.add("Matches ${match.matchedSkills.size} of ${reqSkills.size} requested skills (${match.matchedSkills.joinToString(", ")})")
+            } else if (match.matchedSkills.isNotEmpty()) {
+                evidence.add("Specializes in relevant skills: ${match.matchedSkills.joinToString(", ")}")
+            }
+
+            // 2. Category expertise
+            val offersCat = alumni.helpCategories.any { it.equals(request.category, ignoreCase = true) }
+            if (offersCat) {
+                evidence.add("Specializes in ${request.category}")
+            }
+
+            // 3. Availability alignment
+            val prefAvail = request.preferredAvailability.trim().lowercase()
+            val availMatches = prefAvail.isNotEmpty() && alumni.availableSlots.any { slot ->
+                val s = slot.lowercase()
+                s.contains(prefAvail) || prefAvail.contains(s) ||
+                    (prefAvail.contains("weekend") && s.contains("weekend")) ||
+                    (prefAvail.contains("evening") && s.contains("evening")) ||
+                    (prefAvail.contains("morning") && s.contains("morning"))
+            }
+            if (availMatches) {
+                evidence.add("Availability overlaps with your preferred time")
+            }
+
+            // 4. College / institutional affinity
+            val collegeAffinity = student != null && student.college.isNotBlank() &&
+                alumni.college.isNotBlank() &&
+                student.college.trim().equals(alumni.college.trim(), ignoreCase = true)
+            if (collegeAffinity) {
+                evidence.add("Alumni affinity: Both affiliated with ${alumni.college}")
+            }
+
+            // 5. Industry track record
+            if (alumni.company.isNotBlank() && alumni.jobTitle.isNotBlank()) {
+                evidence.add("Active industry experience: ${alumni.jobTitle} at ${alumni.company}")
+            }
+
+            // 6. Detect missing profile information honestly without inventing
+            if (alumni.availableSlots.isEmpty()) {
+                missingInfo = "Mentor has not listed specific weekly hours; session time to be confirmed in workspace."
+            } else if (student != null && student.careerGoals.isBlank()) {
+                missingInfo = "Adding career goals to your profile will calibrate future matches more precisely."
+            } else if (request.requiredSkills.isEmpty()) {
+                missingInfo = "No specific skills tagged on this mission; recommendation weighted heavily on category."
+            }
+
+            // Fit Level classification
+            val fitLevel = when {
+                match.totalScore >= 75 -> MatchFitLevel.EXCELLENT_FIT
+                match.totalScore >= 55 -> MatchFitLevel.STRONG_FIT
+                match.totalScore >= 35 -> MatchFitLevel.GOOD_FIT
+                else -> MatchFitLevel.EXPLORATORY_FIT
+            }
+
+            val currentActive = activeRequestsCountMap[alumni.uid] ?: 0
+
+            ExplainableMatch(
+                alumni = alumni,
+                fitLevel = fitLevel,
+                totalScore = match.totalScore,
+                evidenceBullets = evidence,
+                missingInfoNotice = missingInfo,
+                matchedSkills = match.matchedSkills,
+                categoryMatch = offersCat,
+                availabilityOverlap = availMatches,
+                collegeAffinity = collegeAffinity,
+                activeConnectionsCount = currentActive
+            )
+        }
     }
 
     fun evaluateAlumnus(
@@ -60,10 +156,6 @@ object MatchingEngine {
             .map { it.trim().lowercase() }
             .filter { it.isNotEmpty() }
         
-        val alumniExpertiseNormalized = alumni.expertise
-            .map { it.trim().lowercase() }
-            .toSet()
-
         val matchedSkills = mutableListOf<String>()
         val skillOverlapRatio = if (requestedSkillsNormalized.isEmpty()) {
             0.0

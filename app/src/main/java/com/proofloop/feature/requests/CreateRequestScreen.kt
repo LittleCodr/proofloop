@@ -1,8 +1,10 @@
 package com.proofloop.feature.requests
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,9 +12,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ElectricBolt
+import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.animation.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,6 +42,7 @@ fun CreateRequestScreen(
     val uiState by viewModel.uiState.collectAsState()
     var newSkillInput by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
+    val blueprintScrollState = rememberScrollState()
 
     val quickSkillSuggestions = listOf(
         "Kotlin", "Jetpack Compose", "Coroutines", "System Design",
@@ -105,6 +111,268 @@ fun CreateRequestScreen(
                 WorkflowHero(currentStep = 1)
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                // MISSION BLUEPRINTS PICKER (Reusable Mentorship Templates)
+                NeoCard(
+                    backgroundColor = ProofWhite,
+                    shadowOffset = 3.dp
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Layers,
+                            contentDescription = null,
+                            tint = ProofPlum,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "MISSION BLUEPRINTS",
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = ProofPlum
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Select a proven mentorship agenda or customize every field manually.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = ProofTextMuted
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(blueprintScrollState),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        uiState.availableBlueprints.forEach { bp ->
+                            val isSelected = uiState.selectedBlueprint?.id == bp.id
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = if (isSelected) ProofElectricLilac else ProofPaper,
+                                border = androidx.compose.foundation.BorderStroke(
+                                    if (isSelected) 2.dp else 1.5.dp,
+                                    ProofBorder
+                                ),
+                                modifier = Modifier
+                                    .width(200.dp)
+                                    .clickable { viewModel.selectBlueprint(bp) }
+                            ) {
+                                Column(modifier = Modifier.padding(10.dp)) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = "${bp.suggestedDurationMinutes}m",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontFamily = FontFamily.Monospace,
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            color = ProofInk
+                                        )
+                                        if (isSelected) {
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = "Selected",
+                                                tint = ProofInk,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = bp.title,
+                                        style = MaterialTheme.typography.titleSmall.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp
+                                        ),
+                                        color = ProofInk,
+                                        maxLines = 2
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = bp.category,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = ProofTextMuted
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    if (uiState.selectedBlueprint != null) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(ProofSignalMint.copy(alpha = 0.35f), RoundedCornerShape(6.dp))
+                                .border(1.dp, ProofBorder, RoundedCornerShape(6.dp))
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Active Template: ${uiState.selectedBlueprint?.title} (v${uiState.selectedBlueprint?.version})",
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = ProofInk
+                            )
+                            Text(
+                                text = "Clear",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = ProofCoral
+                                ),
+                                modifier = Modifier.clickable { viewModel.clearBlueprint() }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // MISSION COACH BUTTON & SUGGESTION CARD
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    color = ProofRaisedPlum,
+                    border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder)
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.AutoAwesome,
+                                    contentDescription = null,
+                                    tint = ProofSignalMint,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "PROOFLOOP COACH",
+                                    style = MaterialTheme.typography.labelMedium.copy(
+                                        fontFamily = FontFamily.Monospace,
+                                        fontWeight = FontWeight.Black,
+                                        letterSpacing = 0.5.sp
+                                    ),
+                                    color = ProofSignalMint
+                                )
+                            }
+
+                            Surface(
+                                shape = RoundedCornerShape(4.dp),
+                                color = ProofElectricLilac,
+                                border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
+                                modifier = Modifier.clickable { viewModel.requestMissionCoaching() }
+                            ) {
+                                Text(
+                                    text = "REFINE DRAFT",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 11.sp
+                                    ),
+                                    color = ProofInk,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Turn rough queries into crisp, high-signal missions mentors want to accept.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = ProofLavender
+                        )
+
+                        // If coach suggestion is available
+                        AnimatedVisibility(
+                            visible = uiState.coachSuggestion != null,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            val suggestion = uiState.coachSuggestion
+                            if (suggestion != null) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(top = 12.dp)
+                                        .background(ProofWhite, RoundedCornerShape(6.dp))
+                                        .border(1.dp, ProofBorder, RoundedCornerShape(6.dp))
+                                        .padding(12.dp)
+                                ) {
+                                    Text(
+                                        text = "COACH PROPOSAL (REVIEW & EDIT):",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontFamily = FontFamily.Monospace,
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = ProofCobalt
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = suggestion.refinedTitle,
+                                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = ProofInk
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = suggestion.refinedProblemStatement,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = ProofInk
+                                    )
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text(
+                                        text = "Deliverable: ${suggestion.suggestedOutcome}",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = ProofInk
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = suggestion.coachingNotes,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = ProofTextMuted
+                                    )
+
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End
+                                    ) {
+                                        TextButton(onClick = { viewModel.dismissCoachSuggestion() }) {
+                                            Text("Dismiss", color = ProofTextMuted)
+                                        }
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Button(
+                                            onClick = { viewModel.applyCoachSuggestion(suggestion) },
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = ProofSignalMint,
+                                                contentColor = ProofInk
+                                            ),
+                                            shape = RoundedCornerShape(6.dp),
+                                            border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder)
+                                        ) {
+                                            Text("Apply Proposal", fontWeight = FontWeight.Bold)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
 
                 NeoCard(
                     backgroundColor = ProofWhite,
@@ -200,7 +468,7 @@ fun CreateRequestScreen(
                         uiState.requiredSkills.forEach { skill ->
                             Surface(
                                 shape = RoundedCornerShape(6.dp),
-                                color = ProofAcidLime,
+                                color = ProofSignalMint,
                                 border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder)
                             ) {
                                 Row(

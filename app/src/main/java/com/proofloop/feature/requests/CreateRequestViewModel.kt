@@ -3,10 +3,14 @@ package com.proofloop.feature.requests
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proofloop.ProofLoopApp
+import com.proofloop.data.model.CoachSuggestion
 import com.proofloop.data.model.HelpCategories
 import com.proofloop.data.model.HelpRequest
+import com.proofloop.data.model.MissionBlueprint
 import com.proofloop.data.model.RequestStatus
 import com.proofloop.data.repository.IProofLoopRepository
+import com.proofloop.domain.blueprint.MissionBlueprintRegistry
+import com.proofloop.domain.coach.MissionCoach
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +24,9 @@ data class CreateRequestUiState(
     val desiredOutcome: String = "Actionable list of architecture fixes and agreed next action.",
     val durationMinutes: Int = 30,
     val preferredAvailability: String = "Weekends 2-4 PM",
+    val selectedBlueprint: MissionBlueprint? = null,
+    val availableBlueprints: List<MissionBlueprint> = emptyList(),
+    val coachSuggestion: CoachSuggestion? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val createdRequestId: String? = null
@@ -29,7 +36,11 @@ class CreateRequestViewModel(
     private val repository: IProofLoopRepository = ProofLoopApp.instance.repository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CreateRequestUiState())
+    private val _uiState = MutableStateFlow(
+        CreateRequestUiState(
+            availableBlueprints = repository.getAvailableBlueprints()
+        )
+    )
     val uiState: StateFlow<CreateRequestUiState> = _uiState.asStateFlow()
 
     fun onTitleChange(title: String) { _uiState.value = _uiState.value.copy(title = title, errorMessage = null) }
@@ -38,6 +49,58 @@ class CreateRequestViewModel(
     fun onDesiredOutcomeChange(outcome: String) { _uiState.value = _uiState.value.copy(desiredOutcome = outcome, errorMessage = null) }
     fun onDurationChange(duration: Int) { _uiState.value = _uiState.value.copy(durationMinutes = duration) }
     fun onAvailabilityChange(avail: String) { _uiState.value = _uiState.value.copy(preferredAvailability = avail) }
+
+    fun selectBlueprint(blueprint: MissionBlueprint) {
+        val currentUser = repository.getCurrentUser()
+        val prefilled = MissionBlueprintRegistry.createPrefilledRequest(
+            blueprint = blueprint,
+            studentId = currentUser?.uid.orEmpty(),
+            studentName = currentUser?.name.orEmpty()
+        )
+        _uiState.value = _uiState.value.copy(
+            selectedBlueprint = blueprint,
+            title = prefilled.title,
+            description = prefilled.description,
+            category = prefilled.category,
+            requiredSkills = prefilled.requiredSkills,
+            desiredOutcome = prefilled.desiredOutcome,
+            durationMinutes = prefilled.durationMinutes,
+            preferredAvailability = prefilled.preferredAvailability,
+            errorMessage = null,
+            coachSuggestion = null
+        )
+    }
+
+    fun clearBlueprint() {
+        _uiState.value = _uiState.value.copy(selectedBlueprint = null)
+    }
+
+    fun requestMissionCoaching() {
+        val current = _uiState.value
+        val suggestion = MissionCoach.generateCoachingSuggestion(
+            rawTitle = current.title,
+            rawDescription = current.description,
+            selectedCategory = current.category
+        )
+        _uiState.value = _uiState.value.copy(coachSuggestion = suggestion)
+    }
+
+    fun dismissCoachSuggestion() {
+        _uiState.value = _uiState.value.copy(coachSuggestion = null)
+    }
+
+    fun applyCoachSuggestion(suggestion: CoachSuggestion) {
+        _uiState.value = _uiState.value.copy(
+            title = suggestion.refinedTitle,
+            description = suggestion.refinedProblemStatement,
+            category = suggestion.suggestedCategory,
+            requiredSkills = suggestion.suggestedSkills,
+            desiredOutcome = suggestion.suggestedOutcome,
+            durationMinutes = suggestion.suggestedDurationMinutes,
+            coachSuggestion = null,
+            errorMessage = null
+        )
+    }
 
     fun addSkill(skill: String) {
         val trimmed = skill.trim()
@@ -87,6 +150,8 @@ class CreateRequestViewModel(
                 durationMinutes = state.durationMinutes,
                 preferredAvailability = state.preferredAvailability,
                 status = RequestStatus.OPEN.name,
+                blueprintId = state.selectedBlueprint?.id ?: "",
+                blueprintVersion = state.selectedBlueprint?.version ?: 1,
                 createdAt = System.currentTimeMillis()
             )
 

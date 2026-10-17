@@ -1,15 +1,22 @@
 package com.proofloop.feature.student
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ElectricBolt
+import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.animation.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.proofloop.core.ui.components.*
 import com.proofloop.core.ui.theme.*
+import com.proofloop.data.model.LoopHealthSeverity
 
 @Composable
 fun StudentHomeScreen(
@@ -33,6 +41,7 @@ fun StudentHomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
+    val blueprintScrollState = rememberScrollState()
 
     // Determine current workflow stage
     val currentWorkflowStep = when {
@@ -94,6 +103,75 @@ fun StudentHomeScreen(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // MISSION BLUEPRINTS SHELF
+                if (uiState.availableBlueprints.isNotEmpty()) {
+                    NeoCard(
+                        backgroundColor = ProofWhite,
+                        shadowOffset = 2.dp
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Layers,
+                                contentDescription = null,
+                                tint = ProofPlum,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "START FROM A MISSION BLUEPRINT",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Black,
+                                    letterSpacing = 0.5.sp
+                                ),
+                                color = ProofPlum
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(blueprintScrollState),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            uiState.availableBlueprints.take(4).forEach { bp ->
+                                Surface(
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = ProofPaper,
+                                    border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
+                                    modifier = Modifier
+                                        .width(170.dp)
+                                        .clickable { onRequestHelpClick() }
+                                ) {
+                                    Column(modifier = Modifier.padding(10.dp)) {
+                                        Text(
+                                            text = "${bp.suggestedDurationMinutes}m • ${bp.category}",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontFamily = FontFamily.Monospace,
+                                                fontSize = 10.sp
+                                            ),
+                                            color = ProofTextMuted
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = bp.title,
+                                            style = MaterialTheme.typography.titleSmall.copy(
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 12.sp
+                                            ),
+                                            color = ProofInk,
+                                            maxLines = 2
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
+                }
+
                 AnimatedVisibility(
                     visible = uiState.isLoading,
                     enter = expandVertically() + fadeIn(),
@@ -105,10 +183,119 @@ fun StudentHomeScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
                 // Workflow Progress Card
                 WorkflowHero(currentStep = currentWorkflowStep)
+
+                // LOOP HEALTH OPERATIONAL ATTENTION PANEL
+                if (uiState.loopHealthItems.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    NeoCard(
+                        backgroundColor = ProofPaper,
+                        borderColor = ProofInk,
+                        shadowOffset = 3.dp
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PriorityHigh,
+                                contentDescription = null,
+                                tint = ProofCoral,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "LOOP HEALTH • OPERATIONAL ATTENTION (${uiState.loopHealthItems.size})",
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Black,
+                                    letterSpacing = 0.5.sp
+                                ),
+                                color = ProofInk
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Bottlenecks detected to help keep your mentorship moving forward smoothly.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = ProofTextMuted
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        uiState.loopHealthItems.forEach { item ->
+                            val severityBg = when (item.severity) {
+                                LoopHealthSeverity.URGENT -> ProofCoral.copy(alpha = 0.2f)
+                                LoopHealthSeverity.ATTENTION -> ProofElectricLilac.copy(alpha = 0.35f)
+                                LoopHealthSeverity.INFO -> ProofWhite
+                            }
+
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = severityBg,
+                                border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(10.dp)) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = item.title,
+                                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                            color = ProofInk
+                                        )
+                                        NeoTag(
+                                            text = item.severity.name,
+                                            backgroundColor = if (item.severity == LoopHealthSeverity.URGENT) ProofCoral else ProofPaper
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = item.description,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = ProofInk
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Next step: ${item.actionPrompt}",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = ProofPlum
+                                        )
+                                    )
+
+                                    if (item.connectionId != null) {
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.End
+                                        ) {
+                                            Surface(
+                                                shape = RoundedCornerShape(4.dp),
+                                                color = ProofWhite,
+                                                border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
+                                                modifier = Modifier.clickable { onOpenWorkspaceClick(item.connectionId) }
+                                            ) {
+                                                Text(
+                                                    text = "Open Workspace →",
+                                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                                    color = ProofInk,
+                                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -150,37 +337,66 @@ fun StudentHomeScreen(
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Request: ${connection.requestTitle}",
+                                text = connection.requestTitle,
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = ProofCobalt
+                                color = ProofInk
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            
-                            // Agreed next action highlight
-                            Surface(
-                                shape = MaterialTheme.shapes.small,
-                                color = ProofLavender,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Column(modifier = Modifier.padding(10.dp)) {
-                                    Text(
-                                        text = "AGREED NEXT ACTION:",
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black),
-                                        color = ProofInk
+
+                            if (connection.sessionAt.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Default.Schedule,
+                                        contentDescription = "Session",
+                                        tint = ProofInk,
+                                        modifier = Modifier.size(16.dp)
                                     )
+                                    Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = connection.agreedNextAction.ifBlank { "Tap to define and agree on a practical next step." },
-                                        style = MaterialTheme.typography.bodySmall,
+                                        text = "${connection.sessionAt} ${if (connection.timeZone.isNotEmpty()) "(${connection.timeZone})" else ""}",
+                                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
                                         color = ProofInk
                                     )
                                 }
                             }
 
+                            if (connection.agreedNextAction.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Surface(
+                                    shape = RoundedCornerShape(6.dp),
+                                    color = ProofAcidLime,
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(modifier = Modifier.padding(10.dp)) {
+                                        Text(
+                                            text = "AGREED NEXT ACTION:",
+                                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black),
+                                            color = ProofInk
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = connection.agreedNextAction,
+                                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                            color = ProofInk
+                                        )
+                                        if (connection.nextActionDueDate.isNotEmpty()) {
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(
+                                                text = "Due: ${connection.nextActionDueDate} • Owner: ${connection.nextActionOwner.ifEmpty { "Student" }}",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = ProofInk
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
                             Spacer(modifier = Modifier.height(12.dp))
                             NeoButton(
-                                text = "Open Workspace",
+                                text = "Open Connection Workspace",
                                 onClick = { onOpenWorkspaceClick(connection.id) },
-                                backgroundColor = ProofAcidLime,
+                                backgroundColor = ProofElectricLilac,
                                 contentColor = ProofInk,
                                 icon = Icons.Default.ArrowForward
                             )
@@ -190,9 +406,9 @@ fun StudentHomeScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // SECTION 2: PENDING CONNECTION REQUESTS
+                // SECTION 2: PENDING RESPONSES
                 Text(
-                    text = "PENDING CONNECTION REQUESTS",
+                    text = "AWAITING ALUMNI RESPONSE",
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
@@ -244,7 +460,7 @@ fun StudentHomeScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Monetization Placement in Feed (1 Test Banner Ad per screen)
+                // Monetization Placement in Feed
                 NeoBannerAd(
                     adTitle = "CAMPUS SPONSOR • CAREER FELLOWSHIP",
                     modifier = Modifier.padding(vertical = 4.dp)
@@ -308,6 +524,9 @@ fun StudentHomeScreen(
                             ) {
                                 NeoTag(text = req.category, backgroundColor = ProofLavender)
                                 NeoTag(text = "${req.durationMinutes} mins", backgroundColor = ProofSurfaceMuted)
+                                if (req.blueprintId.isNotBlank()) {
+                                    NeoTag(text = "Blueprint Active", backgroundColor = ProofSignalMint)
+                                }
                             }
 
                             // Skills tags

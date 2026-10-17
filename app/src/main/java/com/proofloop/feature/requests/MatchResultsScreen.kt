@@ -1,6 +1,8 @@
 package com.proofloop.feature.requests
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,7 +10,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.proofloop.core.ui.components.*
 import com.proofloop.core.ui.theme.*
+import com.proofloop.data.model.MatchFitLevel
 
 @Composable
 fun MatchResultsScreen(
@@ -63,7 +68,7 @@ fun MatchResultsScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "MATCHED ALUMNI",
+                        text = "EXPLAINABLE MATCHES",
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Black
@@ -92,7 +97,7 @@ fun MatchResultsScreen(
                         shadowOffset = 2.dp
                     ) {
                         Text(
-                            text = "YOUR REQUEST",
+                            text = "ACTIVE MISSION",
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black),
                             color = ProofTextMuted
                         )
@@ -105,21 +110,24 @@ fun MatchResultsScreen(
                         Spacer(modifier = Modifier.height(6.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             NeoTag(text = req.category, backgroundColor = ProofLavender)
-                            NeoTag(text = "${req.durationMinutes}m", backgroundColor = ProofSurfaceMuted)
+                            NeoTag(text = "${req.durationMinutes}m duration", backgroundColor = ProofSurfaceMuted)
+                            if (req.blueprintId.isNotBlank()) {
+                                NeoTag(text = "Blueprint Active", backgroundColor = ProofSignalMint)
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
                 // Success Message
-                androidx.compose.animation.AnimatedVisibility(
+                AnimatedVisibility(
                     visible = uiState.successMessage != null,
-                    enter = androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn(),
-                    exit = androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut()
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
                 ) {
                     Column {
                         NeoCard(
-                            backgroundColor = ProofAcidLime,
+                            backgroundColor = ProofSignalMint,
                             shadowOffset = 2.dp
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -133,7 +141,7 @@ fun MatchResultsScreen(
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                             NeoButton(
-                                text = "Back to Student Dashboard",
+                                text = "Go to Student Dashboard",
                                 onClick = onViewHome,
                                 backgroundColor = ProofInk,
                                 contentColor = ProofWhite
@@ -144,7 +152,7 @@ fun MatchResultsScreen(
                 }
 
                 Text(
-                    text = "RANKED ALUMNI & EXPLANATIONS",
+                    text = "PROOF LOOP INTELLIGENCE",
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
@@ -153,7 +161,7 @@ fun MatchResultsScreen(
                     color = ProofInk
                 )
                 Text(
-                    text = "Scores are calculated using the 5-factor deterministic formula. Every reason is truthful.",
+                    text = "Every recommendation explains why a mentor fits using verifiable profile facts, without invented claims.",
                     style = MaterialTheme.typography.bodySmall,
                     color = ProofTextMuted
                 )
@@ -161,17 +169,17 @@ fun MatchResultsScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 if (uiState.isLoading) {
-                    NeoLoadingIndicator(message = "Calculating explainable matches...")
-                } else if (uiState.matches.isEmpty()) {
+                    NeoLoadingIndicator(message = "Evaluating skill overlap, availability & capacity...")
+                } else if (uiState.explainableMatches.isEmpty() && uiState.matches.isEmpty()) {
                     EmptyStateCard(
-                        title = "No Strong Matches Yet",
-                        message = "No opted-in alumni matched all required criteria. Try adding fewer required skills or choosing another help category.",
-                        actionText = "Edit Request",
+                        title = "No Matching Mentors Available",
+                        message = "No opted-in alumni currently match all criteria within capacity limits. Try broadening your requested skills or adjusting your preferred availability.",
+                        actionText = "Revise Request",
                         onAction = onNavigateBack
                     )
                 } else {
-                    uiState.matches.forEachIndexed { index, match ->
-                        val alumni = match.alumni
+                    uiState.explainableMatches.forEachIndexed { index, expMatch ->
+                        val alumni = expMatch.alumni
                         val isAlreadyRequested = uiState.requestedAlumniIds.contains(alumni.uid)
 
                         NeoCard(
@@ -191,11 +199,13 @@ fun MatchResultsScreen(
                                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                             color = ProofInk
                                         )
-                                        if (alumni.isDemonstrationProfile) {
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            NeoTag(
-                                                text = "DEMO PROFILE",
-                                                backgroundColor = ProofLavender
+                                        if (alumni.isVerifiedAlumni) {
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Icon(
+                                                imageVector = Icons.Default.Verified,
+                                                contentDescription = "Verified Alumnus",
+                                                tint = ProofCobalt,
+                                                modifier = Modifier.size(16.dp)
                                             )
                                         }
                                     }
@@ -211,27 +221,35 @@ fun MatchResultsScreen(
                                     )
                                 }
 
-                                // Match Score Badge (Neo-Brutalist Pill)
+                                // Fit Level Badge
+                                val (fitBg, fitText) = when (expMatch.fitLevel) {
+                                    MatchFitLevel.EXCELLENT_FIT -> ProofSignalMint to expMatch.fitLevel.label
+                                    MatchFitLevel.STRONG_FIT -> ProofElectricLilac to expMatch.fitLevel.label
+                                    MatchFitLevel.GOOD_FIT -> ProofLavender to expMatch.fitLevel.label
+                                    MatchFitLevel.EXPLORATORY_FIT -> ProofSurfaceMuted to expMatch.fitLevel.label
+                                }
+
                                 Surface(
                                     shape = RoundedCornerShape(8.dp),
-                                    color = if (match.totalScore >= 70) ProofSignalMint else ProofElectricLilac,
-                                    border = androidx.compose.foundation.BorderStroke(2.dp, ProofBorder)
+                                    color = fitBg,
+                                    border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder)
                                 ) {
                                     Column(
                                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         Text(
-                                            text = "${match.totalScore}%",
-                                            style = MaterialTheme.typography.titleLarge.copy(
+                                            text = fitText.uppercase(),
+                                            style = MaterialTheme.typography.labelSmall.copy(
                                                 fontFamily = FontFamily.Monospace,
-                                                fontWeight = FontWeight.Black
+                                                fontWeight = FontWeight.Black,
+                                                fontSize = 10.sp
                                             ),
                                             color = ProofInk
                                         )
                                         Text(
-                                            text = "MATCH",
-                                            style = MaterialTheme.typography.labelSmall.copy(
+                                            text = "${expMatch.totalScore} pts",
+                                            style = MaterialTheme.typography.bodySmall.copy(
                                                 fontFamily = FontFamily.Monospace,
                                                 fontWeight = FontWeight.Bold,
                                                 fontSize = 9.sp
@@ -244,7 +262,7 @@ fun MatchResultsScreen(
 
                             Spacer(modifier = Modifier.height(10.dp))
 
-                            // Truthful Match Reasons Box
+                            // Truthful Evidence Box
                             Surface(
                                 shape = RoundedCornerShape(6.dp),
                                 color = ProofPaper,
@@ -253,21 +271,26 @@ fun MatchResultsScreen(
                             ) {
                                 Column(modifier = Modifier.padding(10.dp)) {
                                     Text(
-                                        text = "WHY THIS PERSON MATCHES:",
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black),
+                                        text = "MATCH EVIDENCE:",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontFamily = FontFamily.Monospace,
+                                            fontWeight = FontWeight.Black
+                                        ),
                                         color = ProofInk
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
-                                    match.reasons.forEach { reason ->
+                                    expMatch.evidenceBullets.forEach { bullet ->
                                         Row(modifier = Modifier.padding(vertical = 2.dp)) {
                                             Text(
-                                                text = "•",
-                                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Black),
-                                                color = ProofInk
+                                                text = "✓",
+                                                style = MaterialTheme.typography.bodySmall.copy(
+                                                    fontWeight = FontWeight.Black,
+                                                    color = ProofCobalt
+                                                )
                                             )
                                             Spacer(modifier = Modifier.width(6.dp))
                                             Text(
-                                                text = reason,
+                                                text = bullet,
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = ProofInk
                                             )
@@ -276,22 +299,61 @@ fun MatchResultsScreen(
                                 }
                             }
 
+                            // Missing Info Notice (if any)
+                            if (expMatch.missingInfoNotice != null) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(ProofSurfaceMuted, RoundedCornerShape(4.dp))
+                                        .border(1.dp, ProofBorder, RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Info,
+                                        contentDescription = null,
+                                        tint = ProofTextMuted,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = expMatch.missingInfoNotice,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = ProofTextMuted
+                                    )
+                                }
+                            }
+
                             Spacer(modifier = Modifier.height(10.dp))
 
-                            // Availability Slots
-                            if (alumni.availableSlots.isNotEmpty()) {
+                            // Mentor Capacity & Availability
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Text(
-                                    text = "Available: ${alumni.availableSlots.joinToString(" • ")}",
-                                    style = MaterialTheme.typography.bodySmall,
+                                    text = "Active load: ${expMatch.activeConnectionsCount}/${alumni.maxActiveRequests} missions",
+                                    style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace),
                                     color = ProofTextMuted
                                 )
-                                Spacer(modifier = Modifier.height(12.dp))
+
+                                if (alumni.availableSlots.isNotEmpty()) {
+                                    Text(
+                                        text = alumni.availableSlots.first(),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = ProofTextMuted
+                                    )
+                                }
                             }
+
+                            Spacer(modifier = Modifier.height(12.dp))
 
                             // CTA: Send Request
                             if (isAlreadyRequested) {
                                 NeoButton(
-                                    text = "Request Sent ✓",
+                                    text = "Request Pending ✓",
                                     onClick = {},
                                     backgroundColor = ProofSurfaceMuted,
                                     contentColor = ProofInk,
@@ -299,7 +361,7 @@ fun MatchResultsScreen(
                                 )
                             } else {
                                 NeoButton(
-                                    text = "Send Connection Request",
+                                    text = "Send Mission Request",
                                     onClick = {
                                         viewModel.sendConnectionRequest(alumni.uid, alumni.displayName)
                                     },

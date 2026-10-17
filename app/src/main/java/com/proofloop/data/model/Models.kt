@@ -27,6 +27,20 @@ enum class ConnectionStatus {
     PENDING,
     ACCEPTED,
     DECLINED,
+    COMPLETED,
+    CANCELLED,
+    RESCHEDULED
+}
+
+/**
+ * Lifecycle state of a scheduled mentoring session.
+ */
+enum class SessionStatus {
+    UNSCHEDULED,
+    PROPOSED,
+    CONFIRMED,
+    RESCHEDULED,
+    CANCELLED,
     COMPLETED
 }
 
@@ -40,14 +54,16 @@ object HelpCategories {
     const val MOCK_INTERVIEW = "Mock Technical Interview"
     const val SYSTEM_DESIGN = "System Design Guidance"
     const val RESUME_FEEDBACK = "Resume & Profile Feedback"
+    const val ENTREPRENEURSHIP = "Entrepreneurship & Startup Feedback"
 
     val ALL = listOf(
+        RESUME_FEEDBACK,
         PORTFOLIO_REVIEW,
-        CODE_REVIEW,
-        CAREER_DIRECTION,
         MOCK_INTERVIEW,
+        CODE_REVIEW,
         SYSTEM_DESIGN,
-        RESUME_FEEDBACK
+        CAREER_DIRECTION,
+        ENTREPRENEURSHIP
     )
 }
 
@@ -105,6 +121,8 @@ data class HelpRequest(
     var durationMinutes: Int = 30,
     var preferredAvailability: String = "",
     var status: String = RequestStatus.OPEN.name,
+    var blueprintId: String = "",
+    var blueprintVersion: Int = 1,
     var createdAt: Long = System.currentTimeMillis()
 )
 
@@ -122,6 +140,10 @@ data class Connection(
     var alumniName: String = "",
     var status: String = ConnectionStatus.PENDING.name,
     var sessionAt: String = "",
+    var proposedSessionTime: String = "",
+    var sessionStatus: String = SessionStatus.UNSCHEDULED.name,
+    var cancellationReason: String = "",
+    var timeZone: String = "",
     var agreedNextAction: String = "",
     var nextActionDueDate: String = "",
     var nextActionOwner: String = "",
@@ -159,6 +181,113 @@ data class InstitutionalMetrics(
     val acceptanceRatePercent: Int = 0,
     val loopClosureRatePercent: Int = 0,
     val activeMentorsCount: Int = 0,
-    val meanResponseHours: Double = 1.8
+    val meanResponseHours: Double = 1.8,
+    val filterWindow: TimeWindowFilter = TimeWindowFilter.ALL_TIME,
+    val isSampleCohort: Boolean = false
 )
 
+/**
+ * Time-window filter for institutional analytics.
+ */
+enum class TimeWindowFilter(val label: String, val days: Int?) {
+    LAST_7_DAYS("Last 7 Days", 7),
+    LAST_30_DAYS("Last 30 Days", 30),
+    ALL_TIME("All Time", null)
+}
+
+/**
+ * Reusable Mission Blueprint defining structured micro-mentorship engagements.
+ */
+data class MissionBlueprint(
+    val id: String,
+    val version: Int = 1,
+    val title: String,
+    val summary: String,
+    val category: String,
+    val intendedAudience: String,
+    val suggestedDurationMinutes: Int = 30,
+    val requiredStudentInputs: List<String>,
+    val suggestedAgenda: List<String>,
+    val expectedDeliverable: String,
+    val suggestedFollowUpAction: String,
+    val suggestedDueDays: Int = 3,
+    val defaultSkills: List<String> = emptyList()
+)
+
+/**
+ * Fitness tier for explainable mentor matching.
+ */
+enum class MatchFitLevel(val label: String) {
+    EXCELLENT_FIT("Excellent Fit"),
+    STRONG_FIT("Strong Fit"),
+    GOOD_FIT("Good Fit"),
+    EXPLORATORY_FIT("Exploratory Match")
+}
+
+/**
+ * Explainable match result conveying evidence, missing info, and actionable reasons.
+ */
+data class ExplainableMatch(
+    val alumni: PublicProfile,
+    val fitLevel: MatchFitLevel,
+    val totalScore: Int,
+    val evidenceBullets: List<String>,
+    val missingInfoNotice: String? = null,
+    val matchedSkills: List<String> = emptyList(),
+    val categoryMatch: Boolean = false,
+    val availabilityOverlap: Boolean = false,
+    val collegeAffinity: Boolean = false,
+    val activeConnectionsCount: Int = 0
+)
+
+/**
+ * Severity for Loop Health operational bottlenecks.
+ */
+enum class LoopHealthSeverity {
+    INFO,
+    ATTENTION,
+    URGENT
+}
+
+/**
+ * Category of Loop Health bottleneck.
+ */
+enum class LoopHealthCategory {
+    UNANSWERED_REQUEST,
+    UNSCHEDULED_SESSION,
+    MISSING_NEXT_ACTION,
+    OVERDUE_ACTION,
+    PENDING_CONFIRMATION,
+    MENTOR_CAPACITY
+}
+
+/**
+ * Operational bottleneck item detected by the Loop Health Engine.
+ */
+data class LoopHealthItem(
+    val id: String,
+    val connectionId: String? = null,
+    val requestId: String? = null,
+    val title: String,
+    val description: String,
+    val actionPrompt: String,
+    val severity: LoopHealthSeverity,
+    val category: LoopHealthCategory,
+    val ageHours: Long = 0L,
+    val targetRole: UserRole = UserRole.STUDENT,
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+/**
+ * Deterministic suggestion from Mission Coach to turn a vague query into a crisp mission.
+ */
+data class CoachSuggestion(
+    val refinedTitle: String,
+    val refinedProblemStatement: String,
+    val suggestedCategory: String,
+    val suggestedSkills: List<String>,
+    val suggestedOutcome: String,
+    val suggestedDurationMinutes: Int,
+    val suggestedFollowUpAction: String,
+    val coachingNotes: String
+)

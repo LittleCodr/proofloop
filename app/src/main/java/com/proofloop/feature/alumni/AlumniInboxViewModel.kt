@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.proofloop.ProofLoopApp
 import com.proofloop.data.model.Connection
+import com.proofloop.data.model.LoopHealthItem
 import com.proofloop.data.model.PublicProfile
 import com.proofloop.data.model.UserAccount
 import com.proofloop.data.model.UserRole
@@ -18,6 +19,7 @@ data class AlumniInboxUiState(
     val profile: PublicProfile? = null,
     val incomingRequests: List<Connection> = emptyList(),
     val acceptedConnections: List<Connection> = emptyList(),
+    val loopHealthItems: List<LoopHealthItem> = emptyList(),
     val isLoading: Boolean = false,
     val feedbackMessage: String? = null,
     val errorMessage: String? = null
@@ -81,6 +83,13 @@ class AlumniInboxViewModel(
                 }
             }
         }
+
+        // 5. Observe Loop Health operational bottlenecks
+        viewModelScope.launch {
+            repository.getLoopHealthItems(alumniId, UserRole.ALUMNI).collect { items ->
+                _uiState.value = _uiState.value.copy(loopHealthItems = items)
+            }
+        }
     }
 
     fun acceptRequest(connectionId: String) {
@@ -104,7 +113,9 @@ class AlumniInboxViewModel(
         viewModelScope.launch {
             val result = repository.respondToConnection(connectionId, accept = false, currentUserId = currentUserId)
             if (result.isSuccess) {
-                _uiState.value = _uiState.value.copy(feedbackMessage = "Request declined.")
+                _uiState.value = _uiState.value.copy(
+                    feedbackMessage = "Request declined."
+                )
             } else {
                 _uiState.value = _uiState.value.copy(
                     errorMessage = result.exceptionOrNull()?.localizedMessage ?: "Failed to decline connection"
@@ -113,28 +124,21 @@ class AlumniInboxViewModel(
         }
     }
 
-    fun toggleAcceptingRequests() {
-        val user = repository.getCurrentUser() ?: return
-        val currentProfile = uiState.value.profile ?: PublicProfile(
-            uid = user.uid,
-            displayName = user.name,
-            role = UserRole.ALUMNI.name,
-            college = user.college,
-            acceptingRequests = true,
-            maxActiveRequests = 3
-        )
-        val updated = currentProfile.copy(acceptingRequests = !currentProfile.acceptingRequests)
+    fun toggleAcceptingRequests(accepting: Boolean = !(_uiState.value.profile?.acceptingRequests ?: true)) {
+        val profile = uiState.value.profile ?: return
+        val updated = profile.copy(acceptingRequests = accepting)
+        _uiState.value = _uiState.value.copy(profile = updated)
+
         viewModelScope.launch {
             repository.updateAlumniPublicProfile(updated)
-            _uiState.value = _uiState.value.copy(profile = updated)
         }
-    }
-
-    fun logout() {
-        repository.logout()
     }
 
     fun clearFeedback() {
         _uiState.value = _uiState.value.copy(feedbackMessage = null, errorMessage = null)
+    }
+
+    fun logout() {
+        repository.logout()
     }
 }
