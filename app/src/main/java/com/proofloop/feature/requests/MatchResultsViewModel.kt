@@ -68,14 +68,16 @@ class MatchResultsViewModel(
 
     fun sendConnectionRequest(alumniId: String, alumniName: String) {
         val request = uiState.value.request ?: return
-        val student = repository.getCurrentUser() ?: return
+        val student = repository.getCurrentUser()
+        val studentId = student?.uid ?: request.studentId
+        val studentName = student?.name ?: request.studentName
 
         viewModelScope.launch {
             val result = repository.sendConnectionRequest(
                 requestId = request.id,
                 requestTitle = request.title,
-                studentId = student.uid,
-                studentName = student.name,
+                studentId = studentId,
+                studentName = studentName,
                 alumniId = alumniId,
                 alumniName = alumniName
             )

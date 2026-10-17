@@ -33,6 +33,21 @@ class AuthViewModel(
         }
     }
 
+    fun signInWithGoogle(idToken: String, selectedRole: UserRole, college: String? = null) {
+        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+        viewModelScope.launch {
+            val result = repository.signInWithGoogle(idToken, selectedRole, college)
+            if (result.isSuccess) {
+                _uiState.value = _uiState.value.copy(isLoading = false, user = result.getOrNull())
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = result.exceptionOrNull()?.localizedMessage ?: "Google Sign-In failed"
+                )
+            }
+        }
+    }
+
     fun login(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
             _uiState.value = _uiState.value.copy(errorMessage = "Please enter both email and password")
@@ -75,10 +90,8 @@ class AuthViewModel(
         }
     }
 
-    fun loginDemo(role: UserRole) {
-        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-        val result = repository.loginDemo(role)
-        _uiState.value = _uiState.value.copy(isLoading = false, user = result.getOrNull())
+    fun setError(message: String) {
+        _uiState.value = _uiState.value.copy(errorMessage = message, isLoading = false)
     }
 
     fun clearError() {

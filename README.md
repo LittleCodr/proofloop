@@ -64,9 +64,10 @@ ProofLoop is engineered following modern Android architecture best practices:
 - **State Management:** Kotlin Coroutines, StateFlow, callbackFlow, and SharedFlow triggers
 - **Navigation:** Navigation Compose 2.8.8 with type-safe route builders
 - **Data Persistence & Auth:**
-  - **Firebase Authentication** (Email/Password + Quick-Start Demo Auth)
-  - **Cloud Firestore** (`users`, `publicProfiles`, `helpRequests`, `connections`, `outcomes`)
-  - **Dual-Store Cache:** Fully reactive in-memory backing store combined with safe-called, timeout-guarded remote Firestore synchronization (`withTimeoutOrNull(1000L)`). This guarantees immediate zero-latency UI reactivity even when running offline or in restricted hackathon emulator environments.
+  - **Firebase Authentication** (Google Sign-In + Email/Password with real user accounts)
+  - **Firebase Analytics** (`com.google.firebase:firebase-analytics` event tracking for auth, requests, connections, and confirmations)
+  - **Cloud Firestore** (100% production persistence across `users`, `publicProfiles`, `helpRequests`, `connections`, and `outcomes` without dummy/fake seed data)
+  - **Dual-Store Cache:** Fully reactive in-memory backing store combined with real-time Firestore synchronization listeners (`addSnapshotListener`). This guarantees immediate zero-latency UI reactivity alongside persistent cloud storage.
 
 ### Package Architecture
 ```

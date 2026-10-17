@@ -1,6 +1,7 @@
 package com.proofloop
 
 import android.app.Application
+import com.proofloop.core.analytics.AnalyticsManager
 import com.proofloop.data.repository.IProofLoopRepository
 import com.proofloop.data.repository.ProofLoopRepository
 
@@ -9,10 +10,14 @@ class ProofLoopApp : Application() {
     lateinit var repository: IProofLoopRepository
         private set
 
+    lateinit var analytics: AnalyticsManager
+        private set
+
     override fun onCreate() {
         super.onCreate()
         instance = this
-        repository = ProofLoopRepository()
+        analytics = AnalyticsManager(this)
+        repository = ProofLoopRepository(analytics = analytics)
     }
 
     companion object {

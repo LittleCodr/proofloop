@@ -91,6 +91,8 @@ dependencies {
   implementation(firebaseBom)
   implementation("com.google.firebase:firebase-auth")
   implementation("com.google.firebase:firebase-firestore")
+  implementation("com.google.firebase:firebase-analytics")
+  implementation("com.google.android.gms:play-services-auth:21.3.0")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 }
 
