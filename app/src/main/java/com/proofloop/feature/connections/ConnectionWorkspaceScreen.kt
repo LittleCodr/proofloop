@@ -94,8 +94,15 @@ fun ConnectionWorkspaceScreen(
                     .verticalScroll(scrollState)
                     .padding(16.dp)
             ) {
-                // Workflow Progress Card
-                WorkflowHero(currentStep = currentStep)
+                // 5-Stage Mission-to-Outcome Timeline Card
+                MissionToOutcomeTimelineCard(
+                    currentStep = currentStep,
+                    actionDescription = uiState.actionText,
+                    dueDate = uiState.dueDateText,
+                    ownerName = conn?.studentName ?: "Student",
+                    isStudentCompleted = outcome?.studentCompleted == true,
+                    isAlumniConfirmed = outcome?.alumniConfirmed == true
+                )
 
                 Spacer(modifier = Modifier.height(14.dp))
 
@@ -149,7 +156,7 @@ fun ConnectionWorkspaceScreen(
                                 Text(
                                     text = conn.alumniName,
                                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofCobalt
+                                    color = ProofInk
                                 )
                             }
                         }
@@ -179,7 +186,7 @@ fun ConnectionWorkspaceScreen(
                 ) {
                     Column {
                         Spacer(modifier = Modifier.height(12.dp))
-                        NeoCard(backgroundColor = ProofAcidLime, shadowOffset = 2.dp) {
+                        NeoCard(backgroundColor = ProofSignalMint, shadowOffset = 2.dp) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Check, contentDescription = null, tint = ProofInk)
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -205,7 +212,7 @@ fun ConnectionWorkspaceScreen(
                             Text(
                                 text = uiState.errorMessage ?: "",
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ProofWhite
+                                color = ProofInk
                             )
                         }
                     }
@@ -213,7 +220,7 @@ fun ConnectionWorkspaceScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // AGREED NEXT ACTION CARD
+                // AGREED NEXT ACTION COMMITMENT CARD
                 NeoCard(
                     backgroundColor = ProofWhite,
                     shadowOffset = 4.dp
@@ -225,10 +232,10 @@ fun ConnectionWorkspaceScreen(
                             fontWeight = FontWeight.Black,
                             letterSpacing = 0.5.sp
                         ),
-                        color = ProofCobalt
+                        color = ProofInk
                     )
                     Text(
-                        text = "Translate discussion into a concrete, verifiable step.",
+                        text = "Translate discussion into a concrete, verifiable step with due date.",
                         style = MaterialTheme.typography.bodySmall,
                         color = ProofTextMuted
                     )
@@ -244,12 +251,29 @@ fun ConnectionWorkspaceScreen(
                             border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = uiState.actionText.ifBlank { "Action defined during session" },
-                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                                color = ProofInk,
-                                modifier = Modifier.padding(14.dp)
-                            )
+                            Column(modifier = Modifier.padding(14.dp)) {
+                                Text(
+                                    text = uiState.actionText.ifBlank { "Action defined during session" },
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                                    color = ProofInk
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = "Owner: ${uiState.ownerText}",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = ProofTextMuted
+                                    )
+                                    Text(
+                                        text = "Due: ${uiState.dueDateText}",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                        color = ProofTextMuted
+                                    )
+                                }
+                            }
                         }
                     } else {
                         NeoTextField(
@@ -260,11 +284,31 @@ fun ConnectionWorkspaceScreen(
                             singleLine = false,
                             maxLines = 3
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            NeoTextField(
+                                value = uiState.dueDateText,
+                                onValueChange = viewModel::onDueDateTextChange,
+                                label = "Due Date / Timeline",
+                                placeholder = "e.g. Within 7 days",
+                                singleLine = true,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            NeoTextField(
+                                value = uiState.ownerText,
+                                onValueChange = viewModel::onOwnerTextChange,
+                                label = "Action Owner",
+                                placeholder = "Student",
+                                singleLine = true,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                         Spacer(modifier = Modifier.height(10.dp))
                         NeoButton(
-                            text = "Save Action",
+                            text = "Save Action Commitment",
                             onClick = viewModel::saveAgreedAction,
-                            backgroundColor = ProofWhite,
+                            backgroundColor = ProofElectricLilac,
                             contentColor = ProofInk,
                             icon = Icons.Default.Save,
                             shadowOffset = 2.dp
@@ -295,9 +339,9 @@ fun ConnectionWorkspaceScreen(
                 // STEP 1: Student Completion
                 val studentDone = outcome?.studentCompleted == true
                 NeoCard(
-                    backgroundColor = if (studentDone) ProofWhite else ProofWhite,
+                    backgroundColor = ProofWhite,
                     shadowOffset = 3.dp,
-                    borderColor = if (studentDone) ProofBorder else ProofBorder
+                    borderColor = ProofBorder
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -330,8 +374,8 @@ fun ConnectionWorkspaceScreen(
                             NeoButton(
                                 text = "Mark Action Completed",
                                 onClick = viewModel::studentMarkComplete,
-                                backgroundColor = ProofCobalt,
-                                contentColor = ProofWhite,
+                                backgroundColor = ProofElectricLilac,
+                                contentColor = ProofInk,
                                 icon = Icons.Default.CheckCircle
                             )
                         } else {
@@ -350,7 +394,7 @@ fun ConnectionWorkspaceScreen(
                         }
                     } else {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = ProofCobalt, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = ProofInk, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = "Student reported completion. Awaiting alumnus confirmation.",
@@ -366,7 +410,7 @@ fun ConnectionWorkspaceScreen(
                 // STEP 2: Alumni Confirmation
                 val alumniDone = outcome?.alumniConfirmed == true
                 NeoCard(
-                    backgroundColor = if (alumniDone) ProofWhite else ProofWhite,
+                    backgroundColor = ProofWhite,
                     shadowOffset = 3.dp,
                     borderColor = ProofBorder
                 ) {
@@ -415,14 +459,14 @@ fun ConnectionWorkspaceScreen(
                                 NeoButton(
                                     text = "Confirm Interaction Outcome",
                                     onClick = viewModel::alumniConfirmOutcome,
-                                    backgroundColor = ProofAcidLime,
+                                    backgroundColor = ProofSignalMint,
                                     contentColor = ProofInk,
                                     icon = Icons.Default.Check
                                 )
                             } else {
                                 Surface(
                                     shape = RoundedCornerShape(6.dp),
-                                    color = ProofLavender,
+                                    color = ProofElectricLilac,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
@@ -437,7 +481,7 @@ fun ConnectionWorkspaceScreen(
                     } else {
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = ProofAcidLime,
+                            color = ProofSignalMint,
                             border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
                             modifier = Modifier.fillMaxWidth()
                         ) {

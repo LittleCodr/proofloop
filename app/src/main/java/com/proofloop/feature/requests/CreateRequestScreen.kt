@@ -165,7 +165,7 @@ fun CreateRequestScreen(
                             val isSelected = uiState.category == cat
                             Surface(
                                 shape = RoundedCornerShape(6.dp),
-                                color = if (isSelected) ProofCobalt else ProofWhite,
+                                color = if (isSelected) ProofElectricLilac else ProofWhite,
                                 border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
                                 modifier = Modifier.clickable { viewModel.onCategoryChange(cat) }
                             ) {
@@ -174,7 +174,7 @@ fun CreateRequestScreen(
                                     style = MaterialTheme.typography.bodySmall.copy(
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                                     ),
-                                    color = if (isSelected) ProofWhite else ProofInk,
+                                    color = ProofInk,
                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                                 )
                             }
@@ -256,10 +256,10 @@ fun CreateRequestScreen(
                                 }
                             },
                             modifier = Modifier
-                                .background(ProofCobalt, RoundedCornerShape(8.dp))
+                                .background(ProofElectricLilac, RoundedCornerShape(8.dp))
                                 .border(1.5.dp, ProofBorder, RoundedCornerShape(8.dp))
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add", tint = ProofWhite)
+                            Icon(Icons.Default.Add, contentDescription = "Add", tint = ProofInk)
                         }
                     }
 
@@ -320,7 +320,7 @@ fun CreateRequestScreen(
                             val isSelected = uiState.durationMinutes == mins
                             Surface(
                                 shape = RoundedCornerShape(6.dp),
-                                color = if (isSelected) ProofCobalt else ProofWhite,
+                                color = if (isSelected) ProofElectricLilac else ProofWhite,
                                 border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
                                 modifier = Modifier
                                     .weight(1f)
@@ -331,7 +331,7 @@ fun CreateRequestScreen(
                                     style = MaterialTheme.typography.labelMedium.copy(
                                         fontWeight = FontWeight.Bold
                                     ),
-                                    color = if (isSelected) ProofWhite else ProofInk,
+                                    color = ProofInk,
                                     modifier = Modifier.padding(vertical = 10.dp),
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                                 )
@@ -397,8 +397,8 @@ fun CreateRequestScreen(
                     NeoButton(
                         text = "Find Matching Alumni",
                         onClick = viewModel::submitRequest,
-                        backgroundColor = ProofCobalt,
-                        contentColor = ProofWhite,
+                        backgroundColor = ProofElectricLilac,
+                        contentColor = ProofInk,
                         icon = Icons.Default.Search,
                         enabled = !uiState.isLoading,
                         isLoading = uiState.isLoading

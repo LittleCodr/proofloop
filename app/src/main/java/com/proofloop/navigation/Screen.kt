@@ -12,4 +12,6 @@ sealed class Screen(val route: String) {
         fun createRoute(connectionId: String) = "connection_workspace/$connectionId"
     }
     object OutcomeTracker : Screen("outcome_tracker")
+    object ImpactLedger : Screen("impact_ledger")
 }
+

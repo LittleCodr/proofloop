@@ -1,8 +1,10 @@
 package com.proofloop.feature.alumni
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -24,6 +26,7 @@ import com.proofloop.core.ui.theme.*
 @Composable
 fun AlumniInboxScreen(
     onOpenWorkspaceClick: (connectionId: String) -> Unit,
+    onOpenImpactLedgerClick: () -> Unit = {},
     onSignOutClick: () -> Unit,
     viewModel: AlumniInboxViewModel = viewModel()
 ) {
@@ -40,6 +43,7 @@ fun AlumniInboxScreen(
                 title = "PROOFLOOP",
                 subtitle = "Alumni Portal",
                 roleTag = "ALUMNI",
+                onOpenImpactLedger = onOpenImpactLedgerClick,
                 onSignOut = {
                     viewModel.logout()
                     onSignOutClick()
@@ -64,15 +68,34 @@ fun AlumniInboxScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = profile?.displayName ?: uiState.currentUser?.name ?: "Alumnus",
-                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                color = ProofInk
-                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = profile?.displayName ?: uiState.currentUser?.name ?: "Alumnus",
+                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofInk
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Surface(
+                                    shape = RoundedCornerShape(4.dp),
+                                    color = ProofSignalMint,
+                                    border = BorderStroke(1.dp, ProofBorder)
+                                ) {
+                                    Text(
+                                        text = "VERIFIED",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontFamily = FontFamily.Monospace,
+                                            fontWeight = FontWeight.Black,
+                                            fontSize = 9.sp
+                                        ),
+                                        color = ProofInk,
+                                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
                             Text(
                                 text = "${profile?.jobTitle ?: "Alumnus"} • ${profile?.company ?: ""}",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = ProofCobalt
+                                color = ProofInk
                             )
                         }
 
@@ -84,7 +107,7 @@ fun AlumniInboxScreen(
                                     fontWeight = FontWeight.Black,
                                     fontFamily = FontFamily.Monospace
                                 ),
-                                color = if (profile?.acceptingRequests == true) ProofCobalt else ProofCoral
+                                color = if (profile?.acceptingRequests == true) ProofInk else ProofCoral
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Switch(
@@ -92,7 +115,7 @@ fun AlumniInboxScreen(
                                 onCheckedChange = { viewModel.toggleAcceptingRequests() },
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = ProofWhite,
-                                    checkedTrackColor = ProofAcidLime,
+                                    checkedTrackColor = ProofSignalMint,
                                     uncheckedThumbColor = ProofWhite,
                                     uncheckedTrackColor = ProofSurfaceMuted
                                 )
@@ -114,13 +137,14 @@ fun AlumniInboxScreen(
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 color = ProofTextMuted
                             )
+                            val activeCount = uiState.acceptedConnections.count { it.status == "ACCEPTED" }
                             Text(
-                                text = "${uiState.acceptedConnections.size} / ${profile?.maxActiveRequests ?: 3} max",
+                                text = "$activeCount / ${profile?.maxActiveRequests ?: 3} max",
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     fontFamily = FontFamily.Monospace,
                                     fontWeight = FontWeight.Black
                                 ),
-                                color = ProofInk
+                                color = if (activeCount >= (profile?.maxActiveRequests ?: 3)) ProofCoral else ProofInk
                             )
                         }
 
@@ -131,9 +155,9 @@ fun AlumniInboxScreen(
                                 color = ProofTextMuted
                             )
                             Text(
-                                text = profile?.availableSlots?.firstOrNull() ?: "Flexible",
+                                text = if (profile?.acceptingRequests == true) "Accepting Missions" else "Paused by Mentor",
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ProofInk
+                                color = if (profile?.acceptingRequests == true) ProofInk else ProofCoral
                             )
                         }
                     }

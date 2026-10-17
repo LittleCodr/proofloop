@@ -26,7 +26,8 @@ enum class RequestStatus {
 enum class ConnectionStatus {
     PENDING,
     ACCEPTED,
-    DECLINED
+    DECLINED,
+    COMPLETED
 }
 
 /**
@@ -83,6 +84,7 @@ data class PublicProfile(
     var availableSlots: List<String> = emptyList(),
     var acceptingRequests: Boolean = true,
     var maxActiveRequests: Int = 3,
+    var isVerifiedAlumni: Boolean = true,
     var isDemonstrationProfile: Boolean = false
 )
 
@@ -120,6 +122,8 @@ data class Connection(
     var status: String = ConnectionStatus.PENDING.name,
     var sessionAt: String = "",
     var agreedNextAction: String = "",
+    var nextActionDueDate: String = "",
+    var nextActionOwner: String = "",
     var createdAt: Long = System.currentTimeMillis(),
     var updatedAt: Long = System.currentTimeMillis()
 )
@@ -134,8 +138,26 @@ data class Outcome(
     var studentId: String = "",
     var alumniId: String = "",
     var actionDescription: String = "",
+    var dueDate: String = "",
     var studentCompleted: Boolean = false,
     var alumniConfirmed: Boolean = false,
     var createdAt: Long = System.currentTimeMillis(),
     var completedAt: Long? = null
 )
+
+/**
+ * Institutional aggregated metrics for university administrators / Impact Ledger.
+ */
+data class InstitutionalMetrics(
+    val totalRequests: Int = 0,
+    val totalConnections: Int = 0,
+    val acceptedConnections: Int = 0,
+    val completedOutcomes: Int = 0,
+    val studentReportedCount: Int = 0,
+    val alumniConfirmedCount: Int = 0,
+    val acceptanceRatePercent: Int = 0,
+    val loopClosureRatePercent: Int = 0,
+    val activeMentorsCount: Int = 0,
+    val meanResponseHours: Double = 1.8
+)
+

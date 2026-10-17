@@ -27,6 +27,7 @@ fun StudentHomeScreen(
     onRequestHelpClick: () -> Unit,
     onViewMatchesClick: (requestId: String) -> Unit,
     onOpenWorkspaceClick: (connectionId: String) -> Unit,
+    onOpenImpactLedgerClick: () -> Unit = {},
     onSignOutClick: () -> Unit,
     viewModel: StudentHomeViewModel = viewModel()
 ) {
@@ -52,6 +53,7 @@ fun StudentHomeScreen(
                 title = "PROOFLOOP",
                 subtitle = "Student Dashboard",
                 roleTag = "STUDENT",
+                onOpenImpactLedger = onOpenImpactLedgerClick,
                 onSignOut = {
                     viewModel.logout()
                     onSignOutClick()
@@ -86,7 +88,8 @@ fun StudentHomeScreen(
                     NeoButton(
                         text = "Start Loop Mission",
                         onClick = onRequestHelpClick,
-                        backgroundColor = ProofCobalt,
+                        backgroundColor = ProofElectricLilac,
+                        contentColor = ProofInk,
                         icon = Icons.Default.Add
                     )
                 }
@@ -328,7 +331,8 @@ fun StudentHomeScreen(
                             NeoButton(
                                 text = "View Matched Alumni",
                                 onClick = { onViewMatchesClick(req.id) },
-                                backgroundColor = ProofCobalt,
+                                backgroundColor = ProofElectricLilac,
+                                contentColor = ProofInk,
                                 icon = Icons.Default.ArrowForward
                             )
                         }

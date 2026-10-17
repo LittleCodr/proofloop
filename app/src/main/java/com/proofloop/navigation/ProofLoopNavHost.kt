@@ -15,6 +15,7 @@ import com.proofloop.data.model.UserRole
 import com.proofloop.feature.alumni.AlumniInboxScreen
 import com.proofloop.feature.auth.AuthScreen
 import com.proofloop.feature.connections.ConnectionWorkspaceScreen
+import com.proofloop.feature.impact.ImpactLedgerScreen
 import com.proofloop.feature.requests.CreateRequestScreen
 import com.proofloop.feature.requests.MatchResultsScreen
 import com.proofloop.feature.student.StudentHomeScreen
@@ -76,6 +77,9 @@ fun ProofLoopNavHost(
                 onOpenWorkspaceClick = { connectionId ->
                     navController.navigate(Screen.ConnectionWorkspace.createRoute(connectionId))
                 },
+                onOpenImpactLedgerClick = {
+                    navController.navigate(Screen.ImpactLedger.route)
+                },
                 onSignOutClick = {
                     navController.navigate(Screen.Auth.route) {
                         popUpTo(0) { inclusive = true }
@@ -119,6 +123,9 @@ fun ProofLoopNavHost(
                 onOpenWorkspaceClick = { connectionId ->
                     navController.navigate(Screen.ConnectionWorkspace.createRoute(connectionId))
                 },
+                onOpenImpactLedgerClick = {
+                    navController.navigate(Screen.ImpactLedger.route)
+                },
                 onSignOutClick = {
                     navController.navigate(Screen.Auth.route) {
                         popUpTo(0) { inclusive = true }
@@ -135,6 +142,13 @@ fun ProofLoopNavHost(
             val connectionId = backStackEntry.arguments?.getString("connectionId") ?: ""
             ConnectionWorkspaceScreen(
                 connectionId = connectionId,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // Institutional Impact Ledger
+        composable(Screen.ImpactLedger.route) {
+            ImpactLedgerScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
         }

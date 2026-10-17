@@ -18,6 +18,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -165,8 +167,8 @@ fun NeoButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = ProofCobalt,
-    contentColor: Color = ProofWhite,
+    backgroundColor: Color = ProofElectricLilac,
+    contentColor: Color = ProofInk,
     icon: ImageVector? = null,
     enabled: Boolean = true,
     isLoading: Boolean = false,
@@ -393,12 +395,12 @@ fun StatusBadge(
     modifier: Modifier = Modifier
 ) {
     val (targetBg, targetFg, label) = when (status.uppercase()) {
-        "OPEN" -> Triple(ProofAcidLime, ProofInk, "OPEN")
-        "PENDING" -> Triple(ProofLavender, ProofInk, "PENDING")
-        "ACCEPTED" -> Triple(ProofCobalt, ProofWhite, "ACCEPTED")
-        "DECLINED" -> Triple(ProofCoral, ProofWhite, "DECLINED")
-        "COMPLETED" -> Triple(ProofAcidLime, ProofInk, "ACTION COMPLETED")
-        "CONFIRMED" -> Triple(ProofInk, ProofAcidLime, "CONFIRMED OUTCOME")
+        "OPEN" -> Triple(ProofPaper, ProofInk, "OPEN")
+        "PENDING" -> Triple(ProofMutedLavender, ProofInk, "PENDING")
+        "ACCEPTED" -> Triple(ProofElectricLilac, ProofInk, "ACCEPTED")
+        "DECLINED" -> Triple(ProofCoral, ProofInk, "DECLINED")
+        "COMPLETED" -> Triple(ProofSignalMint, ProofInk, "ACTION COMPLETED")
+        "CONFIRMED" -> Triple(ProofSignalMint, ProofInk, "CONFIRMED OUTCOME")
         else -> Triple(ProofSurfaceMuted, ProofInk, status.uppercase())
     }
 
@@ -474,8 +476,8 @@ fun WorkflowHero(
                 val isPassed = stepNum < currentStep
 
                 val (targetBg, targetFg) = when {
-                    isCurrent -> Pair(ProofCobalt, ProofWhite)
-                    isPassed -> Pair(ProofAcidLime, ProofInk)
+                    isCurrent -> Pair(ProofElectricLilac, ProofInk)
+                    isPassed -> Pair(ProofSignalMint, ProofInk)
                     else -> Pair(ProofWhite, ProofInk)
                 }
 
@@ -546,6 +548,7 @@ fun NeoTopAppBar(
     title: String = "PROOFLOOP",
     subtitle: String? = null,
     roleTag: String? = null,
+    onOpenImpactLedger: (() -> Unit)? = null,
     onSignOut: (() -> Unit)? = null
 ) {
     Surface(
@@ -584,7 +587,7 @@ fun NeoTopAppBar(
                         Spacer(modifier = Modifier.width(8.dp))
                         NeoTag(
                             text = roleTag.uppercase(),
-                            backgroundColor = if (roleTag.equals("ALUMNI", ignoreCase = true)) ProofAcidLime else ProofLavender
+                            backgroundColor = if (roleTag.equals("ALUMNI", ignoreCase = true)) ProofSignalMint else ProofElectricLilac
                         )
                     }
                 }
@@ -597,20 +600,47 @@ fun NeoTopAppBar(
                 }
             }
 
-            if (onSignOut != null) {
-                IconButton(
-                    onClick = onSignOut,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .background(ProofWhite, RoundedCornerShape(6.dp))
-                        .border(1.5.dp, ProofBorder, RoundedCornerShape(6.dp))
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                        contentDescription = "Sign Out",
-                        tint = ProofInk,
-                        modifier = Modifier.size(18.dp)
-                    )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (onOpenImpactLedger != null) {
+                    Surface(
+                        shape = RoundedCornerShape(6.dp),
+                        color = ProofElectricLilac,
+                        border = BorderStroke(1.5.dp, ProofBorder),
+                        modifier = Modifier
+                            .clickable(onClick = onOpenImpactLedger)
+                            .padding(end = 8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "LEDGER",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Black,
+                                    letterSpacing = 0.5.sp
+                                ),
+                                color = ProofInk
+                            )
+                        }
+                    }
+                }
+
+                if (onSignOut != null) {
+                    IconButton(
+                        onClick = onSignOut,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .background(ProofWhite, RoundedCornerShape(6.dp))
+                            .border(1.5.dp, ProofBorder, RoundedCornerShape(6.dp))
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Sign Out",
+                            tint = ProofInk,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
         }
@@ -654,9 +684,198 @@ fun EmptyStateCard(
                 NeoButton(
                     text = actionText,
                     onClick = onAction,
-                    backgroundColor = ProofCobalt
+                    backgroundColor = ProofElectricLilac,
+                    contentColor = ProofInk
                 )
             }
         }
     }
 }
+
+/**
+ * 5-Stage Mission-to-Outcome Timeline Card.
+ * Displays 5 connected stages, next action, due date, owner, and stage statuses.
+ */
+@Composable
+fun MissionToOutcomeTimelineCard(
+    currentStep: Int,
+    actionDescription: String,
+    dueDate: String,
+    ownerName: String,
+    isStudentCompleted: Boolean,
+    isAlumniConfirmed: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val stages = listOf(
+        Triple("REQUEST", "Scoped Mission", "COMPLETED"),
+        Triple("MATCH", "Explainable Match", "COMPLETED"),
+        Triple("CONNECT", "Mentor Decision", if (currentStep >= 3) "ACCEPTED" else "PENDING"),
+        Triple("ACT", "Agreed Follow-through", if (isStudentCompleted) "REPORTED" else if (currentStep >= 4) "IN PROGRESS" else "PENDING"),
+        Triple("CONFIRM", "Independent Verification", if (isAlumniConfirmed) "CONFIRMED" else "PENDING")
+    )
+
+    NeoCard(
+        modifier = modifier,
+        backgroundColor = ProofWhite,
+        shadowOffset = 3.dp,
+        cornerRadius = 10.dp
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "MISSION-TO-OUTCOME TIMELINE",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 1.sp
+                    ),
+                    color = ProofInk
+                )
+                Text(
+                    text = "5-Stage Verifiable Delivery Funnel",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = ProofTextMuted
+                )
+            }
+            if (isAlumniConfirmed) {
+                StatusBadge(status = "CONFIRMED")
+            } else if (isStudentCompleted) {
+                StatusBadge(status = "COMPLETED")
+            } else {
+                StatusBadge(status = "IN PROGRESS")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // 5 Stage Connected Nodes
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            stages.forEachIndexed { index, (name, _, status) ->
+                val stageNum = index + 1
+                val isDone = status in listOf("COMPLETED", "ACCEPTED", "REPORTED", "CONFIRMED")
+                val isCurrent = stageNum == currentStep
+
+                val (nodeBg, nodeFg) = when {
+                    status == "CONFIRMED" -> Pair(ProofSignalMint, ProofInk)
+                    status == "REPORTED" -> Pair(ProofSignalMint, ProofInk)
+                    isDone -> Pair(ProofSignalMint, ProofInk)
+                    isCurrent -> Pair(ProofElectricLilac, ProofInk)
+                    else -> Pair(ProofPaper, ProofTextMuted)
+                }
+
+                Surface(
+                    shape = RoundedCornerShape(6.dp),
+                    color = nodeBg,
+                    border = BorderStroke(1.5.dp, ProofBorder),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 2.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "0$stageNum",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 9.sp
+                            ),
+                            color = nodeFg
+                        )
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Black,
+                                fontSize = 8.sp
+                            ),
+                            color = nodeFg,
+                            maxLines = 1
+                        )
+                    }
+                }
+
+                if (index < stages.size - 1) {
+                    Box(
+                        modifier = Modifier
+                            .width(4.dp)
+                            .height(2.dp)
+                            .background(ProofBorder)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+        HorizontalDivider(color = ProofBorder, thickness = 1.dp)
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Commitment Specification Box
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            color = ProofPaper,
+            border = BorderStroke(1.5.dp, ProofBorder),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(12.dp)) {
+                Text(
+                    text = "NEXT ACTION COMMITMENT",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Black,
+                        fontSize = 10.sp
+                    ),
+                    color = ProofTextMuted
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = actionDescription.ifBlank { "Action defined and agreed during session" },
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    color = ProofInk
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = ProofInk,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Owner: ${ownerName.ifBlank { "Student" }}",
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                            color = ProofInk
+                        )
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null,
+                            tint = ProofInk,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Due: ${dueDate.ifBlank { "Within 7 days" }}",
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                            color = ProofInk
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+

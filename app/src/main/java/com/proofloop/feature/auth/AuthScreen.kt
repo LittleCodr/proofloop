@@ -194,7 +194,45 @@ fun AuthScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            // 1-Tap Hackathon Demonstration Mode (Mentor Round Pitch)
+            NeoCard(
+                backgroundColor = ProofPaper,
+                borderColor = ProofInk,
+                shadowOffset = 3.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "HACKATHON EVALUATION MODE (1-TAP DEMO)",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 0.5.sp
+                    ),
+                    color = ProofTextMuted
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    NeoButton(
+                        text = "Demo Student",
+                        onClick = { viewModel.loginDemo(UserRole.STUDENT) },
+                        backgroundColor = ProofElectricLilac,
+                        contentColor = ProofInk,
+                        modifier = Modifier.weight(1f)
+                    )
+                    NeoButton(
+                        text = "Demo Alumni",
+                        onClick = { viewModel.loginDemo(UserRole.ALUMNI) },
+                        backgroundColor = ProofSignalMint,
+                        contentColor = ProofInk,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
 
             // Continue with Google Button
             NeoCard(
@@ -260,8 +298,8 @@ fun AuthScreen(
                         isRegisterMode = false
                         viewModel.clearError()
                     },
-                    backgroundColor = if (!isRegisterMode) ProofCobalt else ProofWhite,
-                    contentColor = if (!isRegisterMode) ProofWhite else ProofInk,
+                    backgroundColor = if (!isRegisterMode) ProofElectricLilac else ProofWhite,
+                    contentColor = ProofInk,
                     modifier = Modifier.weight(1f)
                 )
                 NeoButton(
@@ -270,8 +308,8 @@ fun AuthScreen(
                         isRegisterMode = true
                         viewModel.clearError()
                     },
-                    backgroundColor = if (isRegisterMode) ProofCobalt else ProofWhite,
-                    contentColor = if (isRegisterMode) ProofWhite else ProofInk,
+                    backgroundColor = if (isRegisterMode) ProofElectricLilac else ProofWhite,
+                    contentColor = ProofInk,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -347,8 +385,8 @@ fun AuthScreen(
                             viewModel.login(email, password)
                         }
                     },
-                    backgroundColor = ProofCobalt,
-                    contentColor = ProofWhite,
+                    backgroundColor = ProofElectricLilac,
+                    contentColor = ProofInk,
                     icon = Icons.AutoMirrored.Filled.ArrowForward,
                     enabled = !uiState.isLoading,
                     isLoading = uiState.isLoading

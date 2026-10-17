@@ -17,6 +17,8 @@ data class ConnectionWorkspaceUiState(
     val connection: Connection? = null,
     val outcome: Outcome? = null,
     val actionText: String = "",
+    val dueDateText: String = "Within 7 days",
+    val ownerText: String = "Student",
     val isLoading: Boolean = true,
     val feedbackMessage: String? = null,
     val errorMessage: String? = null
@@ -39,6 +41,8 @@ class ConnectionWorkspaceViewModel(
                     _uiState.value = _uiState.value.copy(
                         connection = conn,
                         actionText = conn.agreedNextAction.ifBlank { _uiState.value.actionText },
+                        dueDateText = conn.nextActionDueDate.ifBlank { "Within 7 days" },
+                        ownerText = conn.nextActionOwner.ifBlank { conn.studentName.ifBlank { "Student" } },
                         isLoading = false
                     )
                 }
@@ -56,20 +60,31 @@ class ConnectionWorkspaceViewModel(
         _uiState.value = _uiState.value.copy(actionText = text)
     }
 
+    fun onDueDateTextChange(text: String) {
+        _uiState.value = _uiState.value.copy(dueDateText = text)
+    }
+
+    fun onOwnerTextChange(text: String) {
+        _uiState.value = _uiState.value.copy(ownerText = text)
+    }
+
     fun saveAgreedAction() {
         val conn = uiState.value.connection ?: return
         val text = uiState.value.actionText.trim()
+        val dueDate = uiState.value.dueDateText.trim().ifBlank { "Within 7 days" }
+        val owner = uiState.value.ownerText.trim().ifBlank { conn.studentName.ifBlank { "Student" } }
+
         if (text.isBlank()) {
             _uiState.value = _uiState.value.copy(errorMessage = "Agreed action cannot be empty")
             return
         }
 
         viewModelScope.launch {
-            val result = repository.updateAgreedAction(conn.id, text)
+            val result = repository.updateAgreedAction(conn.id, text, dueDate, owner)
             if (result.isSuccess) {
                 _uiState.value = _uiState.value.copy(
-                    connection = conn.copy(agreedNextAction = text),
-                    feedbackMessage = "Agreed next action saved successfully!"
+                    connection = conn.copy(agreedNextAction = text, nextActionDueDate = dueDate, nextActionOwner = owner),
+                    feedbackMessage = "Agreed next action & commitment timeline saved!"
                 )
             } else {
                 _uiState.value = _uiState.value.copy(

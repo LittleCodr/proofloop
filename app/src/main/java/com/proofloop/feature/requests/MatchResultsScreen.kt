@@ -202,7 +202,7 @@ fun MatchResultsScreen(
                                     Text(
                                         text = "${alumni.jobTitle} • ${alumni.company}",
                                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                        color = ProofCobalt
+                                        color = ProofInk
                                     )
                                     Text(
                                         text = "${alumni.college} ('${alumni.graduationYear})",
@@ -214,7 +214,7 @@ fun MatchResultsScreen(
                                 // Match Score Badge (Neo-Brutalist Pill)
                                 Surface(
                                     shape = RoundedCornerShape(8.dp),
-                                    color = if (match.totalScore >= 70) ProofAcidLime else ProofLavender,
+                                    color = if (match.totalScore >= 70) ProofSignalMint else ProofElectricLilac,
                                     border = androidx.compose.foundation.BorderStroke(2.dp, ProofBorder)
                                 ) {
                                     Column(
@@ -263,7 +263,7 @@ fun MatchResultsScreen(
                                             Text(
                                                 text = "•",
                                                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Black),
-                                                color = ProofCobalt
+                                                color = ProofInk
                                             )
                                             Spacer(modifier = Modifier.width(6.dp))
                                             Text(
@@ -303,8 +303,8 @@ fun MatchResultsScreen(
                                     onClick = {
                                         viewModel.sendConnectionRequest(alumni.uid, alumni.displayName)
                                     },
-                                    backgroundColor = ProofCobalt,
-                                    contentColor = ProofWhite,
+                                    backgroundColor = ProofElectricLilac,
+                                    contentColor = ProofInk,
                                     icon = Icons.Default.Send
                                 )
                             }
