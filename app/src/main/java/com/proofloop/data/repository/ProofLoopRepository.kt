@@ -410,9 +410,30 @@ class ProofLoopRepository(
     }
 
     override fun loginDemo(role: UserRole): Result<UserAccount> {
-        val uid = if (role == UserRole.STUDENT) "student_alex" else "alumni_sarah"
-        val name = if (role == UserRole.STUDENT) "Alex Chen (Student)" else "Sarah Kapoor (Google)"
-        val email = if (role == UserRole.STUDENT) "alex.chen@campus.edu" else "sarah.kapoor@google.com"
+        val uid = when (role) {
+            UserRole.STUDENT -> "student_aarav"
+            UserRole.ALUMNI -> "alumni_priya"
+            UserRole.FOUNDER -> "founder_kunal"
+            UserRole.FACULTY -> "faculty_radhika"
+            UserRole.RECRUITER -> "recruiter_maya"
+            UserRole.INSTITUTION -> "admin_dean_menon"
+        }
+        val name = when (role) {
+            UserRole.STUDENT -> "Aarav Sharma (Student)"
+            UserRole.ALUMNI -> "Priya Sharma (Google Architect)"
+            UserRole.FOUNDER -> "Kunal Varma (Founder @ NeoSprint)"
+            UserRole.FACULTY -> "Dr. Radhika Sen (Faculty Director)"
+            UserRole.RECRUITER -> "Maya Thorne (Razorpay Recruiter)"
+            UserRole.INSTITUTION -> "Prof. Arvind Menon (Dean Innovation)"
+        }
+        val email = when (role) {
+            UserRole.STUDENT -> "aarav.student@hackshift.edu"
+            UserRole.ALUMNI -> "priya.sharma@google.com"
+            UserRole.FOUNDER -> "kunal@neosprint.io"
+            UserRole.FACULTY -> "radhika.sen@iiitd.ac.in"
+            UserRole.RECRUITER -> "maya.thorne@razorpay.com"
+            UserRole.INSTITUTION -> "dean.innovation@iiitd.ac.in"
+        }
         val college = "IIIT Delhi"
         val account = UserAccount(
             uid = uid,
@@ -420,6 +441,20 @@ class ProofLoopRepository(
             email = email,
             role = role.name,
             college = college,
+            department = if (role == UserRole.FACULTY) "Computer Science & Engineering" else "",
+            organization = when (role) {
+                UserRole.FOUNDER -> "NeoSprint Inc. (YC W24)"
+                UserRole.RECRUITER -> "Razorpay"
+                UserRole.ALUMNI -> "Google"
+                else -> college
+            },
+            skills = when (role) {
+                UserRole.STUDENT -> listOf("Kotlin", "Jetpack Compose", "Android Basics", "Git")
+                UserRole.FOUNDER -> listOf("Kotlin", "Startup MVP", "System Design", "Go-To-Market")
+                UserRole.FACULTY -> listOf("Distributed Systems", "Mobile AI", "Research Methodology")
+                UserRole.RECRUITER -> listOf("Technical Hiring", "Engineering Screening")
+                else -> listOf("Kotlin", "Jetpack Compose", "System Design")
+            },
             createdAt = System.currentTimeMillis()
         )
         memoryUsers[uid] = account
@@ -431,70 +466,14 @@ class ProofLoopRepository(
     }
 
     private fun seedDefaultAlumniProfiles() {
-        val seeded = listOf(
-            PublicProfile(
-                uid = "alumni_sarah",
-                displayName = "Sarah Kapoor",
-                role = UserRole.ALUMNI.name,
-                jobTitle = "Staff Android Engineer",
-                company = "Google",
-                college = "IIIT Delhi",
-                expertise = listOf("Kotlin", "Jetpack Compose", "Android Architecture", "System Design"),
-                helpCategories = listOf(HelpCategories.CODE_REVIEW, HelpCategories.PORTFOLIO_REVIEW, HelpCategories.MOCK_INTERVIEW),
-                availableSlots = listOf("Weekends 2-4 PM", "Sunday 4-6 PM"),
-                acceptingRequests = true,
-                maxActiveRequests = 3,
-                isVerifiedAlumni = true
-            ),
-            PublicProfile(
-                uid = "alumni_priya",
-                displayName = "Priya Sharma",
-                role = UserRole.ALUMNI.name,
-                jobTitle = "Senior Android Architect",
-                company = "Google",
-                college = "IIIT Delhi",
-                expertise = listOf("Kotlin", "Jetpack Compose", "System Design", "Coroutines"),
-                helpCategories = listOf(HelpCategories.PORTFOLIO_REVIEW, HelpCategories.CODE_REVIEW),
-                availableSlots = listOf("Weekends 2-4 PM"),
-                acceptingRequests = true,
-                maxActiveRequests = 3,
-                isVerifiedAlumni = true
-            ),
-            PublicProfile(
-                uid = "alumni_rohan",
-                displayName = "Rohan Varma",
-                role = UserRole.ALUMNI.name,
-                jobTitle = "Staff ML Engineer",
-                company = "Microsoft",
-                college = "IIIT Delhi",
-                expertise = listOf("Python", "PyTorch", "AI/ML", "System Design"),
-                helpCategories = listOf(HelpCategories.PORTFOLIO_REVIEW, HelpCategories.SYSTEM_DESIGN),
-                availableSlots = listOf("Weekday Evenings (7-9 PM)"),
-                acceptingRequests = true,
-                maxActiveRequests = 3,
-                isVerifiedAlumni = true
-            ),
-            PublicProfile(
-                uid = "alumni_ananya",
-                displayName = "Ananya Iyer",
-                role = UserRole.ALUMNI.name,
-                jobTitle = "Staff Infrastructure Lead",
-                company = "Stripe",
-                college = "BITS Pilani",
-                expertise = listOf("System Design", "Java", "Backend Architecture", "APIs"),
-                helpCategories = listOf(HelpCategories.CODE_REVIEW, HelpCategories.CAREER_DIRECTION),
-                availableSlots = listOf("Saturday Morning (10-12 AM)"),
-                acceptingRequests = true,
-                maxActiveRequests = 3,
-                isVerifiedAlumni = true
-            )
-        )
+        val seeded = DemoData.ALL_DEMO_PROFILES
         seeded.forEach { profile ->
             if (!memoryProfiles.containsKey(profile.uid)) {
                 memoryProfiles[profile.uid] = profile
             }
         }
     }
+
 
     override fun logout() {
         try {

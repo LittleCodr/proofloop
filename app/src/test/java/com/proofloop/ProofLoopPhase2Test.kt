@@ -181,13 +181,13 @@ class ProofLoopPhase2Test {
     }
 
     // ==========================================
-    // 3. MISSION BLUEPRINT REGISTRY
+    // 3. MISSION BLUEPRINT REGISTRY & MULTI-ROLE
     // ==========================================
 
     @Test
-    fun `blueprint registry contains all six official reusable templates`() {
+    fun `blueprint registry contains all nine reusable templates across multi-role ecosystem`() {
         val blueprints = MissionBlueprintRegistry.getAllBlueprints()
-        assertEquals(6, blueprints.size)
+        assertEquals(9, blueprints.size)
 
         val ids = blueprints.map { it.id }
         assertTrue(ids.contains("resume_review_v1"))
@@ -196,6 +196,9 @@ class ProofLoopPhase2Test {
         assertTrue(ids.contains("architecture_review_v1"))
         assertTrue(ids.contains("career_direction_v1"))
         assertTrue(ids.contains("startup_feedback_v1"))
+        assertTrue(ids.contains("founder_cofounder_v1"))
+        assertTrue(ids.contains("academic_research_v1"))
+        assertTrue(ids.contains("talent_screening_v1"))
 
         // Verify prefilled request generation
         val resumeBp = MissionBlueprintRegistry.getBlueprintById("resume_review_v1")!!
@@ -208,6 +211,68 @@ class ProofLoopPhase2Test {
         assertEquals(resumeBp.version, prefilled.blueprintVersion)
         assertTrue(prefilled.description.contains("Session Focus:"))
     }
+
+    @Test
+    fun `user role enum covers the six HackShift ecosystem participant types`() {
+        val roles = UserRole.values().map { it.name }
+        assertTrue(roles.contains("STUDENT"))
+        assertTrue(roles.contains("ALUMNI"))
+        assertTrue(roles.contains("FACULTY"))
+        assertTrue(roles.contains("FOUNDER"))
+        assertTrue(roles.contains("RECRUITER"))
+        assertTrue(roles.contains("INSTITUTION"))
+        assertEquals(6, roles.size)
+    }
+
+    @Test
+    fun `mission coach transforms co-founder and research intents accurately`() {
+        val cofounderSuggestion = MissionCoach.generateCoachingSuggestion(
+            rawTitle = "looking for tech cofounder",
+            rawDescription = "need a partner for building my mobile MVP"
+        )
+        assertEquals(HelpCategories.FOUNDER_COFOUNDER, cofounderSuggestion.suggestedCategory)
+        assertTrue(cofounderSuggestion.suggestedSkills.contains("Kotlin"))
+
+        val researchSuggestion = MissionCoach.generateCoachingSuggestion(
+            rawTitle = "faculty research project",
+            rawDescription = "want to publish a paper on distributed mobile AI"
+        )
+        assertEquals(HelpCategories.RESEARCH_COLLABORATION, researchSuggestion.suggestedCategory)
+        assertTrue(researchSuggestion.suggestedSkills.contains("Distributed Systems"))
+    }
+
+    @Test
+    fun `explainable matching identifies founder and faculty opportunities with role evidence`() {
+        val request = HelpRequest(
+            id = "req_cofounder",
+            category = HelpCategories.FOUNDER_COFOUNDER,
+            requiredSkills = listOf("Kotlin", "System Design")
+        )
+
+        val founderCandidate = PublicProfile(
+            uid = "founder_1",
+            displayName = "Kunal Varma",
+            role = UserRole.FOUNDER.name,
+            company = "NeoSprint",
+            expertise = listOf("Kotlin", "System Design", "Startup MVP"),
+            helpCategories = listOf(HelpCategories.FOUNDER_COFOUNDER),
+            acceptingRequests = true,
+            maxActiveRequests = 3,
+            isVerifiedProfile = true
+        )
+
+        val matches = MatchingEngine.findExplainableMatches(
+            request = request,
+            student = null,
+            candidates = listOf(founderCandidate)
+        )
+
+        assertEquals(1, matches.size)
+        val match = matches.first()
+        assertTrue(match.evidenceBullets.any { it.contains("Founder Opportunity") })
+        assertTrue(match.evidenceBullets.any { it.contains("Matches 2 of 2 requested skills") })
+    }
+
 
     // ==========================================
     // 4. LOOP HEALTH OPERATIONAL INTELLIGENCE

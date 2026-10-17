@@ -39,35 +39,35 @@ object LoopHealthEngine {
         connections.filter { it.status == ConnectionStatus.PENDING.name }.forEach { conn ->
             val ageHours = (now - conn.createdAt).coerceAtLeast(0L) / (1000 * 60 * 60)
             if (ageHours >= RESPONSE_WINDOW_HOURS) {
-                if (userRole == UserRole.STUDENT && conn.studentId == currentUserId) {
+                if (conn.studentId == currentUserId) {
                     items.add(
                         LoopHealthItem(
-                            id = "unanswered_student_${conn.id}",
+                            id = "unanswered_creator_${conn.id}",
                             connectionId = conn.id,
                             requestId = conn.requestId,
                             title = "Request Awaiting Response (${ageHours}h)",
                             description = "Your mission '${conn.requestTitle}' has been pending with ${conn.alumniName} for over $ageHours hours.",
-                            actionPrompt = "You can send a gentle nudge or explore alternative mentors if your timeline is urgent.",
+                            actionPrompt = "You can send a gentle nudge or explore alternative partners if your timeline is urgent.",
                             severity = if (ageHours >= URGENT_RESPONSE_HOURS) LoopHealthSeverity.URGENT else LoopHealthSeverity.ATTENTION,
                             category = LoopHealthCategory.UNANSWERED_REQUEST,
                             ageHours = ageHours,
-                            targetRole = UserRole.STUDENT,
+                            targetRole = userRole,
                             createdAt = conn.createdAt
                         )
                     )
-                } else if (userRole == UserRole.ALUMNI && conn.alumniId == currentUserId) {
+                } else if (conn.alumniId == currentUserId) {
                     items.add(
                         LoopHealthItem(
-                            id = "unanswered_alumni_${conn.id}",
+                            id = "unanswered_partner_${conn.id}",
                             connectionId = conn.id,
                             requestId = conn.requestId,
                             title = "Pending Request Needs Response (${ageHours}h)",
-                            description = "Student ${conn.studentName} is awaiting your decision on '${conn.requestTitle}'.",
-                            actionPrompt = "Accept to start the session or decline to free up the student's request slot.",
+                            description = "${conn.studentName} is awaiting your decision on '${conn.requestTitle}'.",
+                            actionPrompt = "Accept to start the session or decline to free up the request slot.",
                             severity = if (ageHours >= URGENT_RESPONSE_HOURS) LoopHealthSeverity.URGENT else LoopHealthSeverity.ATTENTION,
                             category = LoopHealthCategory.UNANSWERED_REQUEST,
                             ageHours = ageHours,
-                            targetRole = UserRole.ALUMNI,
+                            targetRole = userRole,
                             createdAt = conn.createdAt
                         )
                     )
@@ -115,31 +115,31 @@ object LoopHealthEngine {
         outcomes.filter { !it.studentCompleted && it.dueDate.isNotBlank() }.forEach { outcome ->
             val isOverdue = isDatePast(outcome.dueDate)
             if (isOverdue) {
-                if (userRole == UserRole.STUDENT && outcome.studentId == currentUserId) {
+                if (outcome.studentId == currentUserId) {
                     items.add(
                         LoopHealthItem(
-                            id = "overdue_student_${outcome.id}",
+                            id = "overdue_creator_${outcome.id}",
                             connectionId = outcome.connectionId,
                             title = "Deliverable Due Date Passed",
                             description = "Your committed next action '${outcome.actionDescription}' was due on ${outcome.dueDate}.",
-                            actionPrompt = "Submit your progress when ready or message your mentor for a date extension.",
+                            actionPrompt = "Submit your progress when ready or message your partner for a date extension.",
                             severity = LoopHealthSeverity.URGENT,
                             category = LoopHealthCategory.OVERDUE_ACTION,
-                            targetRole = UserRole.STUDENT,
+                            targetRole = userRole,
                             createdAt = outcome.createdAt
                         )
                     )
-                } else if (userRole == UserRole.ALUMNI && outcome.alumniId == currentUserId) {
+                } else if (outcome.alumniId == currentUserId) {
                     items.add(
                         LoopHealthItem(
-                            id = "overdue_alumni_${outcome.id}",
+                            id = "overdue_partner_${outcome.id}",
                             connectionId = outcome.connectionId,
-                            title = "Student Follow-Up Pending",
+                            title = "Follow-Up Pending",
                             description = "The agreed deliverable from ${outcome.actionDescription} was due on ${outcome.dueDate}.",
-                            actionPrompt = "Send an encouraging check-in via workspace to unblock the student.",
+                            actionPrompt = "Send an encouraging check-in via workspace to unblock your partner.",
                             severity = LoopHealthSeverity.ATTENTION,
                             category = LoopHealthCategory.OVERDUE_ACTION,
-                            targetRole = UserRole.ALUMNI,
+                            targetRole = userRole,
                             createdAt = outcome.createdAt
                         )
                     )
@@ -147,41 +147,41 @@ object LoopHealthEngine {
             }
         }
 
-        // 5. Student-Reported Completion Awaiting Alumni Confirmation
+        // 5. Completion Awaiting Confirmation
         outcomes.filter { it.studentCompleted && !it.alumniConfirmed }.forEach { outcome ->
-            if (userRole == UserRole.ALUMNI && outcome.alumniId == currentUserId) {
+            if (outcome.alumniId == currentUserId) {
                 items.add(
                     LoopHealthItem(
-                        id = "pending_confirm_alumni_${outcome.id}",
+                        id = "pending_confirm_partner_${outcome.id}",
                         connectionId = outcome.connectionId,
                         title = "Deliverable Awaiting Confirmation",
-                        description = "The student has marked '${outcome.actionDescription}' as completed and submitted proof.",
+                        description = "Partner has marked '${outcome.actionDescription}' as completed and submitted deliverable.",
                         actionPrompt = "Review the deliverable and confirm completion to close the loop.",
                         severity = LoopHealthSeverity.URGENT,
                         category = LoopHealthCategory.PENDING_CONFIRMATION,
-                        targetRole = UserRole.ALUMNI,
+                        targetRole = userRole,
                         createdAt = outcome.createdAt
                     )
                 )
-            } else if (userRole == UserRole.STUDENT && outcome.studentId == currentUserId) {
+            } else if (outcome.studentId == currentUserId) {
                 items.add(
                     LoopHealthItem(
-                        id = "pending_confirm_student_${outcome.id}",
+                        id = "pending_confirm_creator_${outcome.id}",
                         connectionId = outcome.connectionId,
                         title = "Deliverable Submitted",
-                        description = "Your deliverable '${outcome.actionDescription}' has been logged and is awaiting alumni confirmation.",
-                        actionPrompt = "No action required. Your mentor has been notified.",
+                        description = "Your deliverable '${outcome.actionDescription}' has been logged and is awaiting confirmation.",
+                        actionPrompt = "No action required. Your partner has been notified.",
                         severity = LoopHealthSeverity.INFO,
                         category = LoopHealthCategory.PENDING_CONFIRMATION,
-                        targetRole = UserRole.STUDENT,
+                        targetRole = userRole,
                         createdAt = outcome.createdAt
                     )
                 )
             }
         }
 
-        // 6. Mentor Capacity Status (For Alumni)
-        if (userRole == UserRole.ALUMNI && alumniProfile != null) {
+        // 6. Partner Capacity Status
+        if (alumniProfile != null) {
             val activeConnectionsCount = connections.count {
                 it.alumniId == currentUserId &&
                 (it.status == ConnectionStatus.ACCEPTED.name || it.status == ConnectionStatus.PENDING.name)
@@ -189,18 +189,19 @@ object LoopHealthEngine {
             if (activeConnectionsCount >= alumniProfile.maxActiveRequests) {
                 items.add(
                     LoopHealthItem(
-                        id = "mentor_capacity_${currentUserId}",
+                        id = "partner_capacity_${currentUserId}",
                         title = "At Maximum Capacity ($activeConnectionsCount/${alumniProfile.maxActiveRequests})",
-                        description = "You have reached your active connection limit. New requests will be temporarily paused.",
-                        actionPrompt = "Complete or resolve an active mission to open a new slot for upcoming students.",
+                        description = "You have reached your active connection limit. New inbound requests will be temporarily paused.",
+                        actionPrompt = "Complete or resolve an active mission to open a new slot for upcoming collaborators.",
                         severity = LoopHealthSeverity.INFO,
                         category = LoopHealthCategory.MENTOR_CAPACITY,
-                        targetRole = UserRole.ALUMNI,
+                        targetRole = userRole,
                         createdAt = now
                     )
                 )
             }
         }
+
 
         return items.sortedByDescending { it.severity.ordinal }
     }

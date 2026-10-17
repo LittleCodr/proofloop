@@ -11,6 +11,7 @@ import com.proofloop.data.model.RequestStatus
 import com.proofloop.data.repository.IProofLoopRepository
 import com.proofloop.domain.blueprint.MissionBlueprintRegistry
 import com.proofloop.domain.coach.MissionCoach
+import com.proofloop.data.model.UserRole
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +27,7 @@ data class CreateRequestUiState(
     val preferredAvailability: String = "Weekends 2-4 PM",
     val selectedBlueprint: MissionBlueprint? = null,
     val availableBlueprints: List<MissionBlueprint> = emptyList(),
+    val creatorRole: String = UserRole.STUDENT.name,
     val coachSuggestion: CoachSuggestion? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
@@ -38,7 +40,8 @@ class CreateRequestViewModel(
 
     private val _uiState = MutableStateFlow(
         CreateRequestUiState(
-            availableBlueprints = repository.getAvailableBlueprints()
+            availableBlueprints = repository.getAvailableBlueprints(),
+            creatorRole = repository.getCurrentUser()?.role ?: UserRole.STUDENT.name
         )
     )
     val uiState: StateFlow<CreateRequestUiState> = _uiState.asStateFlow()
@@ -150,6 +153,7 @@ class CreateRequestViewModel(
                 durationMinutes = state.durationMinutes,
                 preferredAvailability = state.preferredAvailability,
                 status = RequestStatus.OPEN.name,
+                creatorRole = state.creatorRole,
                 blueprintId = state.selectedBlueprint?.id ?: "",
                 blueprintVersion = state.selectedBlueprint?.version ?: 1,
                 createdAt = System.currentTimeMillis()

@@ -173,24 +173,59 @@ fun AuthScreen(
                     color = ProofInk
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    NeoButton(
-                        text = "Student",
-                        onClick = { selectedRole = UserRole.STUDENT },
-                        backgroundColor = if (selectedRole == UserRole.STUDENT) ProofAcidLime else ProofSurfaceMuted,
-                        contentColor = ProofInk,
-                        modifier = Modifier.weight(1f)
-                    )
-                    NeoButton(
-                        text = "Alumnus / Alumna",
-                        onClick = { selectedRole = UserRole.ALUMNI },
-                        backgroundColor = if (selectedRole == UserRole.ALUMNI) ProofAcidLime else ProofSurfaceMuted,
-                        contentColor = ProofInk,
-                        modifier = Modifier.weight(1f)
-                    )
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        NeoButton(
+                            text = "Student",
+                            onClick = { selectedRole = UserRole.STUDENT },
+                            backgroundColor = if (selectedRole == UserRole.STUDENT) ProofAcidLime else ProofSurfaceMuted,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                        NeoButton(
+                            text = "Alumnus",
+                            onClick = { selectedRole = UserRole.ALUMNI },
+                            backgroundColor = if (selectedRole == UserRole.ALUMNI) ProofAcidLime else ProofSurfaceMuted,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                        NeoButton(
+                            text = "Founder",
+                            onClick = { selectedRole = UserRole.FOUNDER },
+                            backgroundColor = if (selectedRole == UserRole.FOUNDER) ProofAcidLime else ProofSurfaceMuted,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        NeoButton(
+                            text = "Faculty",
+                            onClick = { selectedRole = UserRole.FACULTY },
+                            backgroundColor = if (selectedRole == UserRole.FACULTY) ProofAcidLime else ProofSurfaceMuted,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                        NeoButton(
+                            text = "Recruiter",
+                            onClick = { selectedRole = UserRole.RECRUITER },
+                            backgroundColor = if (selectedRole == UserRole.RECRUITER) ProofAcidLime else ProofSurfaceMuted,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                        NeoButton(
+                            text = "Institution",
+                            onClick = { selectedRole = UserRole.INSTITUTION },
+                            backgroundColor = if (selectedRole == UserRole.INSTITUTION) ProofAcidLime else ProofSurfaceMuted,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
 
@@ -202,7 +237,7 @@ fun AuthScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "HACKATHON EVALUATION MODE (1-TAP DEMO)",
+                    text = "HACKATHON MULTI-ROLE DEMO (1-TAP QUICK SWITCH)",
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
@@ -211,26 +246,67 @@ fun AuthScreen(
                     color = ProofTextMuted
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    NeoButton(
-                        text = "Demo Student",
-                        onClick = { viewModel.loginDemo(UserRole.STUDENT) },
-                        backgroundColor = ProofElectricLilac,
-                        contentColor = ProofInk,
-                        modifier = Modifier.weight(1f)
-                    )
-                    NeoButton(
-                        text = "Demo Alumni",
-                        onClick = { viewModel.loginDemo(UserRole.ALUMNI) },
-                        backgroundColor = ProofSignalMint,
-                        contentColor = ProofInk,
-                        modifier = Modifier.weight(1f)
-                    )
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        NeoButton(
+                            text = "Student (Aarav)",
+                            onClick = { viewModel.loginDemo(UserRole.STUDENT) },
+                            backgroundColor = ProofElectricLilac,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                        NeoButton(
+                            text = "Alumni (Priya)",
+                            onClick = { viewModel.loginDemo(UserRole.ALUMNI) },
+                            backgroundColor = ProofSignalMint,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        NeoButton(
+                            text = "Founder (Kunal @ YC)",
+                            onClick = { viewModel.loginDemo(UserRole.FOUNDER) },
+                            backgroundColor = ProofAcidLime,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                        NeoButton(
+                            text = "Faculty (Dr. Sen)",
+                            onClick = { viewModel.loginDemo(UserRole.FACULTY) },
+                            backgroundColor = ProofMutedLavender,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        NeoButton(
+                            text = "Recruiter (Maya)",
+                            onClick = { viewModel.loginDemo(UserRole.RECRUITER) },
+                            backgroundColor = ProofCoral,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                        NeoButton(
+                            text = "Impact Ledger (Dean)",
+                            onClick = { viewModel.loginDemo(UserRole.INSTITUTION) },
+                            backgroundColor = ProofWhite,
+                            contentColor = ProofInk,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
+
 
             Spacer(modifier = Modifier.height(14.dp))
 

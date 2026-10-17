@@ -50,8 +50,53 @@ object MissionCoach {
                 )
             }
 
-            // 3. Architecture / Code Review / System Design
-            combinedText.contains("architecture") || combinedText.contains("design") || combinedText.contains("system") ||
+            // 3. Co-founder / Technical Partnership
+            combinedText.contains("cofounder") || combinedText.contains("co-founder") || combinedText.contains("founding engineer") ||
+            combinedText.contains("technical partner") || combinedText.contains("equity") -> {
+                CoachSuggestion(
+                    refinedTitle = "Technical Co-founder & Early Team Alignment Sprint",
+                    refinedProblemStatement = "Seeking an aligned technical co-founder / founding engineer to evaluate architecture feasibility, equity structure, and 30-day MVP milestone roadmap.",
+                    suggestedCategory = HelpCategories.FOUNDER_COFOUNDER,
+                    suggestedSkills = listOf("Kotlin", "System Design", "Startup MVP", "Architecture"),
+                    suggestedOutcome = "Agreed technical MVP roadmap and 7-day joint prototype spike commitment.",
+                    suggestedDurationMinutes = 45,
+                    suggestedFollowUpAction = "Build and demonstrate the agreed prototype technical spike.",
+                    coachingNotes = "Tip: Bring your validated customer signals and a clear definition of what technical spike proves mutual collaboration fit."
+                )
+            }
+
+            // 4. Research & Academic Collaboration
+            combinedText.contains("research") || combinedText.contains("paper") || combinedText.contains("lab") ||
+            combinedText.contains("thesis") || combinedText.contains("faculty") || combinedText.contains("academic") -> {
+                CoachSuggestion(
+                    refinedTitle = "Academic Research: Problem Scope & Methodology Brief",
+                    refinedProblemStatement = "Collaborating with faculty lab directors to define novel systems research problem statement, benchmark apparatus, and publication goals.",
+                    suggestedCategory = HelpCategories.RESEARCH_COLLABORATION,
+                    suggestedSkills = listOf("Distributed Systems", "Mobile AI", "Research Methodology", "Benchmarking"),
+                    suggestedOutcome = "Structured research proposal brief with calibrated milestone experiment targets.",
+                    suggestedDurationMinutes = 60,
+                    suggestedFollowUpAction = "Execute preliminary benchmark baseline and submit empirical findings to lab director.",
+                    coachingNotes = "Tip: Highlighting relevant prior literature and your desired compute apparatus allows faculty to scope the project immediately."
+                )
+            }
+
+            // 5. Talent Screening & Recruiting
+            combinedText.contains("hire") || combinedText.contains("recruiter") || combinedText.contains("recruiting") ||
+            combinedText.contains("internship") || combinedText.contains("screening") || combinedText.contains("job") -> {
+                CoachSuggestion(
+                    refinedTitle = "Candidate Screening: Technical Portfolio Walkthrough",
+                    refinedProblemStatement = "Presenting production engineering projects and system architecture to recruiter for internship fast-track consideration.",
+                    suggestedCategory = HelpCategories.RECRUITMENT_INTERNSHIP,
+                    suggestedSkills = listOf("Technical Hiring", "Kotlin", "Android", "System Design"),
+                    suggestedOutcome = "Recruiter candidate scorecard and expedited interview loop schedule.",
+                    suggestedDurationMinutes = 30,
+                    suggestedFollowUpAction = "Complete the expedited technical evaluation or pair-programming screen.",
+                    coachingNotes = "Tip: Have your clean GitHub repository and a running APK ready to screen-share during the first 10 minutes."
+                )
+            }
+
+            // 6. Architecture / Code Review / System Design
+            combinedText.contains("architecture") || combinedText.contains("system design") ||
             combinedText.contains("backend") || combinedText.contains("database") || combinedText.contains("api") ||
             combinedText.contains("code review") || combinedText.contains("refactor") -> {
                 CoachSuggestion(
@@ -66,7 +111,7 @@ object MissionCoach {
                 )
             }
 
-            // 4. Portfolio / UI / UX / Frontend
+            // 7. Portfolio / UI / UX / Frontend
             combinedText.contains("portfolio") || combinedText.contains("ui") || combinedText.contains("ux") ||
             combinedText.contains("design") || combinedText.contains("frontend") || combinedText.contains("website") -> {
                 CoachSuggestion(
@@ -81,7 +126,7 @@ object MissionCoach {
                 )
             }
 
-            // 5. Startup / Product / Entrepreneurship
+            // 8. Startup / Product / Entrepreneurship
             combinedText.contains("startup") || combinedText.contains("product") || combinedText.contains("mvp") ||
             combinedText.contains("founder") || combinedText.contains("business") || combinedText.contains("growth") -> {
                 CoachSuggestion(
@@ -95,6 +140,8 @@ object MissionCoach {
                     coachingNotes = "Tip: Be prepared to state who your hair-on-fire customer is and why current alternatives fail them."
                 )
             }
+
+
 
             // 6. Career Strategy / General Direction (Default Fallback)
             else -> {

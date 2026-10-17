@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.proofloop.core.ui.components.*
 import com.proofloop.core.ui.theme.*
 import com.proofloop.data.model.HelpCategories
+import com.proofloop.data.model.UserRole
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -662,8 +663,14 @@ fun CreateRequestScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // Submit CTA
+                    val ctaText = when (uiState.creatorRole) {
+                        UserRole.FOUNDER.name -> "Find Matching Collaborators"
+                        UserRole.FACULTY.name -> "Find Matching Researchers"
+                        UserRole.RECRUITER.name -> "Find Matching Candidates"
+                        else -> "Find Matching Mentors & Partners"
+                    }
                     NeoButton(
-                        text = "Find Matching Alumni",
+                        text = ctaText,
                         onClick = viewModel::submitRequest,
                         backgroundColor = ProofElectricLilac,
                         contentColor = ProofInk,

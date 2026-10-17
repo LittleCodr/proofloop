@@ -28,8 +28,10 @@ fun ProofLoopNavHost(
     val currentUser = ProofLoopApp.instance.repository.getCurrentUser()
     val startDestination = when {
         currentUser == null -> Screen.Auth.route
-        currentUser.role.equals(UserRole.ALUMNI.name, ignoreCase = true) -> Screen.AlumniInbox.route
-        else -> Screen.StudentHome.route
+        currentUser.role.equals(UserRole.INSTITUTION.name, ignoreCase = true) -> Screen.ImpactLedger.route
+        currentUser.role.equals(UserRole.STUDENT.name, ignoreCase = true) ||
+        currentUser.role.equals(UserRole.FOUNDER.name, ignoreCase = true) -> Screen.StudentHome.route
+        else -> Screen.AlumniInbox.route
     }
 
     NavHost(
@@ -53,10 +55,11 @@ fun ProofLoopNavHost(
         composable(Screen.Auth.route) {
             AuthScreen(
                 onAuthSuccess = { role ->
-                    val destination = if (role.equals(UserRole.ALUMNI.name, ignoreCase = true)) {
-                        Screen.AlumniInbox.route
-                    } else {
-                        Screen.StudentHome.route
+                    val destination = when {
+                        role.equals(UserRole.INSTITUTION.name, ignoreCase = true) -> Screen.ImpactLedger.route
+                        role.equals(UserRole.STUDENT.name, ignoreCase = true) ||
+                        role.equals(UserRole.FOUNDER.name, ignoreCase = true) -> Screen.StudentHome.route
+                        else -> Screen.AlumniInbox.route
                     }
                     navController.navigate(destination) {
                         popUpTo(Screen.Auth.route) { inclusive = true }
@@ -64,6 +67,7 @@ fun ProofLoopNavHost(
                 }
             )
         }
+
 
         // Student Home
         composable(Screen.StudentHome.route) {

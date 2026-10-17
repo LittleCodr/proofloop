@@ -5,14 +5,33 @@ import com.google.firebase.firestore.PropertyName
 
 /**
  * User roles in ProofLoop.
+ * Covers the complete professional network ecosystem:
+ * Students, Alumni, Faculty, Founders, Recruiters, and Institutions.
  */
-enum class UserRole {
-    STUDENT,
-    ALUMNI
+enum class UserRole(val displayName: String, val badge: String, val headline: String) {
+    STUDENT("Student", "STUDENT", "Seek mentorship, reviews & career opportunities"),
+    ALUMNI("Alumnus / Alumna", "ALUMNI", "Mentor, share expertise & verify follow-through"),
+    FACULTY("Faculty", "FACULTY", "Guide research & connect academic projects to industry"),
+    FOUNDER("Founder / Builder", "FOUNDER", "Find co-founders, early talent & startup advisory"),
+    RECRUITER("Recruiter", "RECRUITER", "Share opportunities & discover candidate talent"),
+    INSTITUTION("Institution Admin", "INSTITUTION", "Coordinate community & track impact analytics")
 }
 
 /**
- * Lifecycle status of a Help Request.
+ * Types of Loop Missions supported across the platform.
+ */
+enum class MissionType(val label: String, val defaultDurationMinutes: Int) {
+    MENTORSHIP("Micro-Mentorship", 30),
+    PORTFOLIO_REVIEW("Portfolio & Code Review", 45),
+    RESEARCH_COLLABORATION("Research & Academic Collaboration", 60),
+    FOUNDER_ADVISORY("Founder & Startup Advisory", 45),
+    FOUNDER_COFOUNDER("Co-founder & Early Team Sprint", 45),
+    TALENT_RECRUITMENT("Talent Screening & Pipeline", 30),
+    TECHNICAL_FEEDBACK("System Design & Architecture", 45)
+}
+
+/**
+ * Lifecycle status of a Help Request / Loop Mission.
  */
 enum class RequestStatus {
     OPEN,
@@ -33,7 +52,7 @@ enum class ConnectionStatus {
 }
 
 /**
- * Lifecycle state of a scheduled mentoring session.
+ * Lifecycle state of a scheduled mentoring or collaboration session.
  */
 enum class SessionStatus {
     UNSCHEDULED,
@@ -45,16 +64,19 @@ enum class SessionStatus {
 }
 
 /**
- * Categories of micro-mentorship help offered/requested.
+ * Categories of micro-mentorship, collaboration and opportunities.
  */
 object HelpCategories {
-    const val PORTFOLIO_REVIEW = "Portfolio Review"
-    const val CODE_REVIEW = "Code & Architecture Review"
-    const val CAREER_DIRECTION = "Career Direction"
-    const val MOCK_INTERVIEW = "Mock Technical Interview"
-    const val SYSTEM_DESIGN = "System Design Guidance"
     const val RESUME_FEEDBACK = "Resume & Profile Feedback"
+    const val PORTFOLIO_REVIEW = "Portfolio Review"
+    const val MOCK_INTERVIEW = "Mock Technical Interview"
+    const val CODE_REVIEW = "Code & Architecture Review"
+    const val SYSTEM_DESIGN = "System Design Guidance"
+    const val CAREER_DIRECTION = "Career Direction"
     const val ENTREPRENEURSHIP = "Entrepreneurship & Startup Feedback"
+    const val RESEARCH_COLLABORATION = "Research & Academic Collaboration"
+    const val FOUNDER_COFOUNDER = "Technical Co-founder & Early Team"
+    const val RECRUITMENT_INTERNSHIP = "Internship & Talent Discovery"
 
     val ALL = listOf(
         RESUME_FEEDBACK,
@@ -63,7 +85,10 @@ object HelpCategories {
         CODE_REVIEW,
         SYSTEM_DESIGN,
         CAREER_DIRECTION,
-        ENTREPRENEURSHIP
+        ENTREPRENEURSHIP,
+        RESEARCH_COLLABORATION,
+        FOUNDER_COFOUNDER,
+        RECRUITMENT_INTERNSHIP
     )
 }
 
@@ -77,6 +102,8 @@ data class UserAccount(
     var email: String = "",
     var role: String = UserRole.STUDENT.name,
     var college: String = "",
+    var department: String = "",
+    var organization: String = "",
     var skills: List<String> = emptyList(),
     var interests: List<String> = emptyList(),
     var careerGoals: String = "",
@@ -85,7 +112,8 @@ data class UserAccount(
 )
 
 /**
- * Discoverable public profile for opted-in alumni in `publicProfiles/{uid}`.
+ * Discoverable public profile for opted-in participants in `publicProfiles/{uid}`.
+ * Supports Alumni, Faculty, Founders, Recruiters, and Collaborators.
  */
 @IgnoreExtraProperties
 data class PublicProfile(
@@ -96,23 +124,40 @@ data class PublicProfile(
     var graduationYear: String = "",
     var jobTitle: String = "",
     var company: String = "",
+    var department: String = "",
+    var organization: String = "",
+    var headline: String = "",
     var expertise: List<String> = emptyList(),
     var helpCategories: List<String> = emptyList(),
     var availableSlots: List<String> = emptyList(),
     var acceptingRequests: Boolean = true,
     var maxActiveRequests: Int = 3,
     var isVerifiedAlumni: Boolean = true,
+    var isVerifiedProfile: Boolean = true,
     var isDemonstrationProfile: Boolean = false
-)
+) {
+    val subtitle: String
+        get() = when {
+            headline.isNotBlank() -> headline
+            jobTitle.isNotBlank() && company.isNotBlank() -> "$jobTitle @ $company"
+            department.isNotBlank() && college.isNotBlank() -> "$department, $college"
+            jobTitle.isNotBlank() -> jobTitle
+            company.isNotBlank() -> company
+            else -> college
+        }
+}
 
 /**
- * Structured help request in `helpRequests/{id}`.
+ * Structured Loop Mission / help request in `helpRequests/{id}`.
  */
 @IgnoreExtraProperties
 data class HelpRequest(
     var id: String = "",
     var studentId: String = "",
     var studentName: String = "",
+    var creatorRole: String = UserRole.STUDENT.name,
+    var targetRole: String = "ALL",
+    var missionType: String = MissionType.MENTORSHIP.name,
     var title: String = "",
     var description: String = "",
     var category: String = "",
@@ -127,17 +172,20 @@ data class HelpRequest(
 )
 
 /**
- * Connection between student and alumnus in `connections/{id}`.
+ * Connection between mission creator and partner in `connections/{id}`.
  */
 @IgnoreExtraProperties
 data class Connection(
     var id: String = "",
     var requestId: String = "",
     var requestTitle: String = "",
+    var missionType: String = MissionType.MENTORSHIP.name,
     var studentId: String = "",
     var studentName: String = "",
+    var creatorRole: String = UserRole.STUDENT.name,
     var alumniId: String = "",
     var alumniName: String = "",
+    var responderRole: String = UserRole.ALUMNI.name,
     var status: String = ConnectionStatus.PENDING.name,
     var sessionAt: String = "",
     var proposedSessionTime: String = "",
@@ -183,7 +231,11 @@ data class InstitutionalMetrics(
     val activeMentorsCount: Int = 0,
     val meanResponseHours: Double = 1.8,
     val filterWindow: TimeWindowFilter = TimeWindowFilter.ALL_TIME,
-    val isSampleCohort: Boolean = false
+    val isSampleCohort: Boolean = false,
+    val activeStudentsCount: Int = 14,
+    val activeFoundersCount: Int = 3,
+    val activeFacultyCount: Int = 4,
+    val activeRecruitersCount: Int = 2
 )
 
 /**
@@ -194,6 +246,7 @@ enum class TimeWindowFilter(val label: String, val days: Int?) {
     LAST_30_DAYS("Last 30 Days", 30),
     ALL_TIME("All Time", null)
 }
+
 
 /**
  * Reusable Mission Blueprint defining structured micro-mentorship engagements.

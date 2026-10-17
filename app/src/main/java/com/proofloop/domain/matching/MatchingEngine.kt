@@ -5,6 +5,7 @@ import com.proofloop.data.model.HelpRequest
 import com.proofloop.data.model.MatchFitLevel
 import com.proofloop.data.model.PublicProfile
 import com.proofloop.data.model.UserAccount
+import com.proofloop.data.model.UserRole
 import kotlin.math.roundToInt
 
 /**
@@ -38,8 +39,13 @@ object MatchingEngine {
             // Filter 1: Must be opted-in
             if (!alumni.acceptingRequests) return@filter false
             
-            // Filter 2: Must be verified alumnus
-            if (!alumni.isVerifiedAlumni) return@filter false
+            // Filter 2: Must be verified participant (alumni, faculty, founder, or recruiter)
+            val isVerified = if (alumni.role == UserRole.ALUMNI.name || alumni.role.isBlank()) {
+                alumni.isVerifiedAlumni
+            } else {
+                alumni.isVerifiedProfile || alumni.isVerifiedAlumni
+            }
+            if (!isVerified) return@filter false
 
             // Filter 3: Must not exceed capacity
             val currentActive = activeRequestsCountMap[alumni.uid] ?: 0
@@ -70,7 +76,25 @@ object MatchingEngine {
             val evidence = mutableListOf<String>()
             var missingInfo: String? = null
 
-            // 1. Skill overlap evidence
+            // 1. Role-specific context evidence
+            when (alumni.role) {
+                "FOUNDER" -> {
+                    evidence.add("Founder Opportunity: ${alumni.displayName} is seeking collaborators at ${alumni.company.ifBlank { "startup" }}")
+                }
+                "FACULTY" -> {
+                    evidence.add("Faculty Research Lab: Research advisor at ${alumni.college.ifBlank { "University" }}")
+                }
+                "RECRUITER" -> {
+                    evidence.add("Recruiter Screening: Active talent pipeline at ${alumni.company.ifBlank { "Enterprise" }}")
+                }
+                else -> {
+                    if (alumni.company.isNotBlank() && alumni.jobTitle.isNotBlank()) {
+                        evidence.add("Alumni Mentor: ${alumni.jobTitle} at ${alumni.company}")
+                    }
+                }
+            }
+
+            // 2. Skill overlap evidence
             val reqSkills = request.requiredSkills.filter { it.isNotBlank() }
             if (reqSkills.isNotEmpty() && match.matchedSkills.isNotEmpty()) {
                 evidence.add("Matches ${match.matchedSkills.size} of ${reqSkills.size} requested skills (${match.matchedSkills.joinToString(", ")})")
@@ -78,13 +102,13 @@ object MatchingEngine {
                 evidence.add("Specializes in relevant skills: ${match.matchedSkills.joinToString(", ")}")
             }
 
-            // 2. Category expertise
+            // 3. Category expertise
             val offersCat = alumni.helpCategories.any { it.equals(request.category, ignoreCase = true) }
             if (offersCat) {
                 evidence.add("Specializes in ${request.category}")
             }
 
-            // 3. Availability alignment
+            // 4. Availability alignment
             val prefAvail = request.preferredAvailability.trim().lowercase()
             val availMatches = prefAvail.isNotEmpty() && alumni.availableSlots.any { slot ->
                 val s = slot.lowercase()
@@ -97,18 +121,15 @@ object MatchingEngine {
                 evidence.add("Availability overlaps with your preferred time")
             }
 
-            // 4. College / institutional affinity
+            // 5. College / institutional affinity
             val collegeAffinity = student != null && student.college.isNotBlank() &&
                 alumni.college.isNotBlank() &&
                 student.college.trim().equals(alumni.college.trim(), ignoreCase = true)
             if (collegeAffinity) {
-                evidence.add("Alumni affinity: Both affiliated with ${alumni.college}")
+                val prefix = if (alumni.role == "ALUMNI" || alumni.role.isBlank()) "Alumni affinity" else "Affinity"
+                evidence.add("$prefix: Both affiliated with ${alumni.college}")
             }
 
-            // 5. Industry track record
-            if (alumni.company.isNotBlank() && alumni.jobTitle.isNotBlank()) {
-                evidence.add("Active industry experience: ${alumni.jobTitle} at ${alumni.company}")
-            }
 
             // 6. Detect missing profile information honestly without inventing
             if (alumni.availableSlots.isEmpty()) {

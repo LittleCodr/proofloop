@@ -160,8 +160,84 @@ object MissionBlueprintRegistry {
             suggestedFollowUpAction = "Execute 5 customer discovery interviews and document verbatim quotes in validation doc.",
             suggestedDueDays = 7,
             defaultSkills = listOf("Product Strategy", "Go-To-Market", "MVP Scoping", "User Discovery")
+        ),
+
+        MissionBlueprint(
+            id = "founder_cofounder_v1",
+            version = 1,
+            title = "Technical Co-founder & Early Team Sprint",
+            summary = "Structured alignment session between startup founders and senior engineering collaborators to establish product-market feasibility, equity, and MVP deliverables.",
+            category = HelpCategories.FOUNDER_COFOUNDER,
+            intendedAudience = "Founders seeking technical co-founders or engineers looking to join early-stage startups.",
+            suggestedDurationMinutes = 45,
+            requiredStudentInputs = listOf(
+                "Product thesis & target market wedge",
+                "MVP architecture roadmap & desired tech stack (e.g. Kotlin/Compose, Firebase)",
+                "Commitment expectations (full-time vs sweat equity sprint)"
+            ),
+            suggestedAgenda = listOf(
+                "00-10m: Product mission, customer validation evidence, and market size",
+                "10-25m: Technical feasibility, architecture stack, and MVP milestone timeline",
+                "25-35m: Working style alignment, equity vesting expectations, and mutual fit",
+                "35-45m: Committing to a 1-week pilot sprint or technical spike"
+            ),
+            expectedDeliverable = "Technical MVP milestone roadmap and mutual collaboration agreement.",
+            suggestedFollowUpAction = "Build and submit the agreed technical prototype spike within 7 days.",
+            suggestedDueDays = 7,
+            defaultSkills = listOf("Kotlin", "System Design", "Startup MVP", "Architecture")
+        ),
+
+        MissionBlueprint(
+            id = "academic_research_v1",
+            version = 1,
+            title = "Academic Research & Lab Collaboration",
+            summary = "Formal research alignment between faculty lab directors and students/engineers to define novel systems problem statements, datasets, and publication targets.",
+            category = HelpCategories.RESEARCH_COLLABORATION,
+            intendedAudience = "Faculty members, student researchers, and industry research partners.",
+            suggestedDurationMinutes = 60,
+            requiredStudentInputs = listOf(
+                "1-page research abstract / problem statement",
+                "Relevant baseline literature or related works",
+                "Expected experiment apparatus or dataset requirements"
+            ),
+            suggestedAgenda = listOf(
+                "00-15m: Research novelty, problem positioning, and theoretical foundations",
+                "15-35m: Experimental methodology, benchmark datasets, and evaluation metrics",
+                "35-50m: Lab computing resources, authorship guidelines, and timeline",
+                "50-60m: Agreeing on baseline experiment sprint"
+            ),
+            expectedDeliverable = "Formalized research proposal brief with milestone experiment checklist.",
+            suggestedFollowUpAction = "Execute preliminary baseline benchmark and document empirical findings.",
+            suggestedDueDays = 7,
+            defaultSkills = listOf("Distributed Systems", "Mobile AI", "Research Methodology", "Benchmarking")
+        ),
+
+        MissionBlueprint(
+            id = "talent_screening_v1",
+            version = 1,
+            title = "Direct Talent Screening & Candidate Fast-Track",
+            summary = "High-signal recruiter-to-candidate screen evaluating technical projects, culture alignment, and expedited interview loops for engineering internships.",
+            category = HelpCategories.RECRUITMENT_INTERNSHIP,
+            intendedAudience = "Recruiters and candidates seeking internship or engineering opportunities.",
+            suggestedDurationMinutes = 30,
+            requiredStudentInputs = listOf(
+                "Updated resume & GitHub profile link",
+                "Verified project code sample or deployed APK",
+                "Target internship/full-time start timeline"
+            ),
+            suggestedAgenda = listOf(
+                "00-05m: Overview of open engineering role and team charter",
+                "05-20m: Candidate technical walkthrough of top production project",
+                "20-25m: Mutual culture & compensation/role alignment",
+                "25-30m: Decision: Fast-track to technical onsite interview loop"
+            ),
+            expectedDeliverable = "Recruiter candidate scorecard and expedited interview loop schedule.",
+            suggestedFollowUpAction = "Submit technical assessment or attend onsite interview round.",
+            suggestedDueDays = 3,
+            defaultSkills = listOf("Technical Hiring", "Kotlin", "Android", "System Design")
         )
     )
+
 
     fun getAllBlueprints(): List<MissionBlueprint> = BLUEPRINTS
 

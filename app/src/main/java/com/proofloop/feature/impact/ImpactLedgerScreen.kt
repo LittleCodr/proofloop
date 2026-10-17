@@ -384,7 +384,45 @@ fun ImpactLedgerScreen(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Multi-Role Ecosystem Participation Card
+                NeoCard(
+                    backgroundColor = ProofPaper,
+                    borderColor = ProofInk,
+                    shadowOffset = 3.dp
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "MULTI-ROLE NETWORK PARTICIPATION",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = ProofInk
+                        )
+                        NeoTag(text = "6 ROLES ACTIVE", backgroundColor = ProofElectricLilac, contentColor = ProofInk)
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        MetricCard(title = "STUDENTS", value = "${metrics.activeStudentsCount}", subtitle = "Missions Created", backgroundColor = ProofElectricLilac, modifier = Modifier.weight(1f))
+                        MetricCard(title = "ALUMNI", value = "${metrics.activeMentorsCount}", subtitle = "Active Mentors", backgroundColor = ProofSignalMint, modifier = Modifier.weight(1f))
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        MetricCard(title = "FOUNDERS", value = "${metrics.activeFoundersCount}", subtitle = "Co-founder Sprints", backgroundColor = ProofAcidLime, modifier = Modifier.weight(1f))
+                        MetricCard(title = "FACULTY", value = "${metrics.activeFacultyCount}", subtitle = "Research Labs", backgroundColor = ProofLavender, modifier = Modifier.weight(1f))
+                        MetricCard(title = "RECRUITERS", value = "${metrics.activeRecruitersCount}", subtitle = "Hiring Pipelines", backgroundColor = ProofCoral, modifier = Modifier.weight(1f))
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(20.dp))
+
 
                 // Institutional Value Thesis
                 NeoCard(backgroundColor = ProofWhite, shadowOffset = 3.dp) {

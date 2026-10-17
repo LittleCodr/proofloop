@@ -98,10 +98,88 @@ object DemoData {
         isDemonstrationProfile = true
     )
 
+    val DEMO_FOUNDER_1 = PublicProfile(
+        uid = "demo_founder_kunal",
+        displayName = "Kunal Varma",
+        role = UserRole.FOUNDER.name,
+        college = "DTU",
+        graduationYear = "2021",
+        jobTitle = "Founder & CEO",
+        company = "NeoSprint (YC W24)",
+        headline = "Founder & CEO @ NeoSprint (YC W24)",
+        organization = "NeoSprint Inc.",
+        expertise = listOf("Kotlin", "Jetpack Compose", "Startup MVP", "System Design", "Go-To-Market"),
+        helpCategories = listOf(
+            HelpCategories.FOUNDER_COFOUNDER,
+            HelpCategories.ENTREPRENEURSHIP,
+            HelpCategories.SYSTEM_DESIGN
+        ),
+        availableSlots = listOf("Weekday Mornings (9-11 AM)", "Flexible Async"),
+        acceptingRequests = true,
+        maxActiveRequests = 3,
+        isVerifiedProfile = true,
+        isDemonstrationProfile = true
+    )
+
+    val DEMO_FACULTY_1 = PublicProfile(
+        uid = "demo_faculty_radhika",
+        displayName = "Dr. Radhika Sen",
+        role = UserRole.FACULTY.name,
+        college = "IIIT Delhi",
+        jobTitle = "Associate Professor & Lab Director",
+        company = "IIIT Delhi - Mobile AI Lab",
+        department = "Computer Science & Engineering",
+        headline = "Associate Professor & Director @ Mobile AI Lab",
+        expertise = listOf("Distributed Systems", "Mobile AI", "Research Methodology", "Kotlin", "Systems Architecture"),
+        helpCategories = listOf(
+            HelpCategories.RESEARCH_COLLABORATION,
+            HelpCategories.CODE_REVIEW,
+            HelpCategories.CAREER_DIRECTION
+        ),
+        availableSlots = listOf("Tuesday & Thursday 3-5 PM"),
+        acceptingRequests = true,
+        maxActiveRequests = 3,
+        isVerifiedProfile = true,
+        isDemonstrationProfile = true
+    )
+
+    val DEMO_RECRUITER_1 = PublicProfile(
+        uid = "demo_recruiter_maya",
+        displayName = "Maya Thorne",
+        role = UserRole.RECRUITER.name,
+        college = "Delhi University",
+        graduationYear = "2018",
+        jobTitle = "Lead Technical Talent Partner",
+        company = "Razorpay",
+        headline = "Lead Tech Recruiter (Mobile & Platform) @ Razorpay",
+        expertise = listOf("Technical Hiring", "Portfolio Assessment", "Interview Prep", "Compensation Benchmarks"),
+        helpCategories = listOf(
+            HelpCategories.RECRUITMENT_INTERNSHIP,
+            HelpCategories.RESUME_FEEDBACK,
+            HelpCategories.MOCK_INTERVIEW
+        ),
+        availableSlots = listOf("Wednesday 2-4 PM", "Friday 3-5 PM"),
+        acceptingRequests = true,
+        maxActiveRequests = 4,
+        isVerifiedProfile = true,
+        isDemonstrationProfile = true
+    )
+
     val ALL_DEMO_ALUMNI = listOf(
         DEMO_ALUMNI_1,
         DEMO_ALUMNI_2,
         DEMO_ALUMNI_3,
         DEMO_ALUMNI_4
     )
+
+    val ALL_DEMO_PROFILES = listOf(
+        DEMO_ALUMNI_1,
+        DEMO_ALUMNI_2,
+        DEMO_ALUMNI_3,
+        DEMO_ALUMNI_4,
+        DEMO_FOUNDER_1,
+        DEMO_FACULTY_1,
+        DEMO_RECRUITER_1
+    )
 }
+

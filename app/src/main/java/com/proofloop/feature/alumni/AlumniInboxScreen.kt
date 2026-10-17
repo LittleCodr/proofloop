@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.proofloop.core.ui.components.*
 import com.proofloop.core.ui.theme.*
 import com.proofloop.data.model.LoopHealthSeverity
+import com.proofloop.data.model.UserRole
 
 @Composable
 fun AlumniInboxScreen(
@@ -41,11 +42,19 @@ fun AlumniInboxScreen(
         color = ProofPaper
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            val currentRole = uiState.currentUser?.role ?: UserRole.ALUMNI.name
+            val portalSubtitle = when (currentRole) {
+                "FACULTY" -> "Faculty Research Portal"
+                "FOUNDER" -> "Founder Collaboration Portal"
+                "RECRUITER" -> "Recruiter Talent Portal"
+                else -> "Alumni Mentorship Portal"
+            }
+
             // App Bar
             NeoTopAppBar(
                 title = "PROOFLOOP",
-                subtitle = "Alumni Portal",
-                roleTag = "ALUMNI",
+                subtitle = portalSubtitle,
+                roleTag = currentRole,
                 onOpenImpactLedger = onOpenImpactLedgerClick,
                 onSignOut = {
                     viewModel.logout()
@@ -73,7 +82,7 @@ fun AlumniInboxScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = profile?.displayName ?: uiState.currentUser?.name ?: "Alumnus",
+                                    text = profile?.displayName ?: uiState.currentUser?.name ?: "Member",
                                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                     color = ProofInk
                                 )
@@ -96,11 +105,12 @@ fun AlumniInboxScreen(
                                 }
                             }
                             Text(
-                                text = "${profile?.jobTitle ?: "Alumnus"} • ${profile?.company ?: ""}",
+                                text = profile?.subtitle ?: "${profile?.jobTitle ?: currentRole} • ${profile?.company ?: ""}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = ProofInk
                             )
                         }
+
 
                         // Opt-in switch
                         Row(verticalAlignment = Alignment.CenterVertically) {

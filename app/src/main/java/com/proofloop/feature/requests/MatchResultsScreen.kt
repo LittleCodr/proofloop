@@ -199,23 +199,45 @@ fun MatchResultsScreen(
                                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                                             color = ProofInk
                                         )
-                                        if (alumni.isVerifiedAlumni) {
+                                        if (alumni.isVerifiedAlumni || alumni.isVerifiedProfile) {
                                             Spacer(modifier = Modifier.width(4.dp))
                                             Icon(
                                                 imageVector = Icons.Default.Verified,
-                                                contentDescription = "Verified Alumnus",
+                                                contentDescription = "Verified Partner",
                                                 tint = ProofCobalt,
                                                 modifier = Modifier.size(16.dp)
                                             )
                                         }
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Surface(
+                                            shape = RoundedCornerShape(4.dp),
+                                            color = when (alumni.role) {
+                                                "FOUNDER" -> ProofAcidLime
+                                                "FACULTY" -> ProofLavender
+                                                "RECRUITER" -> ProofCoral
+                                                else -> ProofSignalMint
+                                            },
+                                            border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder)
+                                        ) {
+                                            Text(
+                                                text = alumni.role,
+                                                style = MaterialTheme.typography.labelSmall.copy(
+                                                    fontFamily = FontFamily.Monospace,
+                                                    fontWeight = FontWeight.Black,
+                                                    fontSize = 9.sp
+                                                ),
+                                                color = ProofInk,
+                                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                                            )
+                                        }
                                     }
                                     Text(
-                                        text = "${alumni.jobTitle} • ${alumni.company}",
+                                        text = alumni.subtitle,
                                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                                         color = ProofInk
                                     )
                                     Text(
-                                        text = "${alumni.college} ('${alumni.graduationYear})",
+                                        text = alumni.college.ifBlank { "Professional Community" },
                                         style = MaterialTheme.typography.bodySmall,
                                         color = ProofTextMuted
                                     )

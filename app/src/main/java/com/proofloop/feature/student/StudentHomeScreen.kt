@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.proofloop.core.ui.components.*
 import com.proofloop.core.ui.theme.*
 import com.proofloop.data.model.LoopHealthSeverity
+import com.proofloop.data.model.UserRole
 
 @Composable
 fun StudentHomeScreen(
@@ -57,11 +58,25 @@ fun StudentHomeScreen(
         color = ProofPaper
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            val currentRole = uiState.currentUser?.role ?: UserRole.STUDENT.name
+            val dashboardSubtitle = when (currentRole) {
+                "FOUNDER" -> "Founder & Builder Hub"
+                "FACULTY" -> "Faculty Research Hub"
+                "RECRUITER" -> "Talent Discovery Hub"
+                else -> "Student Mission Hub"
+            }
+            val welcomeSubtitle = when (currentRole) {
+                "FOUNDER" -> "Post missions for technical co-founders, engineering talent, or startup advisors."
+                "FACULTY" -> "Initiate academic research collaborations and connect projects with industry."
+                "RECRUITER" -> "Discover candidate portfolios and screen talent for engineering roles."
+                else -> "Connect across intent: mentorship, portfolio reviews, research, and startup opportunities."
+            }
+
             // App Bar
             NeoTopAppBar(
                 title = "PROOFLOOP",
-                subtitle = "Student Dashboard",
-                roleTag = "STUDENT",
+                subtitle = dashboardSubtitle,
+                roleTag = currentRole,
                 onOpenImpactLedger = onOpenImpactLedgerClick,
                 onSignOut = {
                     viewModel.logout()
@@ -81,7 +96,7 @@ fun StudentHomeScreen(
                     shadowOffset = 3.dp
                 ) {
                     Text(
-                        text = "WELCOME, ${uiState.currentUser?.name?.uppercase() ?: "STUDENT"}",
+                        text = "WELCOME, ${uiState.currentUser?.name?.uppercase() ?: currentRole}",
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Black
@@ -89,19 +104,20 @@ fun StudentHomeScreen(
                         color = ProofInk
                     )
                     Text(
-                        text = "Ask for specific, time-bounded guidance from opted-in alumni.",
+                        text = welcomeSubtitle,
                         style = MaterialTheme.typography.bodyMedium,
                         color = ProofTextMuted
                     )
                     Spacer(modifier = Modifier.height(14.dp))
                     NeoButton(
-                        text = "Start Loop Mission",
+                        text = if (currentRole == "FOUNDER") "Post Collaboration Mission" else "Start Loop Mission",
                         onClick = onRequestHelpClick,
-                        backgroundColor = ProofElectricLilac,
+                        backgroundColor = if (currentRole == "FOUNDER") ProofAcidLime else ProofElectricLilac,
                         contentColor = ProofInk,
                         icon = Icons.Default.Add
                     )
                 }
+
 
                 Spacer(modifier = Modifier.height(14.dp))
 
