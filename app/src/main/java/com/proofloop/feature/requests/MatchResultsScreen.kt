@@ -170,7 +170,7 @@ fun MatchResultsScreen(
                         onAction = onNavigateBack
                     )
                 } else {
-                    uiState.matches.forEach { match ->
+                    uiState.matches.forEachIndexed { index, match ->
                         val alumni = match.alumni
                         val isAlreadyRequested = uiState.requestedAlumniIds.contains(alumni.uid)
 
@@ -308,6 +308,14 @@ fun MatchResultsScreen(
                                     icon = Icons.Default.Send
                                 )
                             }
+                        }
+
+                        // Single Monetization Placement in Feed: Rendered after top match
+                        if (index == 0) {
+                            NeoBannerAd(
+                                adTitle = "FEATURED HIRING PARTNER",
+                                modifier = Modifier.padding(bottom = 14.dp)
+                            )
                         }
                     }
                 }

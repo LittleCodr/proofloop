@@ -305,6 +305,7 @@ Follow this rehearsed script during HackShift 2026 judging:
 | **Student completes action** | ✅ **VERIFIED** | Student self-reports completion, locks action description |
 | **Alumni independently confirms outcome** | ✅ **VERIFIED** | Student cannot confirm; separate alumnus authority required |
 | **Basic security & validation** | ✅ **VERIFIED** | Unit tested security rules; Firestore rules written; no leaked secrets |
+| **Monetization & Ad Placements** | ✅ **VERIFIED** | Google AdMob test banner integration (1 ad/feed screen) + campus partner sponsor fallback |
 | **Neo-Brutalist Visual Polish** | ✅ **VERIFIED** | Warm cream `#F5F1E8`, bold 2dp outlines, hard offset shadows, zero generic styling |
 
 ---

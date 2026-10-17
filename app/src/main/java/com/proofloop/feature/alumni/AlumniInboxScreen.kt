@@ -242,7 +242,15 @@ fun AlumniInboxScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Monetization Placement in Feed (1 Test Banner Ad per screen)
+                NeoBannerAd(
+                    adTitle = "ALUMNI PERKS & RECRUITING SPONSOR",
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
 
                 // SECTION 2: ACCEPTED CONNECTIONS & WORKSPACES
                 Text(

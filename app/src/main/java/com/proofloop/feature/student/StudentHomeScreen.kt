@@ -241,6 +241,14 @@ fun StudentHomeScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                // Monetization Placement in Feed (1 Test Banner Ad per screen)
+                NeoBannerAd(
+                    adTitle = "CAMPUS SPONSOR • CAREER FELLOWSHIP",
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
                 // SECTION 3: OPEN HELP REQUESTS
                 Text(
                     text = "YOUR OPEN HELP REQUESTS",
