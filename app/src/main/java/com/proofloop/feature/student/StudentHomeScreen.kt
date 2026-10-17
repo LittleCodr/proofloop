@@ -84,7 +84,7 @@ fun StudentHomeScreen(
                     )
                     Spacer(modifier = Modifier.height(14.dp))
                     NeoButton(
-                        text = "Request Focused Help",
+                        text = "Start Loop Mission",
                         onClick = onRequestHelpClick,
                         backgroundColor = ProofCobalt,
                         icon = Icons.Default.Add

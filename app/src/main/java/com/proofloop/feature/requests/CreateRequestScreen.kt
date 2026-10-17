@@ -85,7 +85,7 @@ fun CreateRequestScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "NEW HELP REQUEST",
+                        text = "NEW LOOP MISSION",
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Black
@@ -111,7 +111,7 @@ fun CreateRequestScreen(
                     shadowOffset = 4.dp
                 ) {
                     Text(
-                        text = "BE SPECIFIC & TIME-BOUNDED",
+                        text = "LOOP MISSION SCOPE",
                         style = MaterialTheme.typography.labelMedium.copy(
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Black,
