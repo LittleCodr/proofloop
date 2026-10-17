@@ -64,6 +64,7 @@ data class UserAccount(
     var skills: List<String> = emptyList(),
     var interests: List<String> = emptyList(),
     var careerGoals: String = "",
+    var fcmToken: String? = null,
     var createdAt: Long = System.currentTimeMillis()
 )
 

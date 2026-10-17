@@ -98,5 +98,14 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    // 6. Institutional Analytics (Impact Ledger)
+    // Stored in `institutional_analytics/{collegeId}`
+    // Read-only for authenticated campus members and administrators.
+    // Written only by backend Cloud Functions (Firebase Admin SDK bypasses client rules).
+    match /institutional_analytics/{collegeId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
   }
 }

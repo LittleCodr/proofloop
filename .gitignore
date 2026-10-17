@@ -11,5 +11,6 @@
 /build
 /captures
 .externalNativeBuild
-.cxx
 local.properties
+functions/node_modules/
+functions/lib/
