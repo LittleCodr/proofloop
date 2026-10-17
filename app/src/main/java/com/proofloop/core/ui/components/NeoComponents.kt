@@ -3,9 +3,11 @@ package com.proofloop.core.ui.components
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
@@ -561,10 +563,18 @@ fun NeoTopAppBar(
         ) {
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = com.proofloop.R.drawable.proofloop_logo),
+                        contentDescription = "ProofLoop Logo",
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = title,
                         style = MaterialTheme.typography.displayMedium.copy(
-                            fontSize = 22.sp,
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.Black,
                             letterSpacing = (-0.5).sp
                         ),

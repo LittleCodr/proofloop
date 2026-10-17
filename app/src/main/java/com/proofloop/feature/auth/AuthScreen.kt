@@ -4,11 +4,15 @@ import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Email
@@ -110,16 +114,29 @@ fun AuthScreen(
                 .verticalScroll(scrollState)
                 .padding(20.dp)
         ) {
-            // Brand Header
-            Text(
-                text = "PROOFLOOP",
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = (-1).sp
-                ),
-                color = ProofInk
-            )
+            // Brand Header with Official Logo
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(bottom = 6.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = com.proofloop.R.drawable.proofloop_logo),
+                    contentDescription = "ProofLoop Logo",
+                    modifier = Modifier
+                        .size(46.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "PROOFLOOP",
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = (-1).sp
+                    ),
+                    color = ProofInk
+                )
+            }
             Text(
                 text = "CONNECTIONS SHOULD LEAD SOMEWHERE.",
                 style = MaterialTheme.typography.labelMedium.copy(

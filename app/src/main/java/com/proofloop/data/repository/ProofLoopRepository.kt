@@ -649,11 +649,11 @@ class ProofLoopRepository(
         currentUserId: String
     ): Result<Unit> {
         val conn = memoryConnections[connectionId]
-            ?: if (firestore != null) {
+            ?: (if (firestore != null) {
                 try {
                     firestore.collection("connections").document(connectionId).get().await().toObject(Connection::class.java)
                 } catch (_: Exception) { null }
-            } else null
+            } else null)
             ?: return Result.failure(IllegalArgumentException("Connection not found"))
 
         // Security check: Only the addressed alumnus may accept or decline
@@ -707,11 +707,11 @@ class ProofLoopRepository(
 
     override suspend fun updateAgreedAction(connectionId: String, actionText: String): Result<Unit> {
         val conn = memoryConnections[connectionId]
-            ?: if (firestore != null) {
+            ?: (if (firestore != null) {
                 try {
                     firestore.collection("connections").document(connectionId).get().await().toObject(Connection::class.java)
                 } catch (_: Exception) { null }
-            } else null
+            } else null)
             ?: return Result.failure(IllegalArgumentException("Connection not found"))
 
         val updatedConn = conn.copy(agreedNextAction = actionText.trim(), updatedAt = System.currentTimeMillis())
@@ -782,11 +782,11 @@ class ProofLoopRepository(
 
     override suspend fun studentMarkComplete(connectionId: String, currentUserId: String): Result<Unit> {
         val conn = memoryConnections[connectionId]
-            ?: if (firestore != null) {
+            ?: (if (firestore != null) {
                 try {
                     firestore.collection("connections").document(connectionId).get().await().toObject(Connection::class.java)
                 } catch (_: Exception) { null }
-            } else null
+            } else null)
             ?: return Result.failure(IllegalArgumentException("Connection not found"))
 
         // Security check: Only the student can mark their action complete
@@ -821,11 +821,11 @@ class ProofLoopRepository(
 
     override suspend fun alumniConfirmOutcome(connectionId: String, currentUserId: String): Result<Unit> {
         val conn = memoryConnections[connectionId]
-            ?: if (firestore != null) {
+            ?: (if (firestore != null) {
                 try {
                     firestore.collection("connections").document(connectionId).get().await().toObject(Connection::class.java)
                 } catch (_: Exception) { null }
-            } else null
+            } else null)
             ?: return Result.failure(IllegalArgumentException("Connection not found"))
 
         // Security check: Only the alumnus can confirm the interaction outcome
