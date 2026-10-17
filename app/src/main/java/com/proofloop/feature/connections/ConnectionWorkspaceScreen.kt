@@ -1,17 +1,23 @@
 package com.proofloop.feature.connections
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +30,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.proofloop.core.ui.components.*
 import com.proofloop.core.ui.theme.*
+import com.proofloop.data.model.ConnectionStatus
+import com.proofloop.data.model.SessionStatus
 
 @Composable
 fun ConnectionWorkspaceScreen(
@@ -33,6 +41,14 @@ fun ConnectionWorkspaceScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
+
+    var showScheduleDialog by remember { mutableStateOf(false) }
+    var showRescheduleDialog by remember { mutableStateOf(false) }
+    var showCancelDialog by remember { mutableStateOf(false) }
+
+    var scheduleInputTime by remember { mutableStateOf("Saturday 3:00 PM") }
+    var rescheduleReason by remember { mutableStateOf("Academic conflict / deadline shift") }
+    var cancelReason by remember { mutableStateOf("Scope no longer applicable") }
 
     LaunchedEffect(connectionId) {
         viewModel.loadConnection(connectionId)
@@ -78,7 +94,7 @@ fun ConnectionWorkspaceScreen(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "CONNECTION WORKSPACE",
+                        text = "COMMITMENT WORKSPACE",
                         style = MaterialTheme.typography.displayMedium.copy(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Black
@@ -179,10 +195,10 @@ fun ConnectionWorkspaceScreen(
                 }
 
                 // Feedback Banner
-                androidx.compose.animation.AnimatedVisibility(
+                AnimatedVisibility(
                     visible = uiState.feedbackMessage != null,
-                    enter = androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn(),
-                    exit = androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut()
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
                 ) {
                     Column {
                         Spacer(modifier = Modifier.height(12.dp))
@@ -201,10 +217,10 @@ fun ConnectionWorkspaceScreen(
                 }
 
                 // Error Banner
-                androidx.compose.animation.AnimatedVisibility(
+                AnimatedVisibility(
                     visible = uiState.errorMessage != null,
-                    enter = androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn(),
-                    exit = androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut()
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
                 ) {
                     Column {
                         Spacer(modifier = Modifier.height(12.dp))
@@ -219,6 +235,140 @@ fun ConnectionWorkspaceScreen(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                // COMMITMENT ENGINE: SESSION SCHEDULING CARD
+                if (conn != null && conn.status != ConnectionStatus.CANCELLED.name) {
+                    NeoCard(
+                        backgroundColor = ProofWhite,
+                        shadowOffset = 3.dp
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.CalendarToday,
+                                    contentDescription = null,
+                                    tint = ProofCobalt,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "SESSION COMMITMENT",
+                                    style = MaterialTheme.typography.labelLarge.copy(
+                                        fontFamily = FontFamily.Monospace,
+                                        fontWeight = FontWeight.Black,
+                                        letterSpacing = 0.5.sp
+                                    ),
+                                    color = ProofInk
+                                )
+                            }
+                            NeoTag(
+                                text = conn.sessionStatus.ifBlank { "SCHEDULED" },
+                                backgroundColor = if (conn.sessionStatus == SessionStatus.CONFIRMED.name) ProofSignalMint else ProofElectricLilac
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        val scheduledTimeDisplay = if (conn.sessionAt.isNotBlank()) {
+                            "${conn.sessionAt} (${conn.timeZone.ifBlank { "Local Device TZ" }})"
+                        } else {
+                            "No session time agreed yet. Tap below to propose."
+                        }
+
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = ProofPaper,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.padding(10.dp)) {
+                                Text(
+                                    text = "SCHEDULED MEETING TIME:",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontFamily = FontFamily.Monospace,
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = ProofTextMuted
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = scheduledTimeDisplay,
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofInk
+                                )
+
+                                if (conn.cancellationReason.isNotBlank() && conn.sessionStatus == SessionStatus.RESCHEDULED.name) {
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Reschedule context: ${conn.cancellationReason}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = ProofPlum
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            if (conn.sessionAt.isBlank()) {
+                                NeoButton(
+                                    text = "Set Session Time",
+                                    onClick = { showScheduleDialog = true },
+                                    backgroundColor = ProofElectricLilac,
+                                    contentColor = ProofInk,
+                                    icon = Icons.Default.EditCalendar,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            } else {
+                                NeoButton(
+                                    text = "Reschedule",
+                                    onClick = { showRescheduleDialog = true },
+                                    backgroundColor = ProofLavender,
+                                    contentColor = ProofInk,
+                                    icon = Icons.Default.Schedule,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            NeoOutlinedButton(
+                                text = "Cancel Mission",
+                                onClick = { showCancelDialog = true },
+                                backgroundColor = ProofWhite,
+                                contentColor = ProofCoral,
+                                icon = Icons.Default.Cancel,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                } else if (conn != null && conn.status == ConnectionStatus.CANCELLED.name) {
+                    NeoCard(
+                        backgroundColor = ProofCoral.copy(alpha = 0.15f),
+                        borderColor = ProofCoral,
+                        shadowOffset = 2.dp
+                    ) {
+                        Text(
+                            text = "MISSION CONNECTION CANCELLED",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = ProofCoral
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Reason: ${conn.cancellationReason.ifBlank { "Explicitly cancelled by participant" }}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = ProofInk
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
                 // AGREED NEXT ACTION COMMITMENT CARD
                 NeoCard(
@@ -538,5 +688,126 @@ fun ConnectionWorkspaceScreen(
                 Spacer(modifier = Modifier.height(30.dp))
             }
         }
+    }
+
+    // Schedule Session Dialog
+    if (showScheduleDialog) {
+        AlertDialog(
+            onDismissRequest = { showScheduleDialog = false },
+            title = {
+                Text("Schedule Session Time", fontWeight = FontWeight.Bold, color = ProofInk)
+            },
+            text = {
+                Column {
+                    Text("Select agreed meeting time with time-zone awareness:", fontSize = 13.sp, color = ProofTextMuted)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = scheduleInputTime,
+                        onValueChange = { scheduleInputTime = it },
+                        label = { Text("Meeting Time") },
+                        singleLine = true
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.scheduleSession(scheduleInputTime)
+                        showScheduleDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = ProofSignalMint, contentColor = ProofInk)
+                ) {
+                    Text("Confirm Schedule", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showScheduleDialog = false }) {
+                    Text("Cancel", color = ProofTextMuted)
+                }
+            }
+        )
+    }
+
+    // Reschedule Dialog
+    if (showRescheduleDialog) {
+        AlertDialog(
+            onDismissRequest = { showRescheduleDialog = false },
+            title = {
+                Text("Reschedule Session", fontWeight = FontWeight.Bold, color = ProofInk)
+            },
+            text = {
+                Column {
+                    Text("Propose new time and state reason for reschedule:", fontSize = 13.sp, color = ProofTextMuted)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = scheduleInputTime,
+                        onValueChange = { scheduleInputTime = it },
+                        label = { Text("New Proposed Time") },
+                        singleLine = true
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = rescheduleReason,
+                        onValueChange = { rescheduleReason = it },
+                        label = { Text("Reason for Reschedule") },
+                        singleLine = true
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.rescheduleSession(scheduleInputTime, rescheduleReason)
+                        showRescheduleDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = ProofElectricLilac, contentColor = ProofInk)
+                ) {
+                    Text("Reschedule", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRescheduleDialog = false }) {
+                    Text("Cancel", color = ProofTextMuted)
+                }
+            }
+        )
+    }
+
+    // Cancellation Dialog
+    if (showCancelDialog) {
+        AlertDialog(
+            onDismissRequest = { showCancelDialog = false },
+            title = {
+                Text("Cancel Mission Connection", fontWeight = FontWeight.Bold, color = ProofCoral)
+            },
+            text = {
+                Column {
+                    Text("Provide explicit reason for cancelling. This will free up the participant slot.", fontSize = 13.sp, color = ProofTextMuted)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = cancelReason,
+                        onValueChange = { cancelReason = it },
+                        label = { Text("Cancellation Reason") },
+                        singleLine = true
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.cancelConnection(cancelReason)
+                        showCancelDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = ProofCoral, contentColor = ProofWhite)
+                ) {
+                    Text("Confirm Cancellation", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showCancelDialog = false }) {
+                    Text("Back", color = ProofTextMuted)
+                }
+            }
+        )
     }
 }

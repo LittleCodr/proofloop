@@ -21,3 +21,5 @@ val ProofWhite = Color(0xFFFFFFFF)          // Crisp card surfaces
 val ProofSurfaceMuted = Color(0xFFECE7DC)    // Subtle containers & neutral borders
 val ProofTextMuted = Color(0xFF555555)      // Secondary body text
 val ProofBorder = ProofMidnight             // Standard 2dp border color (Midnight Plum)
+val ProofPlum = ProofPlumSurface            // #30283D: Raised Plum
+val ProofRaisedPlum = ProofPlumSurface      // #30283D: Raised Plum

@@ -82,7 +82,7 @@ object MissionBlueprintRegistry {
                 "40-45m: Calibrated rubric feedback: Communication, Technical Accuracy, Speed"
             ),
             expectedDeliverable = "Calibrated scoring rubric and customized practice problem recommendation.",
-            suggestedFollowUpAction = "Implement the optimized $O(N)$ solution with unit tests on GitHub.",
+            suggestedFollowUpAction = "Implement the optimized O(N) solution with unit tests on GitHub.",
             suggestedDueDays = 2,
             defaultSkills = listOf("Algorithms", "Data Structures", "Technical Communication", "Kotlin")
         ),
