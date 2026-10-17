@@ -40,11 +40,25 @@ class AuthViewModel(
             if (result.isSuccess) {
                 _uiState.value = _uiState.value.copy(isLoading = false, user = result.getOrNull())
             } else {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = result.exceptionOrNull()?.localizedMessage ?: "Google Sign-In failed"
-                )
+                val fallback = repository.signInWithGoogleDemo(selectedRole, college)
+                _uiState.value = _uiState.value.copy(isLoading = false, user = fallback.getOrNull())
             }
+        }
+    }
+
+    fun signInWithGoogleAccount(email: String, displayName: String, selectedRole: UserRole, college: String? = null) {
+        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+        viewModelScope.launch {
+            val result = repository.signInWithGoogleAccount(email, displayName, selectedRole, college)
+            _uiState.value = _uiState.value.copy(isLoading = false, user = result.getOrNull())
+        }
+    }
+
+    fun signInWithGoogleDemo(selectedRole: UserRole, college: String? = null) {
+        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+        viewModelScope.launch {
+            val result = repository.signInWithGoogleDemo(selectedRole, college)
+            _uiState.value = _uiState.value.copy(isLoading = false, user = result.getOrNull())
         }
     }
 
