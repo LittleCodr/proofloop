@@ -16,7 +16,8 @@ Judges can install and evaluate the complete ProofLoop ecosystem in **under 60 s
 | Deliverable | Location / Details |
 | :--- | :--- |
 | **Direct APK Download** | [**`proofloop-v1.0.0-hackshift2026.apk`**](https://github.com/LittleCodr/proofloop/releases/download/v1.0.0-prototype/proofloop-v1.0.0-hackshift2026.apk) |
-| **Repository File Copy** | [`release/proofloop-v1.0.0-hackshift2026.apk`](file:///Users/mayank/Developer/proofloop/release/proofloop-v1.0.0-hackshift2026.apk) (30.8 MB) |
+| **Root Directory APK (Quick Access)** | [**`proofloop.apk`**](file:///Users/mayank/Developer/proofloop/proofloop.apk) & [**`proofloop-v1.0.0-hackshift2026.apk`**](file:///Users/mayank/Developer/proofloop/proofloop-v1.0.0-hackshift2026.apk) |
+| **Release Folder Copy** | [`release/proofloop-v1.0.0-hackshift2026.apk`](file:///Users/mayank/Developer/proofloop/release/proofloop-v1.0.0-hackshift2026.apk) (30.8 MB) |
 | **GitHub Release** | [ProofLoop v1.0.0 — HackShift 2026 Prototype Release](https://github.com/LittleCodr/proofloop/releases/tag/v1.0.0-prototype) |
 | **SHA-256 Checksum** | `5b951fc5fd774c926e33d8a69637adb09fc65872f69bf5ef6fb9062d5091b5f9` |
 
