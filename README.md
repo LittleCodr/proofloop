@@ -1,26 +1,62 @@
-# ProofLoop — HackShift 2026 Android MVP
+# ProofLoop — Multi-Role Professional Network & Collaboration Platform
 
-> **"Connections should lead somewhere."**  
-> *Trackable, consent-based alumni micro-mentorship with recorded follow-through.*
+> **"Make every professional connection count."**  
+> *A professional-growth platform where people find relevant connections, collaborate around specific goals, and turn introductions into measurable follow-through.*
+
+[![Download Prototype APK](https://img.shields.io/badge/Download-Prototype%20APK%20(v1.0.0)-3155FF?style=for-the-badge&logo=android&logoColor=white)](https://github.com/LittleCodr/proofloop/releases/download/v1.0.0-prototype/proofloop-v1.0.0-hackshift2026.apk)
+[![GitHub Release](https://img.shields.io/badge/Release-v1.0.0--prototype-D7FF3F?style=for-the-badge&logo=github&labelColor=111111&color=D7FF3F)](https://github.com/LittleCodr/proofloop/releases/tag/v1.0.0-prototype)
+[![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026%2B)-28A745?style=for-the-badge&logo=android&logoColor=white)](https://github.com/LittleCodr/proofloop)
+
+---
+
+## 📲 HackShift 2026 Judges & Reviewers Quick-Start
+
+Judges can install and evaluate the complete ProofLoop ecosystem in **under 60 seconds**:
+
+| Deliverable | Location / Details |
+| :--- | :--- |
+| **Direct APK Download** | [**`proofloop-v1.0.0-hackshift2026.apk`**](https://github.com/LittleCodr/proofloop/releases/download/v1.0.0-prototype/proofloop-v1.0.0-hackshift2026.apk) |
+| **Repository File Copy** | [`release/proofloop-v1.0.0-hackshift2026.apk`](file:///Users/mayank/Developer/proofloop/release/proofloop-v1.0.0-hackshift2026.apk) (30.8 MB) |
+| **GitHub Release** | [ProofLoop v1.0.0 — HackShift 2026 Prototype Release](https://github.com/LittleCodr/proofloop/releases/tag/v1.0.0-prototype) |
+| **SHA-256 Checksum** | `5b951fc5fd774c926e33d8a69637adb09fc65872f69bf5ef6fb9062d5091b5f9` |
+
+### Installation Instructions:
+```bash
+# Via ADB to connected device or emulator:
+adb install -r proofloop-v1.0.0-hackshift2026.apk
+
+# Or transfer the APK directly to any Android 8.0+ phone and open via Files app
+```
+
+### ⚡ 1-Tap Quick-Switch Demo Personas (No Typing Required)
+On the welcome authentication screen, tap any of the pre-configured role buttons:
+1. **`STUDENT (AARAV)`**: Explore structured Loop Mission creation using 9 proven blueprints, interact with deterministic **ProofLoop Coach**, and search explainable mentor recommendations.
+2. **`ALUMNI (PRIYA @ GOOGLE)`**: Access the Alumni Mentorship Portal, manage 3-session capacity limiter, accept requests, and confirm completed outcomes.
+3. **`FOUNDER (KUNAL @ YC)`**: View the dedicated Founder Hub, post technical co-founder / MVP collaboration sprints, and discover engineers.
+4. **`FACULTY (DR. SEN @ IIIT DELHI)`**: View the Faculty Research Portal, review research briefs, and bridge academia-to-industry lab projects.
+5. **`RECRUITER (MAYA @ RAZORPAY)`**: Open the Recruiter Talent Portal, screen candidate portfolios, and coordinate expedited interview loops.
+6. **`IMPACT LEDGER (DEAN)`**: Inspect privacy-conscious ($k \ge 3$ anonymity) institutional telemetry, drop-off funnels, and multi-role participation benchmarks.
 
 ---
 
 ## 1. Executive Summary & Product Concept
 
-ProofLoop is a native Android application built for the **Alumni Network & Professional Connections** theme at **HackShift 2026**. 
+ProofLoop is built for the **Alumni Network & Professional Connections** theme at **HackShift 2026**:
+> **"Building a Network, Not a Directory."**
 
-Traditional alumni networks act as passive directories or vanity social feeds where students send cold outreach that rarely receives responses or results in actionable outcomes. ProofLoop re-engineers this relationship into a high-trust, structured micro-mentorship cycle:
+The platform connects **students, alumni, faculty, founders, recruiters, and institutions** through **expertise, intent, and opportunities**. Rather than treating roles as generic profile tags, each participant type has distinct workflows, permissions, and portals.
 
+The central object across all journeys is a **Loop Mission**:
 ```
-[1. REQUEST HELP] ➔ [2. EXPLAINABLE MATCH] ➔ [3. CONNECT & ACCEPT] ➔ [4. AGREE NEXT ACTION] ➔ [5. INDEPENDENT OUTCOME CONFIRMATION]
+[1. DEFINE INTENT] ➔ [2. EXPLAINABLE MATCH] ➔ [3. CONNECT & AGREE] ➔ [4. COMMIT & ACT] ➔ [5. CLOSE THE LOOP]
 ```
 
-### The Key Differentiator: Closed-Loop Follow-Through
-- **Not another directory:** Alumni explicitly opt-in and define strict active capacity limits (e.g. max 3 active sessions).
-- **Explainable Matching:** Students discover alumni through a deterministic 5-factor scoring engine that shows honest, inspectable match reasons.
-- **Actionable Micro-Sessions:** Introductions are anchored to specific, scoped questions with agreed next steps.
-- **Independent Second-Party Confirmation:** A student marking an agreed action complete does *not* automatically close the loop. The alumnus must independently verify the outcome.
-- **Truthful Outcomes:** ProofLoop records verified follow-through on practical guidance, without fabricating promises of job offers or career guarantees.
+### The Core Principle: Connections Should Lead Somewhere
+- **Not another directory:** Participants explicitly opt-in and define strict active capacity limits (e.g. max 3 active sessions).
+- **Explainable Evidence Matching:** Deterministic 5-factor scoring engine surfaces truthful evidence bullets (skill overlap, institutional affinity, availability) without inventing predictive AI scores.
+- **Actionable Micro-Missions:** Introductions are anchored to specific, scoped deliverables with clear owners, timelines, and next actions.
+- **Independent Second-Party Confirmation:** Student self-reporting is audited separately from 2nd-party alumni/collaborator verification.
+- **Privacy-Conscious Telemetry:** Campuses view aggregated outcome benchmarks with $k \ge 3$ differential privacy, never private session correspondence.
 
 ---
 
