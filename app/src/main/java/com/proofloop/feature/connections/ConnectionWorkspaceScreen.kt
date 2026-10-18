@@ -75,32 +75,73 @@ fun ConnectionWorkspaceScreen(
             // Header
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = ProofPaper,
-                border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder)
+                color = ProofWhite,
+                border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = ProofInk
-                        )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = onNavigateBack,
+                            modifier = Modifier
+                                .size(34.dp)
+                                .background(ProofPaper, RoundedCornerShape(6.dp))
+                                .border(1.5.dp, ProofBorder, RoundedCornerShape(6.dp))
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = ProofInk,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = "WORKSPACE",
+                                style = MaterialTheme.typography.displayMedium.copy(
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Black
+                                ),
+                                color = ProofInk
+                            )
+                            Text(
+                                text = "Two-Party Locked Commitment",
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
+                                color = ProofTextMuted
+                            )
+                        }
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "COMMITMENT WORKSPACE",
-                        style = MaterialTheme.typography.displayMedium.copy(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Black
-                        ),
-                        color = ProofInk
-                    )
+
+                    // Live Sync Pill
+                    Surface(
+                        shape = RoundedCornerShape(4.dp),
+                        color = ProofPaperLight,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            NeoPulseIndicator(color = ProofSignalEmerald, size = 8.dp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "FIRESTORE SYNC",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 9.sp
+                                ),
+                                color = ProofInk
+                            )
+                        }
+                    }
                 }
             }
 
@@ -629,33 +670,44 @@ fun ConnectionWorkspaceScreen(
                             }
                         }
                     } else {
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = ProofSignalMint,
-                            border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
+                        NeoCard(
+                            backgroundColor = ProofWhite,
+                            accentColor = ProofSignalEmerald,
+                            stampText = "2-PARTY AUDITED",
+                            shadowOffset = 3.dp,
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Row(
-                                modifier = Modifier.padding(12.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(Icons.Default.CheckCircle, contentDescription = null, tint = ProofInk)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Column {
-                                    Text(
-                                        text = "FULL LOOP CLOSED & CONFIRMED",
-                                        style = MaterialTheme.typography.labelMedium.copy(
-                                            fontFamily = FontFamily.Monospace,
-                                            fontWeight = FontWeight.Black
-                                        ),
-                                        color = ProofInk
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Default.CheckCircle,
+                                        contentDescription = null,
+                                        tint = ProofSignalEmerald,
+                                        modifier = Modifier.size(24.dp)
                                     )
-                                    Text(
-                                        text = "Both student completion and alumnus confirmation recorded in Firestore.",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = ProofInk
-                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column {
+                                        Text(
+                                            text = "FULL LOOP CLOSED & CONFIRMED",
+                                            style = MaterialTheme.typography.labelMedium.copy(
+                                                fontFamily = FontFamily.Monospace,
+                                                fontWeight = FontWeight.Black,
+                                                letterSpacing = 0.5.sp
+                                            ),
+                                            color = ProofObsidianInk
+                                        )
+                                        Text(
+                                            text = "Verified follow-through recorded permanently in Cloud Firestore.",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = ProofCharcoalMuted
+                                        )
+                                    }
                                 }
+                                NeoVerificationSeal(text = "CLOSED")
                             }
                         }
                     }

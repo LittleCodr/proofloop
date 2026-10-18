@@ -62,18 +62,21 @@ fun AlumniInboxScreen(
                 }
             )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(16.dp)
-            ) {
-                // Profile & Opt-in Control Card
-                val profile = uiState.profile
-                NeoCard(
-                    backgroundColor = ProofWhite,
-                    shadowOffset = 3.dp
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
+                    // Profile & Opt-in Control Card
+                    val profile = uiState.profile
+                    NeoCard(
+                        backgroundColor = ProofWhite,
+                        shadowOffset = 3.5.dp,
+                        accentColor = ProofSignalEmerald,
+                        stampText = "VERIFIED MENTOR PROFILE"
+                    ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -112,8 +115,12 @@ fun AlumniInboxScreen(
                         }
 
 
-                        // Opt-in switch
+                        // Opt-in switch with live pulse dot
                         Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (profile?.acceptingRequests == true) {
+                                NeoPulseIndicator(color = ProofSignalEmerald, size = 8.dp)
+                                Spacer(modifier = Modifier.width(6.dp))
+                            }
                             Text(
                                 text = if (profile?.acceptingRequests == true) "OPTED IN" else "PAUSED",
                                 style = MaterialTheme.typography.labelSmall.copy(
@@ -128,7 +135,7 @@ fun AlumniInboxScreen(
                                 onCheckedChange = { viewModel.toggleAcceptingRequests(it) },
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = ProofWhite,
-                                    checkedTrackColor = ProofSignalMint,
+                                    checkedTrackColor = ProofSignalEmerald,
                                     uncheckedThumbColor = ProofWhite,
                                     uncheckedTrackColor = ProofSurfaceMuted
                                 )
@@ -142,32 +149,29 @@ fun AlumniInboxScreen(
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
-                            Text(
-                                text = "ACTIVE SESSIONS",
-                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = ProofTextMuted
-                            )
-                            val activeCount = uiState.acceptedConnections.count { it.status == "ACCEPTED" }
-                            Text(
-                                text = "$activeCount of ${profile?.maxActiveRequests ?: 3} max",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                color = if (activeCount >= (profile?.maxActiveRequests ?: 3)) ProofCoral else ProofInk
-                            )
-                        }
+                        val activeCount = uiState.acceptedConnections.count { it.status == "ACCEPTED" }
+                        NeoSegmentedCapacityMeter(
+                            activeCount = activeCount,
+                            maxCount = profile?.maxActiveRequests ?: 3
+                        )
 
-                        Column {
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = if (profile?.acceptingRequests == true) ProofVoltCitron else ProofSurfaceMuted,
+                            border = BorderStroke(1.dp, ProofBorder)
+                        ) {
                             Text(
-                                text = "AVAILABILITY",
-                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = ProofTextMuted
-                            )
-                            Text(
-                                text = if (profile?.acceptingRequests == true) "Accepting Missions" else "Paused by Mentor",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                color = if (profile?.acceptingRequests == true) ProofInk else ProofCoral
+                                text = if (profile?.acceptingRequests == true) "ACCEPTING MISSIONS" else "PAUSED",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 10.sp
+                                ),
+                                color = ProofInk,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
                             )
                         }
                     }
@@ -478,8 +482,28 @@ fun AlumniInboxScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(96.dp))
             }
+
+            // Floating Neo-Brutalist Bottom Dock
+            NeoBottomNavBar(
+                selectedTab = "INBOX",
+                onTabSelected = { tab ->
+                    when (tab) {
+                        "HUB" -> { /* User can view pending missions */ }
+                        "INBOX" -> { /* Current Tab */ }
+                        "WORKSPACE" -> {
+                            if (uiState.acceptedConnections.isNotEmpty()) {
+                                onOpenWorkspaceClick(uiState.acceptedConnections.first().id)
+                            }
+                        }
+                        "LEDGER" -> onOpenImpactLedgerClick()
+                    }
+                },
+                pendingCount = uiState.incomingRequests.size,
+                acceptedCount = uiState.acceptedConnections.size,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
     }
 }

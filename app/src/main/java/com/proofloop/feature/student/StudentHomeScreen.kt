@@ -84,16 +84,19 @@ fun StudentHomeScreen(
                 }
             )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(16.dp)
-            ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
                 // Welcome Card
                 NeoCard(
                     backgroundColor = ProofWhite,
-                    shadowOffset = 3.dp
+                    shadowOffset = 3.5.dp,
+                    accentColor = ProofKleinBlue,
+                    stampText = "CAMPUS NETWORK PROTOCOL"
                 ) {
                     Text(
                         text = "WELCOME, ${uiState.currentUser?.name?.uppercase() ?: currentRole}",
@@ -109,15 +112,104 @@ fun StudentHomeScreen(
                         color = ProofTextMuted
                     )
                     Spacer(modifier = Modifier.height(14.dp))
-                    NeoButton(
+                    NeoVoltButton(
                         text = if (currentRole == "FOUNDER") "Post Collaboration Mission" else "Start Loop Mission",
                         onClick = onRequestHelpClick,
-                        backgroundColor = if (currentRole == "FOUNDER") ProofAcidLime else ProofElectricLilac,
-                        contentColor = ProofInk,
                         icon = Icons.Default.Add
                     )
                 }
 
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // KPI Micro-Dash Grid
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Metric 1: Open/Active
+                    NeoCard(
+                        modifier = Modifier.weight(1f),
+                        backgroundColor = ProofWhite,
+                        shadowOffset = 2.dp,
+                        accentColor = ProofKleinBlue
+                    ) {
+                        Text(
+                            text = "MISSIONS",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 9.sp
+                            ),
+                            color = ProofTextMuted
+                        )
+                        Text(
+                            text = "${uiState.activeRequests.size + uiState.acceptedConnections.size}",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 22.sp
+                            ),
+                            color = ProofInk
+                        )
+                        Text("Active & Open", style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp), color = ProofTextMuted)
+                    }
+
+                    // Metric 2: Committed Workspaces
+                    NeoCard(
+                        modifier = Modifier.weight(1f),
+                        backgroundColor = ProofWhite,
+                        shadowOffset = 2.dp,
+                        accentColor = ProofVoltCitron
+                    ) {
+                        Text(
+                            text = "IN WORKSPACE",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 9.sp
+                            ),
+                            color = ProofTextMuted
+                        )
+                        Text(
+                            text = "${uiState.acceptedConnections.size}",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 22.sp
+                            ),
+                            color = ProofInk
+                        )
+                        Text("Agreed Actions", style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp), color = ProofTextMuted)
+                    }
+
+                    // Metric 3: Verified Closed Loops
+                    NeoCard(
+                        modifier = Modifier.weight(1f),
+                        backgroundColor = ProofWhite,
+                        shadowOffset = 2.dp,
+                        accentColor = ProofSignalEmerald
+                    ) {
+                        Text(
+                            text = "VERIFIED",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 9.sp
+                            ),
+                            color = ProofTextMuted
+                        )
+                        Text(
+                            text = "${uiState.completedOutcomes.size}",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 22.sp
+                            ),
+                            color = ProofInk
+                        )
+                        Text("Closed Loops", style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp), color = ProofTextMuted)
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(14.dp))
 
@@ -125,7 +217,9 @@ fun StudentHomeScreen(
                 if (uiState.availableBlueprints.isNotEmpty()) {
                     NeoCard(
                         backgroundColor = ProofWhite,
-                        shadowOffset = 2.dp
+                        shadowOffset = 2.5.dp,
+                        accentColor = ProofDigitalLilac,
+                        stampText = "STRUCTURED TEMPLATES"
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
@@ -611,8 +705,32 @@ fun StudentHomeScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(96.dp))
             }
+
+            // Floating Neo-Brutalist Bottom Dock
+            NeoBottomNavBar(
+                selectedTab = "HUB",
+                onTabSelected = { tab ->
+                    when (tab) {
+                        "HUB" -> { /* Current Tab */ }
+                        "INBOX" -> {
+                            if (uiState.activeRequests.isNotEmpty()) {
+                                onViewMatchesClick(uiState.activeRequests.first().id)
+                            }
+                        }
+                        "WORKSPACE" -> {
+                            if (uiState.acceptedConnections.isNotEmpty()) {
+                                onOpenWorkspaceClick(uiState.acceptedConnections.first().id)
+                            }
+                        }
+                        "LEDGER" -> onOpenImpactLedgerClick()
+                    }
+                },
+                pendingCount = uiState.pendingConnections.size,
+                acceptedCount = uiState.acceptedConnections.size,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
     }
 }

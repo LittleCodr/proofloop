@@ -10,16 +10,16 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val ProofColorScheme = lightColorScheme(
-    primary = ProofElectricLilac,
-    onPrimary = ProofInk,
+    primary = ProofCobalt,
+    onPrimary = ProofWhite,
     primaryContainer = ProofMutedLavender,
     onPrimaryContainer = ProofInk,
-    secondary = ProofSignalMint,
+    secondary = ProofAcidLime,
     onSecondary = ProofInk,
     secondaryContainer = ProofSurfaceMuted,
     onSecondaryContainer = ProofInk,
     tertiary = ProofCoral,
-    onTertiary = ProofInk,
+    onTertiary = ProofWhite,
     background = ProofPaper,
     onBackground = ProofInk,
     surface = ProofWhite,
@@ -28,7 +28,7 @@ private val ProofColorScheme = lightColorScheme(
     onSurfaceVariant = ProofInk,
     outline = ProofBorder,
     error = ProofCoral,
-    onError = ProofInk
+    onError = ProofWhite
 )
 
 @Composable
