@@ -89,34 +89,49 @@ fun MatchResultsScreen(
 
                 Spacer(modifier = Modifier.height(14.dp))
 
-                // Request recap card
+                // Compact Mission Recap Strip
                 val req = uiState.request
                 if (req != null) {
                     NeoCard(
                         backgroundColor = ProofWhite,
-                        shadowOffset = 2.dp
+                        shadowOffset = 2.dp,
+                        cornerRadius = 6.dp,
+                        contentPadding = 7.dp
                     ) {
-                        Text(
-                            text = "ACTIVE MISSION",
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black),
-                            color = ProofTextMuted
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = req.title,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ProofInk
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            NeoTag(text = req.category, backgroundColor = ProofLavender)
-                            NeoTag(text = "${req.durationMinutes}m duration", backgroundColor = ProofSurfaceMuted)
-                            if (req.blueprintId.isNotBlank()) {
-                                NeoTag(text = "Blueprint Active", backgroundColor = ProofSignalMint)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "MISSION:",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontFamily = FontFamily.Monospace,
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 9.sp
+                                    ),
+                                    color = ProofCharcoalMuted
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+                                Text(
+                                    text = req.title,
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofObsidianInk,
+                                    maxLines = 1
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                NeoTag(text = "${req.durationMinutes}m", backgroundColor = ProofVoltCitron)
+                                NeoTag(text = req.category, backgroundColor = ProofDigitalLilac)
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
                 // Success Message
@@ -127,46 +142,58 @@ fun MatchResultsScreen(
                 ) {
                     Column {
                         NeoCard(
-                            backgroundColor = ProofSignalMint,
-                            shadowOffset = 2.dp
+                            backgroundColor = ProofSignalEmerald,
+                            shadowOffset = 2.dp,
+                            contentPadding = 8.dp
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Check, contentDescription = null, tint = ProofInk)
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Icon(Icons.Default.Check, contentDescription = null, tint = ProofObsidianInk, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = uiState.successMessage ?: "",
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofObsidianInk
                                 )
                             }
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
                             NeoButton(
-                                text = "Go to Student Dashboard",
+                                text = "Go to Student Dashboard →",
                                 onClick = onViewHome,
-                                backgroundColor = ProofInk,
-                                contentColor = ProofWhite
+                                backgroundColor = ProofObsidianInk,
+                                contentColor = ProofVoltCitron
                             )
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
 
-                Text(
-                    text = "PROOF LOOP INTELLIGENCE",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 0.5.sp
-                    ),
-                    color = ProofInk
-                )
-                Text(
-                    text = "Every recommendation explains why a mentor fits using verifiable profile facts, without invented claims.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = ProofTextMuted
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "• PROOFLOOP INTELLIGENCE MATCHES",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 11.sp,
+                            letterSpacing = 0.5.sp
+                        ),
+                        color = ProofObsidianInk
+                    )
+                    Text(
+                        text = "${uiState.explainableMatches.size} AVAILABLE",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 9.sp
+                        ),
+                        color = ProofKleinBlue
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 if (uiState.isLoading) {
                     NeoLoadingIndicator(message = "Evaluating skill overlap, availability & capacity...")
@@ -184,211 +211,158 @@ fun MatchResultsScreen(
 
                         NeoCard(
                             backgroundColor = ProofWhite,
-                            shadowOffset = 4.dp,
-                            modifier = Modifier.padding(bottom = 14.dp)
+                            shadowOffset = 2.dp,
+                            cornerRadius = 8.dp,
+                            contentPadding = 9.dp,
+                            modifier = Modifier.padding(bottom = 8.dp)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Top
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Text(
                                             text = alumni.displayName,
-                                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                            color = ProofInk
+                                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 14.sp),
+                                            color = ProofObsidianInk
                                         )
                                         if (alumni.isVerifiedAlumni || alumni.isVerifiedProfile) {
-                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Spacer(modifier = Modifier.width(3.dp))
                                             Icon(
                                                 imageVector = Icons.Default.Verified,
                                                 contentDescription = "Verified Partner",
-                                                tint = ProofCobalt,
-                                                modifier = Modifier.size(16.dp)
+                                                tint = ProofKleinBlue,
+                                                modifier = Modifier.size(13.dp)
                                             )
                                         }
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Surface(
-                                            shape = RoundedCornerShape(4.dp),
-                                            color = when (alumni.role) {
-                                                "FOUNDER" -> ProofAcidLime
-                                                "FACULTY" -> ProofLavender
-                                                "RECRUITER" -> ProofCoral
-                                                else -> ProofSignalMint
-                                            },
-                                            border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder)
-                                        ) {
-                                            Text(
-                                                text = alumni.role,
-                                                style = MaterialTheme.typography.labelSmall.copy(
-                                                    fontFamily = FontFamily.Monospace,
-                                                    fontWeight = FontWeight.Black,
-                                                    fontSize = 9.sp
-                                                ),
-                                                color = ProofInk,
-                                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
-                                            )
-                                        }
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        NeoTag(
+                                            text = alumni.role,
+                                            backgroundColor = when (alumni.role) {
+                                                "FOUNDER" -> ProofVoltCitron
+                                                "FACULTY" -> ProofDigitalLilac
+                                                "RECRUITER" -> ProofSolarTangerine
+                                                else -> ProofSignalEmerald
+                                            }
+                                        )
                                     }
                                     Text(
-                                        text = alumni.subtitle,
-                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                        color = ProofInk
-                                    )
-                                    Text(
-                                        text = alumni.college.ifBlank { "Professional Community" },
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = ProofTextMuted
+                                        text = "${alumni.subtitle} • ${alumni.college.ifBlank { "Campus Network" }}",
+                                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                        color = ProofCharcoalMuted,
+                                        maxLines = 1
                                     )
                                 }
 
                                 // Fit Level Badge
                                 val (fitBg, fitText) = when (expMatch.fitLevel) {
-                                    MatchFitLevel.EXCELLENT_FIT -> ProofSignalMint to expMatch.fitLevel.label
-                                    MatchFitLevel.STRONG_FIT -> ProofElectricLilac to expMatch.fitLevel.label
-                                    MatchFitLevel.GOOD_FIT -> ProofLavender to expMatch.fitLevel.label
-                                    MatchFitLevel.EXPLORATORY_FIT -> ProofSurfaceMuted to expMatch.fitLevel.label
+                                    MatchFitLevel.EXCELLENT_FIT -> ProofVoltCitron to expMatch.fitLevel.label
+                                    MatchFitLevel.STRONG_FIT -> ProofSignalEmerald to expMatch.fitLevel.label
+                                    MatchFitLevel.GOOD_FIT -> ProofDigitalLilac to expMatch.fitLevel.label
+                                    MatchFitLevel.EXPLORATORY_FIT -> ProofPaperLight to expMatch.fitLevel.label
                                 }
 
                                 Surface(
-                                    shape = RoundedCornerShape(8.dp),
+                                    shape = RoundedCornerShape(5.dp),
                                     color = fitBg,
-                                    border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder)
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder)
                                 ) {
-                                    Column(
-                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
                                             text = fitText.uppercase(),
                                             style = MaterialTheme.typography.labelSmall.copy(
                                                 fontFamily = FontFamily.Monospace,
                                                 fontWeight = FontWeight.Black,
-                                                fontSize = 10.sp
+                                                fontSize = 8.5.sp
                                             ),
-                                            color = ProofInk
+                                            color = ProofObsidianInk
                                         )
+                                        Spacer(modifier = Modifier.width(3.dp))
                                         Text(
-                                            text = "${expMatch.totalScore} pts",
-                                            style = MaterialTheme.typography.bodySmall.copy(
+                                            text = "${expMatch.totalScore}p",
+                                            style = MaterialTheme.typography.labelSmall.copy(
                                                 fontFamily = FontFamily.Monospace,
                                                 fontWeight = FontWeight.Bold,
-                                                fontSize = 9.sp
+                                                fontSize = 8.5.sp
                                             ),
-                                            color = ProofInk
+                                            color = ProofObsidianInk
                                         )
                                     }
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
 
-                            // Truthful Evidence Box
+                            // Truthful Evidence Box (compact)
                             Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = ProofPaper,
+                                shape = RoundedCornerShape(5.dp),
+                                color = ProofPaperLight,
                                 border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Column(modifier = Modifier.padding(10.dp)) {
-                                    Text(
-                                        text = "MATCH EVIDENCE:",
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            fontFamily = FontFamily.Monospace,
-                                            fontWeight = FontWeight.Black
-                                        ),
-                                        color = ProofInk
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    expMatch.evidenceBullets.forEach { bullet ->
-                                        Row(modifier = Modifier.padding(vertical = 2.dp)) {
+                                Column(modifier = Modifier.padding(6.dp)) {
+                                    expMatch.evidenceBullets.take(2).forEach { bullet ->
+                                        Row(
+                                            modifier = Modifier.padding(vertical = 1.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
                                             Text(
                                                 text = "✓",
                                                 style = MaterialTheme.typography.bodySmall.copy(
                                                     fontWeight = FontWeight.Black,
-                                                    color = ProofCobalt
+                                                    color = ProofKleinBlue,
+                                                    fontSize = 11.sp
                                                 )
                                             )
-                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Spacer(modifier = Modifier.width(4.dp))
                                             Text(
                                                 text = bullet,
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = ProofInk
+                                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                                color = ProofObsidianInk,
+                                                maxLines = 1
                                             )
                                         }
                                     }
                                 }
                             }
 
-                            // Missing Info Notice (if any)
-                            if (expMatch.missingInfoNotice != null) {
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(ProofSurfaceMuted, RoundedCornerShape(4.dp))
-                                        .border(1.dp, ProofBorder, RoundedCornerShape(4.dp))
-                                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Info,
-                                        contentDescription = null,
-                                        tint = ProofTextMuted,
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(
-                                        text = expMatch.missingInfoNotice,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = ProofTextMuted
-                                    )
-                                }
-                            }
+                            Spacer(modifier = Modifier.height(6.dp))
 
-                            Spacer(modifier = Modifier.height(10.dp))
-
-                            // Mentor Capacity & Availability
+                            // Load & CTA Row
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Active load: ${expMatch.activeConnectionsCount}/${alumni.maxActiveRequests} missions",
-                                    style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace),
-                                    color = ProofTextMuted
+                                    text = "Load: ${expMatch.activeConnectionsCount}/${alumni.maxActiveRequests} • ${alumni.availableSlots.firstOrNull() ?: "Flexible"}",
+                                    style = MaterialTheme.typography.labelSmall.copy(fontFamily = FontFamily.Monospace, fontSize = 9.sp),
+                                    color = ProofCharcoalMuted
                                 )
-
-                                if (alumni.availableSlots.isNotEmpty()) {
-                                    Text(
-                                        text = alumni.availableSlots.first(),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = ProofTextMuted
-                                    )
-                                }
                             }
 
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
 
                             // CTA: Send Request
                             if (isAlreadyRequested) {
                                 NeoButton(
                                     text = "Request Pending ✓",
                                     onClick = {},
-                                    backgroundColor = ProofSurfaceMuted,
-                                    contentColor = ProofInk,
+                                    backgroundColor = ProofPaperLight,
+                                    contentColor = ProofCharcoalMuted,
                                     enabled = false
                                 )
                             } else {
-                                NeoButton(
-                                    text = "Send Mission Request",
+                                NeoVoltButton(
+                                    text = "Send Mission Request →",
                                     onClick = {
                                         viewModel.sendConnectionRequest(alumni.uid, alumni.displayName)
                                     },
-                                    backgroundColor = ProofElectricLilac,
-                                    contentColor = ProofInk,
                                     icon = Icons.Default.Send
                                 )
                             }
@@ -398,7 +372,7 @@ fun MatchResultsScreen(
                         if (index == 0) {
                             NeoBannerAd(
                                 adTitle = "FEATURED HIRING PARTNER",
-                                modifier = Modifier.padding(bottom = 14.dp)
+                                modifier = Modifier.padding(bottom = 8.dp)
                             )
                         }
                     }

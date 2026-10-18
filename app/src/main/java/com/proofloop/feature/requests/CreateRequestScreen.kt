@@ -73,31 +73,36 @@ fun CreateRequestScreen(
             // Header
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = ProofPaper,
-                border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder)
+                color = ProofPaperLight,
+                border = androidx.compose.foundation.BorderStroke(1.dp, ProofRecessedMuted)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(horizontal = 12.dp, vertical = 7.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier.size(32.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = ProofInk
+                            tint = ProofObsidianInk,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = "NEW LOOP MISSION",
-                        style = MaterialTheme.typography.displayMedium.copy(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Black
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = (-0.5).sp
                         ),
-                        color = ProofInk
+                        color = ProofObsidianInk
                     )
                 }
             }
@@ -106,17 +111,18 @@ fun CreateRequestScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollState)
-                    .padding(16.dp)
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
             ) {
                 // Workflow indicator (Step 1 -> Step 2)
                 WorkflowHero(currentStep = 1)
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // MISSION BLUEPRINTS PICKER (Reusable Mentorship Templates)
                 NeoCard(
-                    backgroundColor = ProofWhite,
-                    shadowOffset = 3.dp
+                    backgroundColor = ProofPureWhite,
+                    contentPadding = 8.dp,
+                    shadowOffset = 2.dp
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -125,49 +131,54 @@ fun CreateRequestScreen(
                         Icon(
                             imageVector = Icons.Default.Layers,
                             contentDescription = null,
-                            tint = ProofPlum,
-                            modifier = Modifier.size(18.dp)
+                            tint = ProofKleinBlue,
+                            modifier = Modifier.size(14.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "MISSION BLUEPRINTS",
-                            style = MaterialTheme.typography.labelMedium.copy(
+                            style = MaterialTheme.typography.labelSmall.copy(
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Black,
+                                fontSize = 11.sp,
                                 letterSpacing = 0.5.sp
                             ),
-                            color = ProofPlum
+                            color = ProofKleinBlue
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(
+                            text = "PRE-SCOPED",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = ProofCharcoalMuted
                         )
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Select a proven mentorship agenda or customize every field manually.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = ProofTextMuted
-                    )
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .horizontalScroll(blueprintScrollState),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         uiState.availableBlueprints.forEach { bp ->
                             val isSelected = uiState.selectedBlueprint?.id == bp.id
                             Surface(
-                                shape = RoundedCornerShape(8.dp),
-                                color = if (isSelected) ProofElectricLilac else ProofPaper,
+                                shape = RoundedCornerShape(6.dp),
+                                color = if (isSelected) ProofDigitalLilac else ProofPaperLight,
                                 border = androidx.compose.foundation.BorderStroke(
-                                    if (isSelected) 2.dp else 1.5.dp,
-                                    ProofBorder
+                                    1.5.dp,
+                                    if (isSelected) ProofObsidianInk else ProofRecessedMuted
                                 ),
                                 modifier = Modifier
-                                    .width(200.dp)
+                                    .width(150.dp)
                                     .clickable { viewModel.selectBlueprint(bp) }
                             ) {
-                                Column(modifier = Modifier.padding(10.dp)) {
+                                Column(modifier = Modifier.padding(7.dp)) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -177,34 +188,35 @@ fun CreateRequestScreen(
                                             text = "${bp.suggestedDurationMinutes}m",
                                             style = MaterialTheme.typography.labelSmall.copy(
                                                 fontFamily = FontFamily.Monospace,
-                                                fontWeight = FontWeight.Bold
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 9.sp
                                             ),
-                                            color = ProofInk
+                                            color = ProofObsidianInk
                                         )
                                         if (isSelected) {
                                             Icon(
                                                 imageVector = Icons.Default.Check,
                                                 contentDescription = "Selected",
-                                                tint = ProofInk,
-                                                modifier = Modifier.size(16.dp)
+                                                tint = ProofObsidianInk,
+                                                modifier = Modifier.size(13.dp)
                                             )
                                         }
                                     }
-                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = bp.title,
-                                        style = MaterialTheme.typography.titleSmall.copy(
+                                        style = MaterialTheme.typography.bodySmall.copy(
                                             fontWeight = FontWeight.Bold,
-                                            fontSize = 13.sp
+                                            fontSize = 11.sp
                                         ),
-                                        color = ProofInk,
-                                        maxLines = 2
+                                        color = ProofObsidianInk,
+                                        maxLines = 1
                                     )
-                                    Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = bp.category,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = ProofTextMuted
+                                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                                        color = ProofCharcoalMuted,
+                                        maxLines = 1
                                     )
                                 }
                             }
@@ -212,26 +224,27 @@ fun CreateRequestScreen(
                     }
 
                     if (uiState.selectedBlueprint != null) {
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(ProofSignalMint.copy(alpha = 0.35f), RoundedCornerShape(6.dp))
-                                .border(1.dp, ProofBorder, RoundedCornerShape(6.dp))
-                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                                .background(ProofSignalEmerald.copy(alpha = 0.25f), RoundedCornerShape(5.dp))
+                                .border(1.dp, ProofObsidianInk, RoundedCornerShape(5.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "Active Template: ${uiState.selectedBlueprint?.title} (v${uiState.selectedBlueprint?.version})",
-                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = ProofInk
+                                text = "Active: ${uiState.selectedBlueprint?.title}",
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp),
+                                color = ProofObsidianInk
                             )
                             Text(
                                 text = "Clear",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = FontWeight.Bold,
-                                    color = ProofCoral
+                                    fontSize = 10.sp,
+                                    color = ProofSolarTangerine
                                 ),
                                 modifier = Modifier.clickable { viewModel.clearBlueprint() }
                             )
@@ -239,16 +252,16 @@ fun CreateRequestScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // MISSION COACH BUTTON & SUGGESTION CARD
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    color = ProofRaisedPlum,
-                    border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder)
+                    shape = RoundedCornerShape(6.dp),
+                    color = ProofPlumSurface,
+                    border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofObsidianInk)
                 ) {
-                    Column(modifier = Modifier.padding(14.dp)) {
+                    Column(modifier = Modifier.padding(10.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
@@ -258,45 +271,39 @@ fun CreateRequestScreen(
                                 Icon(
                                     imageVector = Icons.Default.AutoAwesome,
                                     contentDescription = null,
-                                    tint = ProofSignalMint,
-                                    modifier = Modifier.size(18.dp)
+                                    tint = ProofSignalEmerald,
+                                    modifier = Modifier.size(15.dp)
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = "PROOFLOOP COACH",
-                                    style = MaterialTheme.typography.labelMedium.copy(
+                                    style = MaterialTheme.typography.labelSmall.copy(
                                         fontFamily = FontFamily.Monospace,
                                         fontWeight = FontWeight.Black,
+                                        fontSize = 11.sp,
                                         letterSpacing = 0.5.sp
                                     ),
-                                    color = ProofSignalMint
+                                    color = ProofSignalEmerald
                                 )
                             }
 
                             Surface(
                                 shape = RoundedCornerShape(4.dp),
-                                color = ProofElectricLilac,
-                                border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
+                                color = ProofVoltCitron,
+                                border = androidx.compose.foundation.BorderStroke(1.dp, ProofObsidianInk),
                                 modifier = Modifier.clickable { viewModel.requestMissionCoaching() }
                             ) {
                                 Text(
                                     text = "REFINE DRAFT",
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontWeight = FontWeight.Black,
-                                        fontSize = 11.sp
+                                        fontSize = 10.sp
                                     ),
-                                    color = ProofInk,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                    color = ProofObsidianInk,
+                                    modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp)
                                 )
                             }
                         }
-
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Turn rough queries into crisp, high-signal missions mentors want to accept.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = ProofLavender
-                        )
 
                         // If coach suggestion is available
                         AnimatedVisibility(
@@ -308,63 +315,62 @@ fun CreateRequestScreen(
                             if (suggestion != null) {
                                 Column(
                                     modifier = Modifier
-                                        .padding(top = 12.dp)
-                                        .background(ProofWhite, RoundedCornerShape(6.dp))
-                                        .border(1.dp, ProofBorder, RoundedCornerShape(6.dp))
-                                        .padding(12.dp)
-                                ) {
+                                        .padding(top = 8.dp)
+                                        .background(ProofPureWhite, RoundedCornerShape(6.dp))
+                                        .border(1.dp, ProofObsidianInk, RoundedCornerShape(6.dp))
+                                        .padding(8.dp)
+                                    ) {
                                     Text(
-                                        text = "COACH PROPOSAL (REVIEW & EDIT):",
+                                        text = "COACH PROPOSAL:",
                                         style = MaterialTheme.typography.labelSmall.copy(
                                             fontFamily = FontFamily.Monospace,
-                                            fontWeight = FontWeight.Bold
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 9.sp
                                         ),
-                                        color = ProofCobalt
+                                        color = ProofKleinBlue
                                     )
-                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = suggestion.refinedTitle,
-                                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                                        color = ProofInk
+                                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp),
+                                        color = ProofObsidianInk
                                     )
-                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = suggestion.refinedProblemStatement,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = ProofInk
-                                    )
-                                    Spacer(modifier = Modifier.height(6.dp))
-                                    Text(
-                                        text = "Deliverable: ${suggestion.suggestedOutcome}",
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                        color = ProofInk
+                                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
+                                        color = ProofCharcoalMuted
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = suggestion.coachingNotes,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = ProofTextMuted
+                                        text = "Deliverable: ${suggestion.suggestedOutcome}",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp),
+                                        color = ProofObsidianInk
                                     )
 
-                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Spacer(modifier = Modifier.height(6.dp))
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.End
                                     ) {
-                                        TextButton(onClick = { viewModel.dismissCoachSuggestion() }) {
-                                            Text("Dismiss", color = ProofTextMuted)
+                                        TextButton(
+                                            onClick = { viewModel.dismissCoachSuggestion() },
+                                            contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
+                                        ) {
+                                            Text("Dismiss", color = ProofCharcoalMuted, fontSize = 11.sp)
                                         }
-                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
                                         Button(
                                             onClick = { viewModel.applyCoachSuggestion(suggestion) },
                                             colors = ButtonDefaults.buttonColors(
-                                                containerColor = ProofSignalMint,
-                                                contentColor = ProofInk
+                                                containerColor = ProofSignalEmerald,
+                                                contentColor = ProofObsidianInk
                                             ),
-                                            shape = RoundedCornerShape(6.dp),
-                                            border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder)
+                                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 3.dp),
+                                            shape = RoundedCornerShape(5.dp),
+                                            border = androidx.compose.foundation.BorderStroke(1.dp, ProofObsidianInk)
                                         ) {
-                                            Text("Apply Proposal", fontWeight = FontWeight.Bold)
+                                            Text("Apply Proposal", fontWeight = FontWeight.Bold, fontSize = 11.sp)
                                         }
                                     }
                                 }
@@ -373,28 +379,40 @@ fun CreateRequestScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 NeoCard(
-                    backgroundColor = ProofWhite,
-                    shadowOffset = 4.dp
+                    backgroundColor = ProofPureWhite,
+                    contentPadding = 10.dp,
+                    shadowOffset = 2.5.dp
                 ) {
-                    Text(
-                        text = "LOOP MISSION SCOPE",
-                        style = MaterialTheme.typography.labelMedium.copy(
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Black,
-                            letterSpacing = 0.5.sp
-                        ),
-                        color = ProofCobalt
-                    )
-                    Text(
-                        text = "Alumni are more likely to accept requests that have a defined scope and clear outcome.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = ProofTextMuted
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "LOOP MISSION SCOPE",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 11.sp,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = ProofKleinBlue
+                        )
+                        Text(
+                            text = "HIGH-SIGNAL INPUTS",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = ProofCharcoalMuted
+                        )
+                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Title
                     NeoTextField(
@@ -404,7 +422,7 @@ fun CreateRequestScreen(
                         placeholder = "e.g. Review Jetpack Compose architecture for app"
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Description
                     NeoTextField(
@@ -413,81 +431,82 @@ fun CreateRequestScreen(
                         label = "Problem Description",
                         placeholder = "Describe the exact technical challenge or context you are blocked on...",
                         singleLine = false,
-                        maxLines = 4
+                        maxLines = 3
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Category Selector
                     Text(
                         text = "Help Category",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ProofInk
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp),
+                        color = ProofObsidianInk
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
                         HelpCategories.ALL.forEach { cat ->
                             val isSelected = uiState.category == cat
                             Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = if (isSelected) ProofElectricLilac else ProofWhite,
-                                border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
+                                shape = RoundedCornerShape(5.dp),
+                                color = if (isSelected) ProofDigitalLilac else ProofPaperLight,
+                                border = androidx.compose.foundation.BorderStroke(1.dp, ProofObsidianInk),
                                 modifier = Modifier.clickable { viewModel.onCategoryChange(cat) }
                             ) {
                                 Text(
                                     text = cat,
                                     style = MaterialTheme.typography.bodySmall.copy(
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                        fontSize = 11.sp
                                     ),
-                                    color = ProofInk,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                                    color = ProofObsidianInk,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                 )
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Required Skills Chips
                     Text(
                         text = "Required Skills",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ProofInk
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp),
+                        color = ProofObsidianInk
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     
                     // Selected skills
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
                         uiState.requiredSkills.forEach { skill ->
                             Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = ProofSignalMint,
-                                border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder)
+                                shape = RoundedCornerShape(5.dp),
+                                color = ProofSignalEmerald,
+                                border = androidx.compose.foundation.BorderStroke(1.dp, ProofObsidianInk)
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
                                         text = skill,
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                        color = ProofInk
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp),
+                                        color = ProofObsidianInk
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Spacer(modifier = Modifier.width(3.dp))
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = "Remove",
-                                        tint = ProofInk,
+                                        tint = ProofObsidianInk,
                                         modifier = Modifier
-                                            .size(14.dp)
+                                            .size(12.dp)
                                             .clickable { viewModel.removeSkill(skill) }
                                     )
                                 }
@@ -495,7 +514,7 @@ fun CreateRequestScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     // Add skill input & suggestions
                     Row(
@@ -505,18 +524,18 @@ fun CreateRequestScreen(
                         OutlinedTextField(
                             value = newSkillInput,
                             onValueChange = { newSkillInput = it },
-                            placeholder = { Text("Add another skill...", color = ProofTextMuted, fontSize = 13.sp) },
+                            placeholder = { Text("Add skill...", color = ProofCharcoalMuted, fontSize = 11.sp) },
                             singleLine = true,
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(6.dp),
                             modifier = Modifier.weight(1f),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = ProofWhite,
-                                unfocusedContainerColor = ProofWhite,
-                                focusedBorderColor = ProofInk,
-                                unfocusedBorderColor = ProofBorder
+                                focusedContainerColor = ProofPureWhite,
+                                unfocusedContainerColor = ProofPureWhite,
+                                focusedBorderColor = ProofObsidianInk,
+                                unfocusedBorderColor = ProofRecessedMuted
                             )
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         IconButton(
                             onClick = {
                                 if (newSkillInput.isNotBlank()) {
@@ -525,119 +544,117 @@ fun CreateRequestScreen(
                                 }
                             },
                             modifier = Modifier
-                                .background(ProofElectricLilac, RoundedCornerShape(8.dp))
-                                .border(1.5.dp, ProofBorder, RoundedCornerShape(8.dp))
+                                .size(40.dp)
+                                .background(ProofVoltCitron, RoundedCornerShape(6.dp))
+                                .border(1.5.dp, ProofObsidianInk, RoundedCornerShape(6.dp))
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add", tint = ProofInk)
+                            Icon(Icons.Default.Add, contentDescription = "Add", tint = ProofObsidianInk, modifier = Modifier.size(18.dp))
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Quick suggestions:",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = ProofTextMuted
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        quickSkillSuggestions.filter { !uiState.requiredSkills.contains(it) }.take(5).forEach { suggestion ->
+                        quickSkillSuggestions.filter { !uiState.requiredSkills.contains(it) }.take(4).forEach { suggestion ->
                             Surface(
                                 shape = RoundedCornerShape(4.dp),
-                                color = ProofSurfaceMuted,
-                                border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
+                                color = ProofPaperLight,
+                                border = androidx.compose.foundation.BorderStroke(1.dp, ProofRecessedMuted),
                                 modifier = Modifier.clickable { viewModel.addSkill(suggestion) }
                             ) {
                                 Text(
                                     text = "+ $suggestion",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = ProofInk,
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                                    color = ProofObsidianInk,
+                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
                                 )
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Desired Outcome
                     NeoTextField(
                         value = uiState.desiredOutcome,
                         onValueChange = viewModel::onDesiredOutcomeChange,
-                        label = "Desired Outcome (What will follow?)",
-                        placeholder = "e.g. Actionable list of architecture fixes and agreed next action",
+                        label = "Desired Deliverable (What will follow?)",
+                        placeholder = "e.g. Actionable PR feedback and agreed architecture refactor",
                         singleLine = false,
                         maxLines = 2
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Expected Duration
-                    Text(
-                        text = "Expected Session Duration",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ProofInk
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        durationOptions.forEach { mins ->
-                            val isSelected = uiState.durationMinutes == mins
-                            Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = if (isSelected) ProofElectricLilac else ProofWhite,
-                                border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clickable { viewModel.onDurationChange(mins) }
-                            ) {
-                                Text(
-                                    text = "${mins}m",
-                                    style = MaterialTheme.typography.labelMedium.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = ProofInk,
-                                    modifier = Modifier.padding(vertical = 10.dp),
-                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                                )
+                        Text(
+                            text = "Duration",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp),
+                            color = ProofObsidianInk
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                            durationOptions.forEach { mins ->
+                                val isSelected = uiState.durationMinutes == mins
+                                Surface(
+                                    shape = RoundedCornerShape(5.dp),
+                                    color = if (isSelected) ProofDigitalLilac else ProofPaperLight,
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, ProofObsidianInk),
+                                    modifier = Modifier.clickable { viewModel.onDurationChange(mins) }
+                                ) {
+                                    Text(
+                                        text = "${mins}m",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
+                                            fontSize = 10.sp
+                                        ),
+                                        color = ProofObsidianInk,
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                    )
+                                }
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Preferred Availability
                     Text(
                         text = "Preferred Availability",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = ProofInk
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp),
+                        color = ProofObsidianInk
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
                         availabilityOptions.forEach { slot ->
                             val isSelected = uiState.preferredAvailability == slot
                             Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = if (isSelected) ProofLavender else ProofWhite,
+                                shape = RoundedCornerShape(5.dp),
+                                color = if (isSelected) ProofDigitalLilac else ProofPaperLight,
                                 border = androidx.compose.foundation.BorderStroke(
-                                    if (isSelected) 2.dp else 1.5.dp,
-                                    ProofBorder
+                                    1.dp,
+                                    if (isSelected) ProofObsidianInk else ProofRecessedMuted
                                 ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { viewModel.onAvailabilityChange(slot) }
+                                modifier = Modifier.clickable { viewModel.onAvailabilityChange(slot) }
                             ) {
                                 Text(
                                     text = slot,
-                                    style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                        fontSize = 10.sp
                                     ),
-                                    color = ProofInk,
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                                    color = ProofObsidianInk,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                 )
                             }
                         }
@@ -650,37 +667,38 @@ fun CreateRequestScreen(
                         exit = shrinkVertically() + fadeOut()
                     ) {
                         Column {
-                            Spacer(modifier = Modifier.height(14.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
                             NeoTag(
                                 text = uiState.errorMessage ?: "",
-                                backgroundColor = ProofCoral,
-                                contentColor = ProofWhite,
+                                backgroundColor = ProofSolarTangerine,
+                                contentColor = ProofPureWhite,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     // Submit CTA
                     val ctaText = when (uiState.creatorRole) {
                         UserRole.FOUNDER.name -> "Find Matching Collaborators"
                         UserRole.FACULTY.name -> "Find Matching Researchers"
                         UserRole.RECRUITER.name -> "Find Matching Candidates"
-                        else -> "Find Matching Mentors & Partners"
+                        else -> "Find Matching Mentors"
                     }
                     NeoButton(
                         text = ctaText,
                         onClick = viewModel::submitRequest,
-                        backgroundColor = ProofElectricLilac,
-                        contentColor = ProofInk,
+                        backgroundColor = ProofVoltCitron,
+                        contentColor = ProofObsidianInk,
                         icon = Icons.Default.Search,
                         enabled = !uiState.isLoading,
-                        isLoading = uiState.isLoading
+                        isLoading = uiState.isLoading,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

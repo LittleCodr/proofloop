@@ -91,195 +91,252 @@ fun StudentHomeScreen(
                         .verticalScroll(scrollState)
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
-                // Welcome Card
+                // 1. High-Density Mission Command Bar (saves ~125dp)
                 NeoCard(
                     backgroundColor = ProofWhite,
-                    shadowOffset = 3.5.dp,
+                    shadowOffset = 2.dp,
+                    cornerRadius = 8.dp,
                     accentColor = ProofKleinBlue,
-                    stampText = "CAMPUS NETWORK PROTOCOL"
+                    contentPadding = 8.dp
                 ) {
-                    Text(
-                        text = "WELCOME, ${uiState.currentUser?.name?.uppercase() ?: currentRole}",
-                        style = MaterialTheme.typography.displayMedium.copy(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Black
-                        ),
-                        color = ProofInk
-                    )
-                    Text(
-                        text = welcomeSubtitle,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = ProofTextMuted
-                    )
-                    Spacer(modifier = Modifier.height(14.dp))
-                    NeoVoltButton(
-                        text = if (currentRole == "FOUNDER") "Post Collaboration Mission" else "Start Loop Mission",
-                        onClick = onRequestHelpClick,
-                        icon = Icons.Default.Add
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // KPI Micro-Dash Grid
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    // Metric 1: Open/Active
-                    NeoCard(
-                        modifier = Modifier.weight(1f),
-                        backgroundColor = ProofWhite,
-                        shadowOffset = 2.dp,
-                        accentColor = ProofKleinBlue
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "MISSIONS",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontFamily = FontFamily.Monospace,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 9.sp
-                            ),
-                            color = ProofTextMuted
-                        )
-                        Text(
-                            text = "${uiState.activeRequests.size + uiState.acceptedConnections.size}",
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontFamily = FontFamily.Monospace,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 22.sp
-                            ),
-                            color = ProofInk
-                        )
-                        Text("Active & Open", style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp), color = ProofTextMuted)
-                    }
-
-                    // Metric 2: Committed Workspaces
-                    NeoCard(
-                        modifier = Modifier.weight(1f),
-                        backgroundColor = ProofWhite,
-                        shadowOffset = 2.dp,
-                        accentColor = ProofVoltCitron
-                    ) {
-                        Text(
-                            text = "IN WORKSPACE",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontFamily = FontFamily.Monospace,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 9.sp
-                            ),
-                            color = ProofTextMuted
-                        )
-                        Text(
-                            text = "${uiState.acceptedConnections.size}",
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontFamily = FontFamily.Monospace,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 22.sp
-                            ),
-                            color = ProofInk
-                        )
-                        Text("Agreed Actions", style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp), color = ProofTextMuted)
-                    }
-
-                    // Metric 3: Verified Closed Loops
-                    NeoCard(
-                        modifier = Modifier.weight(1f),
-                        backgroundColor = ProofWhite,
-                        shadowOffset = 2.dp,
-                        accentColor = ProofSignalEmerald
-                    ) {
-                        Text(
-                            text = "VERIFIED",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontFamily = FontFamily.Monospace,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 9.sp
-                            ),
-                            color = ProofTextMuted
-                        )
-                        Text(
-                            text = "${uiState.completedOutcomes.size}",
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontFamily = FontFamily.Monospace,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 22.sp
-                            ),
-                            color = ProofInk
-                        )
-                        Text("Closed Loops", style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp), color = ProofTextMuted)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // MISSION BLUEPRINTS SHELF
-                if (uiState.availableBlueprints.isNotEmpty()) {
-                    NeoCard(
-                        backgroundColor = ProofWhite,
-                        shadowOffset = 2.5.dp,
-                        accentColor = ProofDigitalLilac,
-                        stampText = "STRUCTURED TEMPLATES"
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Layers,
-                                contentDescription = null,
-                                tint = ProofPlum,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                NeoPulseIndicator(size = 6.dp, color = ProofVoltCitron)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "WELCOME, ${uiState.currentUser?.name?.uppercase() ?: currentRole}",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 14.sp
+                                    ),
+                                    color = ProofObsidianInk
+                                )
+                            }
                             Text(
-                                text = "START FROM A MISSION BLUEPRINT",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontFamily = FontFamily.Monospace,
-                                    fontWeight = FontWeight.Black,
-                                    letterSpacing = 0.5.sp
-                                ),
-                                color = ProofPlum
+                                text = "${uiState.activeRequests.size + uiState.acceptedConnections.size} Active Missions • ${uiState.completedOutcomes.size} Verified Closed",
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                color = ProofCharcoalMuted
                             )
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .horizontalScroll(blueprintScrollState),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = ProofVoltCitron,
+                            border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
+                            modifier = Modifier.clickable(onClick = onRequestHelpClick)
                         ) {
-                            uiState.availableBlueprints.take(4).forEach { bp ->
-                                Surface(
-                                    shape = RoundedCornerShape(8.dp),
-                                    color = ProofPaper,
-                                    border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
-                                    modifier = Modifier
-                                        .width(170.dp)
-                                        .clickable { onRequestHelpClick() }
+                            Row(
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = null,
+                                    tint = ProofObsidianInk,
+                                    modifier = Modifier.size(15.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = if (currentRole == "FOUNDER") "+ MISSION" else "+ START",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontFamily = FontFamily.Monospace,
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 11.sp
+                                    ),
+                                    color = ProofObsidianInk
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 2. High-Density Unified KPI Metric Strip (saves ~50dp)
+                NeoCard(
+                    backgroundColor = ProofWhite,
+                    shadowOffset = 2.dp,
+                    cornerRadius = 8.dp,
+                    contentPadding = 6.dp
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Metric 1: Missions
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
+                            Text(
+                                text = "${uiState.activeRequests.size + uiState.acceptedConnections.size}",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 16.sp
+                                ),
+                                color = ProofKleinBlue
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                text = "MISSIONS",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 9.sp
+                                ),
+                                color = ProofCharcoalMuted
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .width(1.dp)
+                                .height(16.dp)
+                                .background(ProofBorder)
+                        )
+
+                        // Metric 2: In Workspace
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
+                            Text(
+                                text = "${uiState.acceptedConnections.size}",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 16.sp
+                                ),
+                                color = ProofSolarTangerine
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                text = "WORKSPACE",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 9.sp
+                                ),
+                                color = ProofCharcoalMuted
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .width(1.dp)
+                                .height(16.dp)
+                                .background(ProofBorder)
+                        )
+
+                        // Metric 3: Verified Closed
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
+                            Text(
+                                text = "${uiState.completedOutcomes.size}",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 16.sp
+                                ),
+                                color = ProofSignalEmerald
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                text = "VERIFIED",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 9.sp
+                                ),
+                                color = ProofCharcoalMuted
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 3. Compact Horizontal Blueprints Ribbon
+                if (uiState.availableBlueprints.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(blueprintScrollState),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = ProofObsidianInk,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Layers,
+                                    contentDescription = null,
+                                    tint = ProofVoltCitron,
+                                    modifier = Modifier.size(12.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "TEMPLATES:",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontFamily = FontFamily.Monospace,
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 9.sp
+                                    ),
+                                    color = ProofVoltCitron
+                                )
+                            }
+                        }
+
+                        uiState.availableBlueprints.take(5).forEach { bp ->
+                            Surface(
+                                shape = RoundedCornerShape(5.dp),
+                                color = ProofWhite,
+                                border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
+                                modifier = Modifier.clickable { onRequestHelpClick() }
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Column(modifier = Modifier.padding(10.dp)) {
-                                        Text(
-                                            text = "${bp.suggestedDurationMinutes}m • ${bp.category}",
-                                            style = MaterialTheme.typography.labelSmall.copy(
-                                                fontFamily = FontFamily.Monospace,
-                                                fontSize = 10.sp
-                                            ),
-                                            color = ProofTextMuted
-                                        )
-                                        Spacer(modifier = Modifier.height(4.dp))
-                                        Text(
-                                            text = bp.title,
-                                            style = MaterialTheme.typography.titleSmall.copy(
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 12.sp
-                                            ),
-                                            color = ProofInk,
-                                            maxLines = 2
-                                        )
-                                    }
+                                    Text(
+                                        text = "${bp.suggestedDurationMinutes}m",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontFamily = FontFamily.Monospace,
+                                            fontWeight = FontWeight.Black,
+                                            fontSize = 9.sp
+                                        ),
+                                        color = ProofKleinBlue
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = bp.title,
+                                        style = MaterialTheme.typography.bodySmall.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 11.sp
+                                        ),
+                                        color = ProofObsidianInk,
+                                        maxLines = 1
+                                    )
                                 }
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
                 AnimatedVisibility(
@@ -407,19 +464,20 @@ fun StudentHomeScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // SECTION 1: ACCEPTED CONNECTIONS & AGREED ACTIONS
                 Text(
-                    text = "ACCEPTED CONNECTIONS & NEXT ACTIONS",
-                    style = MaterialTheme.typography.labelLarge.copy(
+                    text = "• ACCEPTED WORKSPACES (${uiState.acceptedConnections.size})",
+                    style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
+                        fontSize = 11.sp,
                         letterSpacing = 0.5.sp
                     ),
-                    color = ProofInk
+                    color = ProofObsidianInk
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 if (uiState.acceptedConnections.isEmpty()) {
                     EmptyStateCard(
@@ -430,8 +488,9 @@ fun StudentHomeScreen(
                     uiState.acceptedConnections.forEach { connection ->
                         NeoCard(
                             backgroundColor = ProofWhite,
-                            shadowOffset = 3.dp,
-                            modifier = Modifier.padding(bottom = 12.dp)
+                            shadowOffset = 2.dp,
+                            contentPadding = 9.dp,
+                            modifier = Modifier.padding(bottom = 8.dp)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -440,93 +499,92 @@ fun StudentHomeScreen(
                             ) {
                                 Text(
                                     text = connection.alumniName,
-                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 15.sp),
+                                    color = ProofObsidianInk
                                 )
                                 StatusBadge(status = connection.status)
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(3.dp))
                             Text(
                                 text = connection.requestTitle,
-                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = ProofInk
+                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                                color = ProofKleinBlue,
+                                maxLines = 1
                             )
 
                             if (connection.sessionAt.isNotEmpty()) {
-                                Spacer(modifier = Modifier.height(6.dp))
+                                Spacer(modifier = Modifier.height(4.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(
                                         imageVector = Icons.Default.Schedule,
                                         contentDescription = "Session",
-                                        tint = ProofInk,
-                                        modifier = Modifier.size(16.dp)
+                                        tint = ProofObsidianInk,
+                                        modifier = Modifier.size(13.dp)
                                     )
-                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
                                     Text(
                                         text = "${connection.sessionAt} ${if (connection.timeZone.isNotEmpty()) "(${connection.timeZone})" else ""}",
-                                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-                                        color = ProofInk
+                                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                        color = ProofObsidianInk
                                     )
                                 }
                             }
 
                             if (connection.agreedNextAction.isNotEmpty()) {
-                                Spacer(modifier = Modifier.height(10.dp))
+                                Spacer(modifier = Modifier.height(6.dp))
                                 Surface(
-                                    shape = RoundedCornerShape(6.dp),
-                                    color = ProofAcidLime,
+                                    shape = RoundedCornerShape(5.dp),
+                                    color = ProofVoltCitron.copy(alpha = 0.35f),
                                     border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Column(modifier = Modifier.padding(10.dp)) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
                                         Text(
-                                            text = "AGREED NEXT ACTION:",
-                                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black),
-                                            color = ProofInk
+                                            text = "NEXT ACTION: ",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontFamily = FontFamily.Monospace,
+                                                fontWeight = FontWeight.Black,
+                                                fontSize = 9.sp
+                                            ),
+                                            color = ProofObsidianInk
                                         )
-                                        Spacer(modifier = Modifier.height(2.dp))
                                         Text(
                                             text = connection.agreedNextAction,
-                                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                            color = ProofInk
+                                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                            color = ProofObsidianInk,
+                                            maxLines = 1,
+                                            modifier = Modifier.weight(1f)
                                         )
-                                        if (connection.nextActionDueDate.isNotEmpty()) {
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text(
-                                                text = "Due: ${connection.nextActionDueDate} • Owner: ${connection.nextActionOwner.ifEmpty { "Student" }}",
-                                                style = MaterialTheme.typography.labelSmall,
-                                                color = ProofInk
-                                            )
-                                        }
                                     }
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(12.dp))
-                            NeoButton(
-                                text = "Open Connection Workspace",
-                                onClick = { onOpenWorkspaceClick(connection.id) },
-                                backgroundColor = ProofElectricLilac,
-                                contentColor = ProofInk,
-                                icon = Icons.Default.ArrowForward
+                            Spacer(modifier = Modifier.height(8.dp))
+                            NeoVoltButton(
+                                text = "Open Workspace →",
+                                onClick = { onOpenWorkspaceClick(connection.id) }
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // SECTION 2: PENDING RESPONSES
                 Text(
-                    text = "AWAITING ALUMNI RESPONSE",
-                    style = MaterialTheme.typography.labelLarge.copy(
+                    text = "• AWAITING ALUMNI (${uiState.pendingConnections.size})",
+                    style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
+                        fontSize = 11.sp,
                         letterSpacing = 0.5.sp
                     ),
-                    color = ProofInk
+                    color = ProofObsidianInk
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 if (uiState.pendingConnections.isEmpty()) {
                     EmptyStateCard(
@@ -538,7 +596,8 @@ fun StudentHomeScreen(
                         NeoCard(
                             backgroundColor = ProofWhite,
                             shadowOffset = 2.dp,
-                            modifier = Modifier.padding(bottom = 10.dp)
+                            contentPadding = 8.dp,
+                            modifier = Modifier.padding(bottom = 6.dp)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -547,48 +606,44 @@ fun StudentHomeScreen(
                             ) {
                                 Text(
                                     text = "To: ${connection.alumniName}",
-                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofObsidianInk
                                 )
                                 StatusBadge(status = connection.status)
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(3.dp))
                             Text(
                                 text = "For: ${connection.requestTitle}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = ProofTextMuted
-                            )
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Text(
-                                text = "Waiting for the alumnus to review scope and accept/decline.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = ProofTextMuted
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                color = ProofCharcoalMuted,
+                                maxLines = 1
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Monetization Placement in Feed
                 NeoBannerAd(
                     adTitle = "CAMPUS SPONSOR • CAREER FELLOWSHIP",
-                    modifier = Modifier.padding(vertical = 4.dp)
+                    modifier = Modifier.padding(vertical = 2.dp)
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // SECTION 3: OPEN HELP REQUESTS
                 Text(
-                    text = "YOUR OPEN HELP REQUESTS",
-                    style = MaterialTheme.typography.labelLarge.copy(
+                    text = "• YOUR OPEN MISSIONS (${uiState.activeRequests.size})",
+                    style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
+                        fontSize = 11.sp,
                         letterSpacing = 0.5.sp
                     ),
-                    color = ProofInk
+                    color = ProofObsidianInk
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 if (uiState.activeRequests.isEmpty()) {
                     EmptyStateCard(
@@ -601,90 +656,8 @@ fun StudentHomeScreen(
                     uiState.activeRequests.forEach { req ->
                         NeoCard(
                             backgroundColor = ProofWhite,
-                            shadowOffset = 3.dp,
-                            modifier = Modifier.padding(bottom = 12.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = req.title,
-                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                StatusBadge(status = req.status)
-                            }
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Text(
-                                text = req.description,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = ProofInk,
-                                maxLines = 3
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            
-                            // Category & duration tags
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                NeoTag(text = req.category, backgroundColor = ProofLavender)
-                                NeoTag(text = "${req.durationMinutes} mins", backgroundColor = ProofSurfaceMuted)
-                                if (req.blueprintId.isNotBlank()) {
-                                    NeoTag(text = "Blueprint Active", backgroundColor = ProofSignalMint)
-                                }
-                            }
-
-                            // Skills tags
-                            if (req.requiredSkills.isNotEmpty()) {
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    req.requiredSkills.take(3).forEach { skill ->
-                                        NeoTag(
-                                            text = skill,
-                                            backgroundColor = ProofWhite,
-                                            borderColor = ProofBorder
-                                        )
-                                    }
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(12.dp))
-                            NeoButton(
-                                text = "View Matched Alumni",
-                                onClick = { onViewMatchesClick(req.id) },
-                                backgroundColor = ProofElectricLilac,
-                                contentColor = ProofInk,
-                                icon = Icons.Default.ArrowForward
-                            )
-                        }
-                    }
-                }
-
-                // SECTION 4: OUTCOMES HISTORY (if present)
-                if (uiState.completedOutcomes.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        text = "COMPLETED OUTCOMES & EVIDENCE",
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Black,
-                            letterSpacing = 0.5.sp
-                        ),
-                        color = ProofInk
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    uiState.completedOutcomes.forEach { outcome ->
-                        NeoCard(
-                            backgroundColor = ProofWhite,
                             shadowOffset = 2.dp,
+                            contentPadding = 9.dp,
                             modifier = Modifier.padding(bottom = 8.dp)
                         ) {
                             Row(
@@ -693,19 +666,84 @@ fun StudentHomeScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = outcome.actionDescription,
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk,
+                                    text = req.title,
+                                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, fontSize = 14.sp),
+                                    color = ProofObsidianInk,
                                     modifier = Modifier.weight(1f)
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                StatusBadge(status = req.status)
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = req.description,
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                color = ProofObsidianInk,
+                                maxLines = 2
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            
+                            // Category & duration tags
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                NeoTag(text = req.category, backgroundColor = ProofDigitalLilac)
+                                NeoTag(text = "${req.durationMinutes}m", backgroundColor = ProofPaperLight)
+                                if (req.blueprintId.isNotBlank()) {
+                                    NeoTag(text = "Template", backgroundColor = ProofSignalEmerald)
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            NeoVoltButton(
+                                text = "View Matched Alumni →",
+                                onClick = { onViewMatchesClick(req.id) }
+                            )
+                        }
+                    }
+                }
+
+                // SECTION 4: OUTCOMES HISTORY (if present)
+                if (uiState.completedOutcomes.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "• VERIFIED OUTCOMES (${uiState.completedOutcomes.size})",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 11.sp,
+                            letterSpacing = 0.5.sp
+                        ),
+                        color = ProofObsidianInk
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    uiState.completedOutcomes.forEach { outcome ->
+                        NeoCard(
+                            backgroundColor = ProofWhite,
+                            shadowOffset = 2.dp,
+                            contentPadding = 7.dp,
+                            modifier = Modifier.padding(bottom = 6.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = outcome.actionDescription,
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofObsidianInk,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
                                 StatusBadge(status = if (outcome.alumniConfirmed) "CONFIRMED" else "COMPLETED")
                             }
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(96.dp))
+                Spacer(modifier = Modifier.height(80.dp))
             }
 
             // Floating Neo-Brutalist Bottom Dock

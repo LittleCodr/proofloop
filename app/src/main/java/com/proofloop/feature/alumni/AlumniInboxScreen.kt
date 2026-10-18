@@ -69,113 +69,86 @@ fun AlumniInboxScreen(
                         .verticalScroll(scrollState)
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
-                    // Profile & Opt-in Control Card
+                    // Profile & Opt-in High-Density Control Bar (saves ~150dp)
                     val profile = uiState.profile
                     NeoCard(
                         backgroundColor = ProofWhite,
-                        shadowOffset = 3.5.dp,
+                        shadowOffset = 2.dp,
+                        cornerRadius = 8.dp,
                         accentColor = ProofSignalEmerald,
-                        stampText = "VERIFIED MENTOR PROFILE"
+                        contentPadding = 8.dp
                     ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = profile?.displayName ?: uiState.currentUser?.name ?: "Member",
-                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Surface(
-                                    shape = RoundedCornerShape(4.dp),
-                                    color = ProofSignalMint,
-                                    border = BorderStroke(1.dp, ProofBorder)
-                                ) {
-                                    Text(
-                                        text = "VERIFIED",
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            fontFamily = FontFamily.Monospace,
-                                            fontWeight = FontWeight.Black,
-                                            fontSize = 9.sp
-                                        ),
-                                        color = ProofInk,
-                                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
-                                    )
-                                }
-                            }
-                            Text(
-                                text = profile?.subtitle ?: "${profile?.jobTitle ?: currentRole} • ${profile?.company ?: ""}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = ProofInk
-                            )
-                        }
-
-
-                        // Opt-in switch with live pulse dot
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (profile?.acceptingRequests == true) {
-                                NeoPulseIndicator(color = ProofSignalEmerald, size = 8.dp)
-                                Spacer(modifier = Modifier.width(6.dp))
-                            }
-                            Text(
-                                text = if (profile?.acceptingRequests == true) "OPTED IN" else "PAUSED",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = FontFamily.Monospace
-                                ),
-                                color = if (profile?.acceptingRequests == true) ProofInk else ProofCoral
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Switch(
-                                checked = profile?.acceptingRequests ?: true,
-                                onCheckedChange = { viewModel.toggleAcceptingRequests(it) },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = ProofWhite,
-                                    checkedTrackColor = ProofSignalEmerald,
-                                    uncheckedThumbColor = ProofWhite,
-                                    uncheckedTrackColor = ProofSurfaceMuted
-                                )
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-                    HorizontalDivider(color = ProofBorder, thickness = 1.dp)
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        val activeCount = uiState.acceptedConnections.count { it.status == "ACCEPTED" }
-                        NeoSegmentedCapacityMeter(
-                            activeCount = activeCount,
-                            maxCount = profile?.maxActiveRequests ?: 3
-                        )
-
-                        Surface(
-                            shape = RoundedCornerShape(4.dp),
-                            color = if (profile?.acceptingRequests == true) ProofVoltCitron else ProofSurfaceMuted,
-                            border = BorderStroke(1.dp, ProofBorder)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = if (profile?.acceptingRequests == true) "ACCEPTING MISSIONS" else "PAUSED",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = FontFamily.Monospace,
-                                    fontSize = 10.sp
-                                ),
-                                color = ProofInk,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
-                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = profile?.displayName ?: uiState.currentUser?.name ?: "Member",
+                                        style = MaterialTheme.typography.titleMedium.copy(
+                                            fontWeight = FontWeight.Black,
+                                            fontSize = 14.sp
+                                        ),
+                                        color = ProofObsidianInk
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Surface(
+                                        shape = RoundedCornerShape(3.dp),
+                                        color = ProofSignalEmerald,
+                                        border = BorderStroke(1.dp, ProofBorder)
+                                    ) {
+                                        Text(
+                                            text = "VERIFIED",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontFamily = FontFamily.Monospace,
+                                                fontWeight = FontWeight.Black,
+                                                fontSize = 8.sp
+                                            ),
+                                            color = ProofObsidianInk,
+                                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                                        )
+                                    }
+                                }
+                                val activeCount = uiState.acceptedConnections.count { it.status == "ACCEPTED" }
+                                Text(
+                                    text = "${profile?.jobTitle ?: currentRole} • $activeCount/${profile?.maxActiveRequests ?: 3} Capacity",
+                                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                    color = ProofCharcoalMuted
+                                )
+                            }
+
+                            // Opt-in switch with live radar pulse
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                if (profile?.acceptingRequests == true) {
+                                    NeoPulseIndicator(color = ProofSignalEmerald, size = 6.dp)
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                }
+                                Text(
+                                    text = if (profile?.acceptingRequests == true) "OPEN" else "OFF",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = FontFamily.Monospace,
+                                        fontSize = 9.sp
+                                    ),
+                                    color = if (profile?.acceptingRequests == true) ProofObsidianInk else ProofSolarTangerine
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Switch(
+                                    checked = profile?.acceptingRequests ?: true,
+                                    onCheckedChange = { viewModel.toggleAcceptingRequests(it) },
+                                    colors = SwitchDefaults.colors(
+                                        checkedThumbColor = ProofWhite,
+                                        checkedTrackColor = ProofSignalEmerald,
+                                        uncheckedThumbColor = ProofWhite,
+                                        uncheckedTrackColor = ProofSurfaceMuted
+                                    ),
+                                    modifier = Modifier.height(28.dp)
+                                )
+                            }
                         }
                     }
-                }
 
                 // Feedback Banner
                 AnimatedVisibility(
@@ -184,12 +157,12 @@ fun AlumniInboxScreen(
                     exit = shrinkVertically() + fadeOut()
                 ) {
                     Column {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        NeoCard(backgroundColor = ProofAcidLime, shadowOffset = 2.dp) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        NeoCard(backgroundColor = ProofVoltCitron, shadowOffset = 2.dp, contentPadding = 8.dp) {
                             Text(
                                 text = uiState.feedbackMessage ?: "",
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ProofInk
+                                color = ProofObsidianInk
                             )
                         }
                     }
@@ -197,11 +170,12 @@ fun AlumniInboxScreen(
 
                 // LOOP HEALTH OPERATIONAL ATTENTION PANEL FOR ALUMNI
                 if (uiState.loopHealthItems.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     NeoCard(
-                        backgroundColor = ProofPaper,
-                        borderColor = ProofInk,
-                        shadowOffset = 3.dp
+                        backgroundColor = ProofPaperLight,
+                        borderColor = ProofObsidianInk,
+                        shadowOffset = 2.dp,
+                        contentPadding = 8.dp
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -210,45 +184,40 @@ fun AlumniInboxScreen(
                             Icon(
                                 imageVector = Icons.Default.PriorityHigh,
                                 contentDescription = null,
-                                tint = ProofCoral,
-                                modifier = Modifier.size(18.dp)
+                                tint = ProofSolarTangerine,
+                                modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = "LOOP HEALTH • ACTIONS NEEDED (${uiState.loopHealthItems.size})",
-                                style = MaterialTheme.typography.labelMedium.copy(
+                                style = MaterialTheme.typography.labelSmall.copy(
                                     fontFamily = FontFamily.Monospace,
                                     fontWeight = FontWeight.Black,
+                                    fontSize = 11.sp,
                                     letterSpacing = 0.5.sp
                                 ),
-                                color = ProofInk
+                                color = ProofObsidianInk
                             )
                         }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Outstanding deliverables and pending requests awaiting your confirmation.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = ProofTextMuted
-                        )
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
 
                         uiState.loopHealthItems.forEach { item ->
                             val severityBg = when (item.severity) {
-                                LoopHealthSeverity.URGENT -> ProofCoral.copy(alpha = 0.2f)
-                                LoopHealthSeverity.ATTENTION -> ProofElectricLilac.copy(alpha = 0.35f)
+                                LoopHealthSeverity.URGENT -> ProofSolarTangerine.copy(alpha = 0.2f)
+                                LoopHealthSeverity.ATTENTION -> ProofVoltCitron.copy(alpha = 0.35f)
                                 LoopHealthSeverity.INFO -> ProofWhite
                             }
 
                             Surface(
-                                shape = RoundedCornerShape(6.dp),
+                                shape = RoundedCornerShape(5.dp),
                                 color = severityBg,
                                 border = BorderStroke(1.dp, ProofBorder),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
+                                    .padding(vertical = 3.dp)
                             ) {
-                                Column(modifier = Modifier.padding(10.dp)) {
+                                Column(modifier = Modifier.padding(8.dp)) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -256,31 +225,32 @@ fun AlumniInboxScreen(
                                     ) {
                                         Text(
                                             text = item.title,
-                                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                                            color = ProofInk
+                                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, fontSize = 12.sp),
+                                            color = ProofObsidianInk
                                         )
                                         NeoTag(
                                             text = item.severity.name,
-                                            backgroundColor = if (item.severity == LoopHealthSeverity.URGENT) ProofCoral else ProofPaper
+                                            backgroundColor = if (item.severity == LoopHealthSeverity.URGENT) ProofSolarTangerine else ProofPaperLight
                                         )
                                     }
-                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = item.description,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = ProofInk
+                                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                        color = ProofObsidianInk
                                     )
-                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = "Action: ${item.actionPrompt}",
                                         style = MaterialTheme.typography.labelSmall.copy(
                                             fontWeight = FontWeight.SemiBold,
-                                            color = ProofPlum
+                                            fontSize = 10.sp,
+                                            color = ProofKleinBlue
                                         )
                                     )
 
                                     if (item.connectionId != null) {
-                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Spacer(modifier = Modifier.height(4.dp))
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
                                             horizontalArrangement = Arrangement.End
@@ -293,9 +263,9 @@ fun AlumniInboxScreen(
                                             ) {
                                                 Text(
                                                     text = "Open Workspace →",
-                                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                                    color = ProofInk,
-                                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp),
+                                                    color = ProofObsidianInk,
+                                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
                                                 )
                                             }
                                         }
@@ -307,29 +277,25 @@ fun AlumniInboxScreen(
                 }
 
                 if (uiState.isLoading) {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     NeoLoadingIndicator("Syncing alumni portal...")
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // SECTION 1: INCOMING REQUESTS
                 Text(
-                    text = "INCOMING REQUESTS (${uiState.incomingRequests.size})",
-                    style = MaterialTheme.typography.labelLarge.copy(
+                    text = "• INCOMING REQUESTS (${uiState.incomingRequests.size})",
+                    style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
+                        fontSize = 11.sp,
                         letterSpacing = 0.5.sp
                     ),
-                    color = ProofInk
-                )
-                Text(
-                    text = "Review scope and time commitment before accepting.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = ProofTextMuted
+                    color = ProofObsidianInk
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 if (uiState.incomingRequests.isEmpty()) {
                     EmptyStateCard(
@@ -340,8 +306,9 @@ fun AlumniInboxScreen(
                     uiState.incomingRequests.forEach { conn ->
                         NeoCard(
                             backgroundColor = ProofWhite,
-                            shadowOffset = 3.dp,
-                            modifier = Modifier.padding(bottom = 12.dp)
+                            shadowOffset = 2.dp,
+                            contentPadding = 8.dp,
+                            modifier = Modifier.padding(bottom = 8.dp)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -350,31 +317,30 @@ fun AlumniInboxScreen(
                             ) {
                                 Text(
                                     text = "From: ${conn.studentName}",
-                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, fontSize = 14.sp),
+                                    color = ProofObsidianInk
                                 )
                                 StatusBadge(status = conn.status)
                             }
 
-                            Spacer(modifier = Modifier.height(6.dp))
+                            Spacer(modifier = Modifier.height(3.dp))
                             Text(
                                 text = conn.requestTitle,
-                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = ProofCobalt
+                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                                color = ProofKleinBlue,
+                                maxLines = 1
                             )
 
-                            Spacer(modifier = Modifier.height(14.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
 
-                            // Accept & Decline Buttons
+                            // Accept & Decline Buttons (compact 36dp)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                NeoButton(
+                                NeoVoltButton(
                                     text = "Accept",
                                     onClick = { viewModel.acceptRequest(conn.id) },
-                                    backgroundColor = ProofAcidLime,
-                                    contentColor = ProofInk,
                                     icon = Icons.Default.Check,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -382,7 +348,7 @@ fun AlumniInboxScreen(
                                     text = "Decline",
                                     onClick = { viewModel.declineRequest(conn.id) },
                                     backgroundColor = ProofWhite,
-                                    contentColor = ProofCoral,
+                                    contentColor = ProofSolarTangerine,
                                     icon = Icons.Default.Close,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -391,33 +357,29 @@ fun AlumniInboxScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Monetization Placement in Feed
                 NeoBannerAd(
                     adTitle = "ALUMNI PERKS & RECRUITING SPONSOR",
-                    modifier = Modifier.padding(vertical = 4.dp)
+                    modifier = Modifier.padding(vertical = 2.dp)
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // SECTION 2: ACCEPTED CONNECTIONS & WORKSPACES
                 Text(
-                    text = "ACTIVE CONNECTIONS & SESSIONS (${uiState.acceptedConnections.size})",
-                    style = MaterialTheme.typography.labelLarge.copy(
+                    text = "• ACTIVE SESSIONS (${uiState.acceptedConnections.size})",
+                    style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
+                        fontSize = 11.sp,
                         letterSpacing = 0.5.sp
                     ),
-                    color = ProofInk
-                )
-                Text(
-                    text = "Manage agreed next actions and confirm completed outcomes.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = ProofTextMuted
+                    color = ProofObsidianInk
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 if (uiState.acceptedConnections.isEmpty()) {
                     EmptyStateCard(
@@ -428,8 +390,9 @@ fun AlumniInboxScreen(
                     uiState.acceptedConnections.forEach { conn ->
                         NeoCard(
                             backgroundColor = ProofWhite,
-                            shadowOffset = 3.dp,
-                            modifier = Modifier.padding(bottom = 12.dp)
+                            shadowOffset = 2.dp,
+                            contentPadding = 8.dp,
+                            modifier = Modifier.padding(bottom = 8.dp)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -438,51 +401,60 @@ fun AlumniInboxScreen(
                             ) {
                                 Text(
                                     text = "Student: ${conn.studentName}",
-                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, fontSize = 14.sp),
+                                    color = ProofObsidianInk
                                 )
                                 StatusBadge(status = conn.status)
                             }
 
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(3.dp))
                             Text(
                                 text = "Request: ${conn.requestTitle}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = ProofTextMuted
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                color = ProofCharcoalMuted,
+                                maxLines = 1
                             )
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(6.dp))
                             Surface(
-                                shape = MaterialTheme.shapes.small,
-                                color = ProofLavender,
+                                shape = RoundedCornerShape(5.dp),
+                                color = ProofVoltCitron.copy(alpha = 0.35f),
+                                border = BorderStroke(1.dp, ProofBorder),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Column(modifier = Modifier.padding(10.dp)) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     Text(
-                                        text = "AGREED NEXT ACTION:",
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black),
-                                        color = ProofInk
+                                        text = "ACTION: ",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontFamily = FontFamily.Monospace,
+                                            fontWeight = FontWeight.Black,
+                                            fontSize = 9.sp
+                                        ),
+                                        color = ProofObsidianInk
                                     )
                                     Text(
-                                        text = conn.agreedNextAction.ifBlank { "Tap Open Workspace to agree on a practical next step." },
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = ProofInk
+                                        text = conn.agreedNextAction.ifBlank { "Tap Open Workspace to record next step." },
+                                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                        color = ProofObsidianInk,
+                                        maxLines = 1,
+                                        modifier = Modifier.weight(1f)
                                     )
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(12.dp))
-                            NeoButton(
-                                text = "Open Workspace",
-                                onClick = { onOpenWorkspaceClick(conn.id) },
-                                backgroundColor = ProofCobalt,
-                                icon = Icons.Default.ArrowForward
+                            Spacer(modifier = Modifier.height(8.dp))
+                            NeoVoltButton(
+                                text = "Open Workspace →",
+                                onClick = { onOpenWorkspaceClick(conn.id) }
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(96.dp))
+                Spacer(modifier = Modifier.height(80.dp))
             }
 
             // Floating Neo-Brutalist Bottom Dock

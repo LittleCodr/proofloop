@@ -72,7 +72,7 @@ fun ConnectionWorkspaceScreen(
         color = ProofPaper
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Header
+            // Workspace Top App Bar
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 color = ProofWhite,
@@ -82,7 +82,7 @@ fun ConnectionWorkspaceScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                        .padding(horizontal = 14.dp, vertical = 7.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -90,31 +90,31 @@ fun ConnectionWorkspaceScreen(
                         IconButton(
                             onClick = onNavigateBack,
                             modifier = Modifier
-                                .size(34.dp)
-                                .background(ProofPaper, RoundedCornerShape(6.dp))
-                                .border(1.5.dp, ProofBorder, RoundedCornerShape(6.dp))
+                                .size(30.dp)
+                                .background(ProofPaper, RoundedCornerShape(5.dp))
+                                .border(1.5.dp, ProofBorder, RoundedCornerShape(5.dp))
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
-                                tint = ProofInk,
-                                modifier = Modifier.size(18.dp)
+                                tint = ProofObsidianInk,
+                                modifier = Modifier.size(16.dp)
                             )
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         Column {
                             Text(
                                 text = "WORKSPACE",
                                 style = MaterialTheme.typography.displayMedium.copy(
-                                    fontSize = 18.sp,
+                                    fontSize = 17.sp,
                                     fontWeight = FontWeight.Black
                                 ),
-                                color = ProofInk
+                                color = ProofObsidianInk
                             )
                             Text(
                                 text = "Two-Party Locked Commitment",
                                 style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
-                                color = ProofTextMuted
+                                color = ProofCharcoalMuted
                             )
                         }
                     }
@@ -126,19 +126,19 @@ fun ConnectionWorkspaceScreen(
                         border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder)
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            NeoPulseIndicator(color = ProofSignalEmerald, size = 8.dp)
-                            Spacer(modifier = Modifier.width(6.dp))
+                            NeoPulseIndicator(color = ProofSignalEmerald, size = 6.dp)
+                            Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = "FIRESTORE SYNC",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontFamily = FontFamily.Monospace,
                                     fontWeight = FontWeight.Black,
-                                    fontSize = 9.sp
+                                    fontSize = 8.5.sp
                                 ),
-                                color = ProofInk
+                                color = ProofObsidianInk
                             )
                         }
                     }
@@ -149,7 +149,7 @@ fun ConnectionWorkspaceScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollState)
-                    .padding(16.dp)
+                    .padding(horizontal = 14.dp, vertical = 10.dp)
             ) {
                 // 5-Stage Mission-to-Outcome Timeline Card
                 MissionToOutcomeTimelineCard(
@@ -161,76 +161,52 @@ fun ConnectionWorkspaceScreen(
                     isAlumniConfirmed = outcome?.alumniConfirmed == true
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                // Connection Details Card
+                // Compact Connection Participants Ribbon (saves ~70dp)
                 if (conn == null && uiState.isLoading) {
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     NeoLoadingIndicator("Loading session workspace...")
                 } else if (conn != null) {
                     NeoCard(
                         backgroundColor = ProofWhite,
-                        shadowOffset = 3.dp
+                        shadowOffset = 2.dp,
+                        cornerRadius = 6.dp,
+                        contentPadding = 7.dp
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = "SESSION PARTICIPANTS",
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontFamily = FontFamily.Monospace,
-                                    fontWeight = FontWeight.Black
-                                ),
-                                color = ProofTextMuted
-                            )
-                            StatusBadge(status = conn.status)
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column {
-                                Text(
-                                    text = "STUDENT",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = ProofTextMuted
-                                )
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 Text(
                                     text = conn.studentName,
-                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofObsidianInk
                                 )
-                            }
-                            Column(horizontalAlignment = Alignment.End) {
                                 Text(
-                                    text = "ALUMNUS",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = ProofTextMuted
+                                    text = " ⇄ ",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = ProofKleinBlue
                                 )
                                 Text(
                                     text = conn.alumniName,
-                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofObsidianInk
                                 )
                             }
+                            StatusBadge(status = conn.status)
                         }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-                        HorizontalDivider(color = ProofBorder, thickness = 1.dp)
-                        Spacer(modifier = Modifier.height(8.dp))
-
+                        Spacer(modifier = Modifier.height(3.dp))
                         Text(
-                            text = "ORIGINAL REQUEST:",
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black),
-                            color = ProofTextMuted
-                        )
-                        Text(
-                            text = conn.requestTitle,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = ProofInk
+                            text = "Mission: ${conn.requestTitle}",
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                            color = ProofCharcoalMuted,
+                            maxLines = 1
                         )
                     }
                 }
@@ -242,15 +218,19 @@ fun ConnectionWorkspaceScreen(
                     exit = shrinkVertically() + fadeOut()
                 ) {
                     Column {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        NeoCard(backgroundColor = ProofSignalMint, shadowOffset = 2.dp) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        NeoCard(
+                            backgroundColor = ProofSignalEmerald,
+                            contentPadding = 8.dp,
+                            shadowOffset = 2.dp
+                        ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Check, contentDescription = null, tint = ProofInk)
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Icon(Icons.Default.Check, contentDescription = null, tint = ProofObsidianInk, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = uiState.feedbackMessage ?: "",
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                    color = ProofObsidianInk
                                 )
                             }
                         }
@@ -264,24 +244,30 @@ fun ConnectionWorkspaceScreen(
                     exit = shrinkVertically() + fadeOut()
                 ) {
                     Column {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        NeoCard(backgroundColor = ProofCoral, shadowOffset = 2.dp) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        NeoCard(
+                            backgroundColor = ProofSolarTangerine.copy(alpha = 0.2f),
+                            borderColor = ProofSolarTangerine,
+                            contentPadding = 8.dp,
+                            shadowOffset = 2.dp
+                        ) {
                             Text(
                                 text = uiState.errorMessage ?: "",
-                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ProofInk
+                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                color = ProofObsidianInk
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // COMMITMENT ENGINE: SESSION SCHEDULING CARD
                 if (conn != null && conn.status != ConnectionStatus.CANCELLED.name) {
                     NeoCard(
-                        backgroundColor = ProofWhite,
-                        shadowOffset = 3.dp
+                        backgroundColor = ProofPureWhite,
+                        contentPadding = 10.dp,
+                        shadowOffset = 2.5.dp
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -292,68 +278,70 @@ fun ConnectionWorkspaceScreen(
                                 Icon(
                                     imageVector = Icons.Default.CalendarToday,
                                     contentDescription = null,
-                                    tint = ProofCobalt,
-                                    modifier = Modifier.size(16.dp)
+                                    tint = ProofKleinBlue,
+                                    modifier = Modifier.size(14.dp)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = "SESSION COMMITMENT",
-                                    style = MaterialTheme.typography.labelLarge.copy(
+                                    style = MaterialTheme.typography.labelSmall.copy(
                                         fontFamily = FontFamily.Monospace,
                                         fontWeight = FontWeight.Black,
+                                        fontSize = 11.sp,
                                         letterSpacing = 0.5.sp
                                     ),
-                                    color = ProofInk
+                                    color = ProofObsidianInk
                                 )
                             }
                             NeoTag(
                                 text = conn.sessionStatus.ifBlank { "SCHEDULED" },
-                                backgroundColor = if (conn.sessionStatus == SessionStatus.CONFIRMED.name) ProofSignalMint else ProofElectricLilac
+                                backgroundColor = if (conn.sessionStatus == SessionStatus.CONFIRMED.name) ProofSignalEmerald else ProofDigitalLilac
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
 
                         val scheduledTimeDisplay = if (conn.sessionAt.isNotBlank()) {
                             "${conn.sessionAt} (${conn.timeZone.ifBlank { "Local Device TZ" }})"
                         } else {
-                            "No session time agreed yet. Tap below to propose."
+                            "No session time agreed yet. Propose below."
                         }
 
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = ProofPaper,
-                            border = androidx.compose.foundation.BorderStroke(1.dp, ProofBorder),
+                            color = ProofPaperLight,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, ProofRecessedMuted),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(modifier = Modifier.padding(10.dp)) {
+                            Column(modifier = Modifier.padding(8.dp)) {
                                 Text(
                                     text = "SCHEDULED MEETING TIME:",
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontFamily = FontFamily.Monospace,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 9.sp
                                     ),
-                                    color = ProofTextMuted
+                                    color = ProofCharcoalMuted
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = scheduledTimeDisplay,
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, fontSize = 12.sp),
+                                    color = ProofObsidianInk
                                 )
 
                                 if (conn.cancellationReason.isNotBlank() && conn.sessionStatus == SessionStatus.RESCHEDULED.name) {
-                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Spacer(modifier = Modifier.height(3.dp))
                                     Text(
                                         text = "Reschedule context: ${conn.cancellationReason}",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = ProofPlum
+                                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                                        color = ProofSolarTangerine
                                     )
                                 }
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -363,8 +351,8 @@ fun ConnectionWorkspaceScreen(
                                 NeoButton(
                                     text = "Set Session Time",
                                     onClick = { showScheduleDialog = true },
-                                    backgroundColor = ProofElectricLilac,
-                                    contentColor = ProofInk,
+                                    backgroundColor = ProofDigitalLilac,
+                                    contentColor = ProofObsidianInk,
                                     icon = Icons.Default.EditCalendar,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -372,8 +360,8 @@ fun ConnectionWorkspaceScreen(
                                 NeoButton(
                                     text = "Reschedule",
                                     onClick = { showRescheduleDialog = true },
-                                    backgroundColor = ProofLavender,
-                                    contentColor = ProofInk,
+                                    backgroundColor = ProofDigitalLilac,
+                                    contentColor = ProofObsidianInk,
                                     icon = Icons.Default.Schedule,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -382,86 +370,99 @@ fun ConnectionWorkspaceScreen(
                             NeoOutlinedButton(
                                 text = "Cancel Mission",
                                 onClick = { showCancelDialog = true },
-                                backgroundColor = ProofWhite,
-                                contentColor = ProofCoral,
+                                backgroundColor = ProofPureWhite,
+                                contentColor = ProofSolarTangerine,
                                 icon = Icons.Default.Cancel,
                                 modifier = Modifier.weight(1f)
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                 } else if (conn != null && conn.status == ConnectionStatus.CANCELLED.name) {
                     NeoCard(
-                        backgroundColor = ProofCoral.copy(alpha = 0.15f),
-                        borderColor = ProofCoral,
+                        backgroundColor = ProofSolarTangerine.copy(alpha = 0.12f),
+                        borderColor = ProofSolarTangerine,
+                        contentPadding = 8.dp,
                         shadowOffset = 2.dp
                     ) {
                         Text(
                             text = "MISSION CONNECTION CANCELLED",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = ProofCoral
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = ProofSolarTangerine
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = "Reason: ${conn.cancellationReason.ifBlank { "Explicitly cancelled by participant" }}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = ProofInk
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                            color = ProofObsidianInk
                         )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
 
                 // AGREED NEXT ACTION COMMITMENT CARD
                 NeoCard(
-                    backgroundColor = ProofWhite,
-                    shadowOffset = 4.dp
+                    backgroundColor = ProofPureWhite,
+                    contentPadding = 10.dp,
+                    shadowOffset = 2.5.dp
                 ) {
-                    Text(
-                        text = "AGREED NEXT ACTION",
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Black,
-                            letterSpacing = 0.5.sp
-                        ),
-                        color = ProofInk
-                    )
-                    Text(
-                        text = "Translate discussion into a concrete, verifiable step with due date.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = ProofTextMuted
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "AGREED NEXT ACTION",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 11.sp,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = ProofObsidianInk
+                        )
+                        Text(
+                            text = "CONCRETE DELIVERABLE",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 9.sp,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = ProofCharcoalMuted
+                        )
+                    }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     val isActionLocked = outcome?.studentCompleted == true
 
                     if (isActionLocked) {
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = ProofPaper,
-                            border = androidx.compose.foundation.BorderStroke(1.5.dp, ProofBorder),
+                            shape = RoundedCornerShape(6.dp),
+                            color = ProofPaperLight,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, ProofRecessedMuted),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(modifier = Modifier.padding(14.dp)) {
+                            Column(modifier = Modifier.padding(8.dp)) {
                                 Text(
                                     text = uiState.actionText.ifBlank { "Action defined during session" },
-                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, fontSize = 12.sp),
+                                    color = ProofObsidianInk
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(4.dp))
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text(
                                         text = "Owner: ${uiState.ownerText}",
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                        color = ProofTextMuted
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp),
+                                        color = ProofCharcoalMuted
                                     )
                                     Text(
                                         text = "Due: ${uiState.dueDateText}",
-                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                        color = ProofTextMuted
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp),
+                                        color = ProofCharcoalMuted
                                     )
                                 }
                             }
@@ -473,66 +474,78 @@ fun ConnectionWorkspaceScreen(
                             label = "Action Description",
                             placeholder = "e.g. Refactor CartRepository using Flow and add unit test",
                             singleLine = false,
-                            maxLines = 3
+                            maxLines = 2
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
                         Row(modifier = Modifier.fillMaxWidth()) {
                             NeoTextField(
                                 value = uiState.dueDateText,
                                 onValueChange = viewModel::onDueDateTextChange,
-                                label = "Due Date / Timeline",
+                                label = "Due Date",
                                 placeholder = "e.g. Within 7 days",
                                 singleLine = true,
                                 modifier = Modifier.weight(1f)
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
                             NeoTextField(
                                 value = uiState.ownerText,
                                 onValueChange = viewModel::onOwnerTextChange,
-                                label = "Action Owner",
+                                label = "Owner",
                                 placeholder = "Student",
                                 singleLine = true,
                                 modifier = Modifier.weight(1f)
                             )
                         }
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         NeoButton(
                             text = "Save Action Commitment",
                             onClick = viewModel::saveAgreedAction,
-                            backgroundColor = ProofElectricLilac,
-                            contentColor = ProofInk,
+                            backgroundColor = ProofVoltCitron,
+                            contentColor = ProofObsidianInk,
                             icon = Icons.Default.Save,
-                            shadowOffset = 2.dp
+                            shadowOffset = 2.dp,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // FOLLOW-THROUGH OUTCOME TRACKER
-                Text(
-                    text = "OUTCOME FOLLOW-THROUGH & CONFIRMATION",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 0.5.sp
-                    ),
-                    color = ProofInk
-                )
-                Text(
-                    text = "Both parties record status independently. Confirmation requires separate alumnus authority.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = ProofTextMuted
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "OUTCOME FOLLOW-THROUGH",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 11.sp,
+                            letterSpacing = 0.5.sp
+                        ),
+                        color = ProofObsidianInk
+                    )
+                    Text(
+                        text = "INDEPENDENT 2-PARTY VERIFICATION",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = ProofCharcoalMuted
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 // STEP 1: Student Completion
                 val studentDone = outcome?.studentCompleted == true
                 NeoCard(
-                    backgroundColor = ProofWhite,
-                    shadowOffset = 3.dp,
-                    borderColor = ProofBorder
+                    backgroundColor = ProofPureWhite,
+                    contentPadding = 10.dp,
+                    shadowOffset = 2.dp
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -542,13 +555,13 @@ fun ConnectionWorkspaceScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "STEP 1: STUDENT COMPLETION",
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ProofInk
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, fontSize = 12.sp),
+                                color = ProofObsidianInk
                             )
                             Text(
                                 text = "Student self-reported completion of agreed action.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = ProofTextMuted
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
+                                color = ProofCharcoalMuted
                             )
                         }
                         if (studentDone) {
@@ -558,52 +571,53 @@ fun ConnectionWorkspaceScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
                     if (!studentDone) {
+                        Spacer(modifier = Modifier.height(8.dp))
                         if (isStudent) {
                             NeoButton(
                                 text = "Mark Action Completed",
                                 onClick = viewModel::studentMarkComplete,
-                                backgroundColor = ProofElectricLilac,
-                                contentColor = ProofInk,
-                                icon = Icons.Default.CheckCircle
+                                backgroundColor = ProofDigitalLilac,
+                                contentColor = ProofObsidianInk,
+                                icon = Icons.Default.CheckCircle,
+                                modifier = Modifier.fillMaxWidth()
                             )
                         } else {
                             Surface(
                                 shape = RoundedCornerShape(6.dp),
-                                color = ProofSurfaceMuted,
+                                color = ProofPaperLight,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(
                                     text = "Waiting for ${conn?.studentName ?: "student"} to mark the action completed.",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = ProofTextMuted,
-                                    modifier = Modifier.padding(10.dp)
+                                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                    color = ProofCharcoalMuted,
+                                    modifier = Modifier.padding(6.dp)
                                 )
                             }
                         }
                     } else {
+                        Spacer(modifier = Modifier.height(6.dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = ProofInk, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
+                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = ProofSignalEmerald, modifier = Modifier.size(14.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = "Student reported completion. Awaiting alumnus confirmation.",
-                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                                color = ProofInk
+                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp),
+                                color = ProofObsidianInk
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // STEP 2: Alumni Confirmation
                 val alumniDone = outcome?.alumniConfirmed == true
                 NeoCard(
-                    backgroundColor = ProofWhite,
-                    shadowOffset = 3.dp,
-                    borderColor = ProofBorder
+                    backgroundColor = ProofPureWhite,
+                    contentPadding = 10.dp,
+                    shadowOffset = 2.dp
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -613,13 +627,13 @@ fun ConnectionWorkspaceScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "STEP 2: ALUMNI CONFIRMATION",
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = ProofInk
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, fontSize = 12.sp),
+                                color = ProofObsidianInk
                             )
                             Text(
                                 text = "Independent second-party confirmation by alumnus.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = ProofTextMuted
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
+                                color = ProofCharcoalMuted
                             )
                         }
                         if (alumniDone) {
@@ -629,20 +643,19 @@ fun ConnectionWorkspaceScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
                     if (!alumniDone) {
+                        Spacer(modifier = Modifier.height(8.dp))
                         if (!studentDone) {
                             Surface(
                                 shape = RoundedCornerShape(6.dp),
-                                color = ProofSurfaceMuted,
+                                color = ProofPaperLight,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(
-                                    text = "Confirmation unlocks once the student marks the action completed.",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = ProofTextMuted,
-                                    modifier = Modifier.padding(10.dp)
+                                    text = "Unlocks once the student marks the action completed.",
+                                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                                    color = ProofCharcoalMuted,
+                                    modifier = Modifier.padding(6.dp)
                                 )
                             }
                         } else {
@@ -650,31 +663,33 @@ fun ConnectionWorkspaceScreen(
                                 NeoButton(
                                     text = "Confirm Interaction Outcome",
                                     onClick = viewModel::alumniConfirmOutcome,
-                                    backgroundColor = ProofSignalMint,
-                                    contentColor = ProofInk,
-                                    icon = Icons.Default.Check
+                                    backgroundColor = ProofSignalEmerald,
+                                    contentColor = ProofObsidianInk,
+                                    icon = Icons.Default.Check,
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             } else {
                                 Surface(
                                     shape = RoundedCornerShape(6.dp),
-                                    color = ProofElectricLilac,
+                                    color = ProofDigitalLilac.copy(alpha = 0.2f),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
-                                        text = "Awaiting ${conn?.alumniName ?: "alumnus"} to independently confirm the interaction outcome.",
-                                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                                        color = ProofInk,
-                                        modifier = Modifier.padding(10.dp)
+                                        text = "Awaiting ${conn?.alumniName ?: "alumnus"} to independently confirm outcome.",
+                                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold, fontSize = 11.sp),
+                                        color = ProofObsidianInk,
+                                        modifier = Modifier.padding(6.dp)
                                     )
                                 }
                             }
                         }
                     } else {
+                        Spacer(modifier = Modifier.height(6.dp))
                         NeoCard(
-                            backgroundColor = ProofWhite,
-                            accentColor = ProofSignalEmerald,
-                            stampText = "2-PARTY AUDITED",
-                            shadowOffset = 3.dp,
+                            backgroundColor = ProofSignalEmerald.copy(alpha = 0.15f),
+                            borderColor = ProofSignalEmerald,
+                            contentPadding = 8.dp,
+                            shadowOffset = 2.dp,
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Row(
@@ -682,27 +697,31 @@ fun ConnectionWorkspaceScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     Icon(
                                         imageVector = Icons.Default.CheckCircle,
                                         contentDescription = null,
                                         tint = ProofSignalEmerald,
-                                        modifier = Modifier.size(24.dp)
+                                        modifier = Modifier.size(18.dp)
                                     )
-                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
                                     Column {
                                         Text(
                                             text = "FULL LOOP CLOSED & CONFIRMED",
-                                            style = MaterialTheme.typography.labelMedium.copy(
+                                            style = MaterialTheme.typography.labelSmall.copy(
                                                 fontFamily = FontFamily.Monospace,
                                                 fontWeight = FontWeight.Black,
+                                                fontSize = 10.sp,
                                                 letterSpacing = 0.5.sp
                                             ),
                                             color = ProofObsidianInk
                                         )
                                         Text(
-                                            text = "Verified follow-through recorded permanently in Cloud Firestore.",
-                                            style = MaterialTheme.typography.bodySmall,
+                                            text = "Verified follow-through recorded permanently.",
+                                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
                                             color = ProofCharcoalMuted
                                         )
                                     }
@@ -713,31 +732,31 @@ fun ConnectionWorkspaceScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                // HONESTY DISCLAIMER
+                // HONESTY DISCLAIMER (Condensed 1-line pill)
                 NeoCard(
-                    backgroundColor = ProofPaper,
-                    shadowOffset = 2.dp,
-                    borderColor = ProofBorder
+                    backgroundColor = ProofPaperLight,
+                    contentPadding = 6.dp,
+                    shadowOffset = 1.5.dp
                 ) {
-                    Row(verticalAlignment = Alignment.Top) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Info,
                             contentDescription = null,
-                            tint = ProofInk,
-                            modifier = Modifier.size(18.dp)
+                            tint = ProofObsidianInk,
+                            modifier = Modifier.size(14.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "ProofLoop tracks follow-through on agreed guidance. Second-party alumni confirmation verifies that the interaction took place and resulted in practical action, not a guarantee of employment, internship, or career outcome.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = ProofTextMuted
+                            text = "ProofLoop tracks follow-through on agreed guidance. Confirmation verifies action took place, not guaranteed job placement.",
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
+                            color = ProofCharcoalMuted
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

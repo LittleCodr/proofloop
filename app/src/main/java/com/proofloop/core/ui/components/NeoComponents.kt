@@ -259,6 +259,7 @@ fun NeoPulseIndicator(
 /**
  * High-end Neo-Brutalist Card with crisp obsidian border, unblurred drop shadow,
  * tactile spring depression on click, and optional top accent stripe or stamp badge.
+ * Optimized for compact, high-density minimalist layouts.
  */
 @Composable
 fun NeoCard(
@@ -266,10 +267,11 @@ fun NeoCard(
     backgroundColor: Color = ProofWhite,
     borderColor: Color = ProofBorder,
     shadowColor: Color = ProofObsidianInk,
-    shadowOffset: Dp = 4.dp,
-    cornerRadius: Dp = 10.dp,
+    shadowOffset: Dp = 2.5.dp,
+    cornerRadius: Dp = 8.dp,
     accentColor: Color? = null,
     stampText: String? = null,
+    contentPadding: Dp = 10.dp,
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -279,7 +281,7 @@ fun NeoCard(
 
     // Tactile 3D press depression
     val translation by animateDpAsState(
-        targetValue = if (isPressed && onClick != null) 2.5.dp else 0.dp,
+        targetValue = if (isPressed && onClick != null) 2.dp else 0.dp,
         animationSpec = spring(
             stiffness = Spring.StiffnessMediumLow,
             dampingRatio = Spring.DampingRatioMediumBouncy
@@ -316,7 +318,7 @@ fun NeoCard(
                 ),
             shape = shape,
             color = backgroundColor,
-            border = BorderStroke(2.dp, borderColor)
+            border = BorderStroke(1.5.dp, borderColor)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 // Optional top accent stripe
@@ -324,22 +326,22 @@ fun NeoCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(4.dp)
+                            .height(3.dp)
                             .background(accentColor)
                     )
                 }
                 
-                // Content with padding & optional stamp badge
+                // Content with compact padding & optional stamp badge
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(contentPadding)
                 ) {
                     if (stampText != null) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 8.dp),
+                                .padding(bottom = 6.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -353,11 +355,11 @@ fun NeoCard(
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontFamily = FontFamily.Monospace,
                                         fontWeight = FontWeight.Black,
-                                        fontSize = 9.sp,
+                                        fontSize = 8.5.sp,
                                         letterSpacing = 0.5.sp
                                     ),
                                     color = ProofVoltCitron,
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
                                 )
                             }
                         }
@@ -376,6 +378,7 @@ fun NeoCard(
 /**
  * Neo-Brutalist Mechanical Button.
  * Physically translates down and right into its shadow on press using snappy spring bounce physics.
+ * Compact 40dp height with crisp 12sp typography.
  */
 @Composable
 fun NeoButton(
@@ -387,8 +390,8 @@ fun NeoButton(
     icon: ImageVector? = null,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    shadowOffset: Dp = 3.5.dp,
-    cornerRadius: Dp = 8.dp
+    shadowOffset: Dp = 2.5.dp,
+    cornerRadius: Dp = 6.dp
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -444,24 +447,24 @@ fun NeoButton(
                 ),
             shape = shape,
             color = if (enabled) backgroundColor else ProofSurfaceMuted,
-            border = BorderStroke(2.dp, if (enabled) ProofBorder else Color.Gray)
+            border = BorderStroke(1.5.dp, if (enabled) ProofBorder else Color.Gray)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 13.dp),
+                    .padding(horizontal = 14.dp, vertical = 9.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (isLoading) {
-                    NeoSpinner(size = 18.dp, color = contentColor)
-                    Spacer(modifier = Modifier.width(10.dp))
+                    NeoSpinner(size = 16.dp, color = contentColor)
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "PROCESSING...",
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontWeight = FontWeight.Black,
-                            fontSize = 13.sp,
-                            letterSpacing = 1.sp
+                            fontSize = 12.sp,
+                            letterSpacing = 0.8.sp
                         ),
                         color = contentColor
                     )
@@ -471,16 +474,16 @@ fun NeoButton(
                             imageVector = icon,
                             contentDescription = null,
                             tint = if (enabled) contentColor else Color.Gray,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(16.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                     }
                     Text(
                         text = text.uppercase(),
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontWeight = FontWeight.Black,
-                            fontSize = 13.sp,
-                            letterSpacing = 0.75.sp
+                            fontSize = 12.sp,
+                            letterSpacing = 0.5.sp
                         ),
                         color = if (enabled) contentColor else Color.Gray
                     )
@@ -502,7 +505,7 @@ fun NeoOutlinedButton(
     contentColor: Color = ProofObsidianInk,
     icon: ImageVector? = null,
     enabled: Boolean = true,
-    shadowOffset: Dp = 3.dp
+    shadowOffset: Dp = 2.5.dp
 ) {
     NeoButton(
         text = text,
@@ -815,54 +818,60 @@ fun NeoVerificationSeal(
 }
 
 // =========================================================================
-// 6. 5-STAGE WORKFLOW HERO (CONNECTED CIRCUIT TIMELINE)
+// 6. 5-STAGE WORKFLOW HERO (COMPACT CONNECTED CIRCUIT TIMELINE)
 // =========================================================================
 
 /**
  * 5-stage Workflow Hero Graphic with connected circuit timeline and animated pulse:
- * REQUEST → MATCH → CONNECT → ACT → CONFIRM
+ * REQUEST → MATCH → CONNECT → ACT → CONFIRM.
+ * Compact 36-40dp design for high-density minimalist layouts.
  */
 @Composable
 fun WorkflowHero(
     currentStep: Int, // 1 to 5
     modifier: Modifier = Modifier
 ) {
-    val steps = listOf("REQUEST", "MATCH", "CONNECT", "ACT", "CONFIRM")
+    val steps = listOf("REQ", "MATCH", "CONN", "ACT", "CONF")
 
     NeoCard(
         modifier = modifier,
         backgroundColor = ProofWhite,
-        shadowOffset = 3.dp,
-        cornerRadius = 10.dp,
+        shadowOffset = 2.dp,
+        cornerRadius = 6.dp,
         accentColor = ProofKleinBlue,
-        stampText = "5-STAGE CLOSED PROTOCOL"
+        contentPadding = 8.dp
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                NeoPulseIndicator(size = 7.dp, color = ProofKleinBlue)
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "5-STAGE CLOSED PROTOCOL",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Black,
+                        fontSize = 9.sp,
+                        letterSpacing = 0.5.sp
+                    ),
+                    color = ProofCharcoalMuted
+                )
+            }
             Text(
-                text = "INTERACTION LIFECYCLE",
+                text = "STAGE 0$currentStep/05",
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Black,
-                    letterSpacing = 1.sp
-                ),
-                color = ProofCharcoalMuted
-            )
-            Text(
-                text = "STAGE 0$currentStep OF 05",
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Black,
-                    fontSize = 10.sp
+                    fontSize = 9.5.sp
                 ),
                 color = ProofKleinBlue
             )
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -880,44 +889,36 @@ fun WorkflowHero(
                     else -> Pair(ProofPaperLight, ProofCharcoalMuted)
                 }
 
-                val animatedBg by animateColorAsState(targetValue = targetBg, animationSpec = tween(350), label = "stepBg")
-                val animatedFg by animateColorAsState(targetValue = targetFg, animationSpec = tween(350), label = "stepFg")
-                val stepScale by animateFloatAsState(
-                    targetValue = if (isCurrent) 1.06f else 1.0f,
-                    animationSpec = spring(stiffness = Spring.StiffnessMedium, dampingRatio = Spring.DampingRatioMediumBouncy),
-                    label = "stepScale"
-                )
+                val animatedBg by animateColorAsState(targetValue = targetBg, animationSpec = tween(250), label = "stepBg")
+                val animatedFg by animateColorAsState(targetValue = targetFg, animationSpec = tween(250), label = "stepFg")
 
                 Surface(
-                    shape = RoundedCornerShape(5.dp),
+                    shape = RoundedCornerShape(4.dp),
                     color = animatedBg,
-                    border = BorderStroke(1.5.dp, if (isCurrent) ProofObsidianInk else ProofBorder),
-                    modifier = Modifier
-                        .weight(1f)
-                        .graphicsLayer {
-                            scaleX = stepScale
-                            scaleY = stepScale
-                        }
+                    border = BorderStroke(1.dp, if (isCurrent) ProofObsidianInk else ProofBorder),
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 2.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Row(
+                        modifier = Modifier.padding(vertical = 4.dp, horizontal = 2.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = if (isPassed) "✓" else "0$stepNum",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Black,
-                                fontSize = 9.sp
+                                fontSize = 8.sp
                             ),
                             color = animatedFg
                         )
+                        Spacer(modifier = Modifier.width(2.dp))
                         Text(
                             text = stepName,
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Black,
-                                fontSize = 8.sp,
-                                letterSpacing = 0.sp
+                                fontSize = 7.5.sp,
+                                letterSpacing = (-0.2).sp
                             ),
                             color = animatedFg,
                             maxLines = 1
@@ -926,13 +927,11 @@ fun WorkflowHero(
                 }
 
                 if (index < steps.size - 1) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
+                    Box(
                         modifier = Modifier
-                            .size(10.dp)
-                            .padding(horizontal = 1.dp),
-                        tint = ProofObsidianInk
+                            .width(3.dp)
+                            .height(1.5.dp)
+                            .background(ProofBorder)
                     )
                 }
             }
@@ -946,6 +945,7 @@ fun WorkflowHero(
 
 /**
  * Top App Bar with official logo, role pill, Impact Ledger link, and sign out button.
+ * Compact and crisp.
  */
 @Composable
 fun NeoTopAppBar(
@@ -964,7 +964,7 @@ fun NeoTopAppBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .padding(horizontal = 16.dp, vertical = 10.dp),
+                .padding(horizontal = 14.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -974,22 +974,22 @@ fun NeoTopAppBar(
                         painter = painterResource(id = com.proofloop.R.drawable.proofloop_logo),
                         contentDescription = "ProofLoop Logo",
                         modifier = Modifier
-                            .size(30.dp)
-                            .clip(RoundedCornerShape(6.dp))
-                            .border(1.5.dp, ProofBorder, RoundedCornerShape(6.dp))
+                            .size(26.dp)
+                            .clip(RoundedCornerShape(5.dp))
+                            .border(1.5.dp, ProofBorder, RoundedCornerShape(5.dp))
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = title,
                         style = MaterialTheme.typography.displayMedium.copy(
-                            fontSize = 20.sp,
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.Black,
                             letterSpacing = (-0.5).sp
                         ),
                         color = ProofObsidianInk
                     )
                     if (roleTag != null) {
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         NeoTag(
                             text = roleTag.uppercase(),
                             backgroundColor = when (roleTag.uppercase()) {
@@ -1006,7 +1006,7 @@ fun NeoTopAppBar(
                 if (subtitle != null) {
                     Text(
                         text = subtitle,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                         color = ProofCharcoalMuted
                     )
                 }
@@ -1015,30 +1015,30 @@ fun NeoTopAppBar(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (onOpenImpactLedger != null) {
                     Surface(
-                        shape = RoundedCornerShape(6.dp),
+                        shape = RoundedCornerShape(5.dp),
                         color = ProofVoltCitron,
                         border = BorderStroke(1.5.dp, ProofBorder),
                         modifier = Modifier
                             .clickable(onClick = onOpenImpactLedger)
-                            .padding(end = 8.dp)
+                            .padding(end = 6.dp)
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
+                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Analytics,
                                 contentDescription = null,
                                 tint = ProofObsidianInk,
-                                modifier = Modifier.size(14.dp)
+                                modifier = Modifier.size(13.dp)
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(3.dp))
                             Text(
                                 text = "LEDGER",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = FontWeight.Black,
                                     fontFamily = FontFamily.Monospace,
-                                    fontSize = 11.sp
+                                    fontSize = 10.sp
                                 ),
                                 color = ProofObsidianInk
                             )
@@ -1050,15 +1050,15 @@ fun NeoTopAppBar(
                     IconButton(
                         onClick = onSignOut,
                         modifier = Modifier
-                            .size(34.dp)
-                            .background(ProofPaper, RoundedCornerShape(6.dp))
-                            .border(1.5.dp, ProofBorder, RoundedCornerShape(6.dp))
+                            .size(30.dp)
+                            .background(ProofPaper, RoundedCornerShape(5.dp))
+                            .border(1.5.dp, ProofBorder, RoundedCornerShape(5.dp))
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                             contentDescription = "Sign Out",
                             tint = ProofObsidianInk,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 }
@@ -1069,6 +1069,7 @@ fun NeoTopAppBar(
 
 /**
  * Floating Neo-Brutalist Bottom Navigation Dock for fluid screen transitions.
+ * Compact and tactile.
  */
 @Composable
 fun NeoBottomNavBar(
@@ -1082,16 +1083,16 @@ fun NeoBottomNavBar(
         modifier = modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(12.dp),
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        shape = RoundedCornerShape(10.dp),
         color = ProofObsidianInk,
-        border = BorderStroke(2.dp, ProofVoltCitron),
-        shadowElevation = 8.dp
+        border = BorderStroke(1.5.dp, ProofVoltCitron),
+        shadowElevation = 6.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 6.dp),
+                .padding(horizontal = 6.dp, vertical = 4.dp),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -1141,13 +1142,13 @@ private fun NeoNavTabItem(
     onClick: () -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(6.dp),
         color = if (isSelected) ProofVoltCitron else Color.Transparent,
-        border = if (isSelected) BorderStroke(1.5.dp, ProofWhite) else null,
+        border = if (isSelected) BorderStroke(1.dp, ProofWhite) else null,
         modifier = Modifier.clickable(onClick = onClick)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box {
@@ -1155,26 +1156,26 @@ private fun NeoNavTabItem(
                     imageVector = icon,
                     contentDescription = label,
                     tint = if (isSelected) ProofObsidianInk else ProofWhite,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(16.dp)
                 )
                 if (badgeCount > 0) {
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .offset(x = 6.dp, y = (-4).dp)
-                            .size(8.dp)
+                            .offset(x = 4.dp, y = (-3).dp)
+                            .size(7.dp)
                             .background(ProofSolarTangerine, CircleShape)
                     )
                 }
             }
             if (isSelected) {
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(
                     text = label,
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
-                        fontSize = 11.sp
+                        fontSize = 10.sp
                     ),
                     color = ProofObsidianInk
                 )
@@ -1211,10 +1212,11 @@ fun MissionToOutcomeTimelineCard(
     NeoCard(
         modifier = modifier,
         backgroundColor = ProofWhite,
-        shadowOffset = 3.dp,
-        cornerRadius = 10.dp,
+        shadowOffset = 2.5.dp,
+        cornerRadius = 8.dp,
         accentColor = if (isAlumniConfirmed) ProofSignalEmerald else ProofVoltCitron,
-        stampText = if (isAlumniConfirmed) "LOOP FULLY CLOSED" else "ACTIVE COMMITMENT"
+        stampText = if (isAlumniConfirmed) "LOOP FULLY CLOSED" else "ACTIVE COMMITMENT",
+        contentPadding = 10.dp
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -1227,13 +1229,14 @@ fun MissionToOutcomeTimelineCard(
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
-                        letterSpacing = 1.sp
+                        fontSize = 10.sp,
+                        letterSpacing = 0.5.sp
                     ),
                     color = ProofObsidianInk
                 )
                 Text(
                     text = "5-Stage Verifiable Delivery Funnel",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                     color = ProofCharcoalMuted
                 )
             }
@@ -1246,7 +1249,7 @@ fun MissionToOutcomeTimelineCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // 5 Stage Connected Nodes
         Row(
@@ -1268,13 +1271,13 @@ fun MissionToOutcomeTimelineCard(
                 }
 
                 Surface(
-                    shape = RoundedCornerShape(6.dp),
+                    shape = RoundedCornerShape(4.dp),
                     color = nodeBg,
-                    border = BorderStroke(1.5.dp, ProofBorder),
+                    border = BorderStroke(1.dp, ProofBorder),
                     modifier = Modifier.weight(1f)
                 ) {
                     Column(
-                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 2.dp),
+                        modifier = Modifier.padding(vertical = 4.dp, horizontal = 2.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -1282,7 +1285,7 @@ fun MissionToOutcomeTimelineCard(
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Black,
-                                fontSize = 9.sp
+                                fontSize = 8.5.sp
                             ),
                             color = nodeFg
                         )
@@ -1290,7 +1293,7 @@ fun MissionToOutcomeTimelineCard(
                             text = name,
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Black,
-                                fontSize = 8.sp
+                                fontSize = 7.5.sp
                             ),
                             color = nodeFg,
                             maxLines = 1
@@ -1301,42 +1304,42 @@ fun MissionToOutcomeTimelineCard(
                 if (index < stages.size - 1) {
                     Box(
                         modifier = Modifier
-                            .width(4.dp)
-                            .height(2.dp)
+                            .width(3.dp)
+                            .height(1.5.dp)
                             .background(ProofBorder)
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider(color = ProofBorder, thickness = 1.dp)
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Commitment Specification Box
         Surface(
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(6.dp),
             color = ProofPaperLight,
-            border = BorderStroke(1.5.dp, ProofBorder),
+            border = BorderStroke(1.dp, ProofBorder),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(12.dp)) {
+            Column(modifier = Modifier.padding(8.dp)) {
                 Text(
                     text = "NEXT ACTION COMMITMENT",
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
-                        fontSize = 10.sp
+                        fontSize = 9.sp
                     ),
                     color = ProofCharcoalMuted
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = actionDescription.ifBlank { "Action defined and agreed during session" },
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, fontSize = 13.sp),
                     color = ProofObsidianInk
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -1346,12 +1349,12 @@ fun MissionToOutcomeTimelineCard(
                             imageVector = Icons.Default.Person,
                             contentDescription = null,
                             tint = ProofObsidianInk,
-                            modifier = Modifier.size(14.dp)
+                            modifier = Modifier.size(13.dp)
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(3.dp))
                         Text(
                             text = "Owner: ${ownerName.ifBlank { "Student" }}",
-                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold, fontSize = 11.sp),
                             color = ProofObsidianInk
                         )
                     }
@@ -1360,12 +1363,12 @@ fun MissionToOutcomeTimelineCard(
                             imageVector = Icons.Default.Info,
                             contentDescription = null,
                             tint = ProofObsidianInk,
-                            modifier = Modifier.size(14.dp)
+                            modifier = Modifier.size(13.dp)
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(3.dp))
                         Text(
                             text = "Due: ${dueDate.ifBlank { "Within 7 days" }}",
-                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold, fontSize = 11.sp),
                             color = ProofObsidianInk
                         )
                     }
@@ -1389,43 +1392,42 @@ fun EmptyStateCard(
     NeoCard(
         modifier = modifier,
         backgroundColor = ProofWhite,
-        shadowOffset = 4.dp
+        shadowOffset = 2.5.dp,
+        contentPadding = 12.dp
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .background(ProofVoltCitron, RoundedCornerShape(10.dp))
-                    .border(2.dp, ProofBorder, RoundedCornerShape(10.dp)),
+                    .size(36.dp)
+                    .background(ProofVoltCitron, RoundedCornerShape(8.dp))
+                    .border(1.5.dp, ProofBorder, RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Bolt,
                     contentDescription = null,
                     tint = ProofObsidianInk,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Black),
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
                 color = ProofObsidianInk
             )
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = message,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = ProofCharcoalMuted,
-                modifier = Modifier.padding(horizontal = 12.dp)
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
             if (actionText != null && onAction != null) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 NeoVoltButton(
                     text = actionText,
                     onClick = onAction

@@ -119,201 +119,216 @@ fun AuthScreen(
                 .verticalScroll(scrollState)
                 .padding(20.dp)
         ) {
-            // Brand Header with Official Logo
+            // Compact Brand Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 6.dp)
+                modifier = Modifier.padding(bottom = 4.dp)
             ) {
                 Image(
                     painter = painterResource(id = com.proofloop.R.drawable.proofloop_logo),
                     contentDescription = "ProofLoop Logo",
                     modifier = Modifier
-                        .size(46.dp)
-                        .clip(RoundedCornerShape(10.dp))
+                        .size(34.dp)
+                        .clip(RoundedCornerShape(6.dp))
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "PROOFLOOP",
-                    style = MaterialTheme.typography.displayLarge.copy(
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = (-1).sp
-                    ),
-                    color = ProofInk
-                )
-            }
-            Text(
-                text = "CONNECTIONS SHOULD LEAD SOMEWHERE.",
-                style = MaterialTheme.typography.labelMedium.copy(
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.5.sp
-                ),
-                color = ProofTextMuted
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 5-Step Workflow Hero
-            WorkflowHero(currentStep = 1)
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Role Selector Card
-            NeoCard(
-                backgroundColor = ProofWhite,
-                shadowOffset = 3.dp
-            ) {
-                Text(
-                    text = "SELECT YOUR ROLE:",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Black
-                    ),
-                    color = ProofInk
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        NeoButton(
-                            text = "Student",
-                            onClick = { selectedRole = UserRole.STUDENT },
-                            backgroundColor = if (selectedRole == UserRole.STUDENT) ProofAcidLime else ProofSurfaceMuted,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                        NeoButton(
-                            text = "Alumnus",
-                            onClick = { selectedRole = UserRole.ALUMNI },
-                            backgroundColor = if (selectedRole == UserRole.ALUMNI) ProofAcidLime else ProofSurfaceMuted,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                        NeoButton(
-                            text = "Founder",
-                            onClick = { selectedRole = UserRole.FOUNDER },
-                            backgroundColor = if (selectedRole == UserRole.FOUNDER) ProofAcidLime else ProofSurfaceMuted,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        NeoButton(
-                            text = "Faculty",
-                            onClick = { selectedRole = UserRole.FACULTY },
-                            backgroundColor = if (selectedRole == UserRole.FACULTY) ProofAcidLime else ProofSurfaceMuted,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                        NeoButton(
-                            text = "Recruiter",
-                            onClick = { selectedRole = UserRole.RECRUITER },
-                            backgroundColor = if (selectedRole == UserRole.RECRUITER) ProofAcidLime else ProofSurfaceMuted,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                        NeoButton(
-                            text = "Institution",
-                            onClick = { selectedRole = UserRole.INSTITUTION },
-                            backgroundColor = if (selectedRole == UserRole.INSTITUTION) ProofAcidLime else ProofSurfaceMuted,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Column {
+                    Text(
+                        text = "PROOFLOOP",
+                        style = MaterialTheme.typography.displayMedium.copy(
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = (-0.5).sp
+                        ),
+                        color = ProofObsidianInk
+                    )
+                    Text(
+                        text = "CLOSED-LOOP MENTORSHIP PROTOCOL",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 9.sp,
+                            letterSpacing = 0.5.sp
+                        ),
+                        color = ProofCharcoalMuted
+                    )
                 }
             }
 
-            // 1-Tap Hackathon Demonstration Mode (Mentor Round Pitch)
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // 5-Step Compact Workflow Hero
+            WorkflowHero(currentStep = 1)
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Compact Role Selector Chips (saves ~90dp)
             NeoCard(
-                backgroundColor = ProofPaper,
-                borderColor = ProofInk,
-                shadowOffset = 3.dp,
-                modifier = Modifier.fillMaxWidth()
+                backgroundColor = ProofWhite,
+                shadowOffset = 2.dp,
+                cornerRadius = 8.dp,
+                contentPadding = 8.dp
             ) {
                 Text(
-                    text = "HACKATHON MULTI-ROLE DEMO (1-TAP QUICK SWITCH)",
+                    text = "SELECT ROLE:",
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
-                        letterSpacing = 0.5.sp
+                        fontSize = 9.5.sp
                     ),
-                    color = ProofTextMuted
+                    color = ProofObsidianInk
                 )
-                Spacer(modifier = Modifier.height(10.dp))
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        NeoButton(
-                            text = "Student (Aarav)",
-                            onClick = { viewModel.loginDemo(UserRole.STUDENT) },
-                            backgroundColor = ProofElectricLilac,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                        NeoButton(
-                            text = "Alumni (Priya)",
-                            onClick = { viewModel.loginDemo(UserRole.ALUMNI) },
-                            backgroundColor = ProofSignalMint,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        NeoButton(
-                            text = "Founder (Kunal @ YC)",
-                            onClick = { viewModel.loginDemo(UserRole.FOUNDER) },
-                            backgroundColor = ProofAcidLime,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                        NeoButton(
-                            text = "Faculty (Dr. Sen)",
-                            onClick = { viewModel.loginDemo(UserRole.FACULTY) },
-                            backgroundColor = ProofMutedLavender,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        NeoButton(
-                            text = "Recruiter (Maya)",
-                            onClick = { viewModel.loginDemo(UserRole.RECRUITER) },
-                            backgroundColor = ProofCoral,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
-                        NeoButton(
-                            text = "Impact Ledger (Dean)",
-                            onClick = { viewModel.loginDemo(UserRole.INSTITUTION) },
-                            backgroundColor = ProofWhite,
-                            contentColor = ProofInk,
-                            modifier = Modifier.weight(1f)
-                        )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    listOf(
+                        UserRole.STUDENT to "Student",
+                        UserRole.ALUMNI to "Alumni",
+                        UserRole.FOUNDER to "Founder",
+                        UserRole.FACULTY to "Faculty",
+                        UserRole.RECRUITER to "Recruiter",
+                        UserRole.INSTITUTION to "Institution"
+                    ).forEach { (role, label) ->
+                        val isSelected = selectedRole == role
+                        Surface(
+                            shape = RoundedCornerShape(5.dp),
+                            color = if (isSelected) ProofVoltCitron else ProofPaperLight,
+                            border = androidx.compose.foundation.BorderStroke(1.5.dp, if (isSelected) ProofObsidianInk else ProofBorder),
+                            modifier = Modifier.clickable { selectedRole = role }
+                        ) {
+                            Text(
+                                text = label.uppercase(),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 10.sp
+                                ),
+                                color = ProofObsidianInk,
+                                modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp)
+                            )
+                        }
                     }
                 }
             }
 
+            Spacer(modifier = Modifier.height(8.dp))
 
-            Spacer(modifier = Modifier.height(14.dp))
+            // Collapsible Hackathon Demo Drawer (saves ~180dp)
+            var isDemoDrawerOpen by remember { mutableStateOf(false) }
+            NeoCard(
+                backgroundColor = ProofPaperLight,
+                borderColor = ProofObsidianInk,
+                shadowOffset = 2.dp,
+                cornerRadius = 8.dp,
+                contentPadding = 8.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { isDemoDrawerOpen = !isDemoDrawerOpen },
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        NeoPulseIndicator(size = 6.dp, color = ProofVoltCitron)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "⚡ 1-TAP DEMO PROFILES",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 10.sp,
+                                letterSpacing = 0.5.sp
+                            ),
+                            color = ProofObsidianInk
+                        )
+                    }
+                    Text(
+                        text = if (isDemoDrawerOpen) "▲ HIDE" else "▼ EXPAND",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 9.sp
+                        ),
+                        color = ProofKleinBlue
+                    )
+                }
+
+                if (isDemoDrawerOpen) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            NeoVoltButton(
+                                text = "Aarav (Student)",
+                                onClick = { viewModel.loginDemo(UserRole.STUDENT) },
+                                modifier = Modifier.weight(1f)
+                            )
+                            NeoButton(
+                                text = "Priya (Alumni)",
+                                onClick = { viewModel.loginDemo(UserRole.ALUMNI) },
+                                backgroundColor = ProofSignalEmerald,
+                                contentColor = ProofObsidianInk,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            NeoButton(
+                                text = "Kunal (Founder)",
+                                onClick = { viewModel.loginDemo(UserRole.FOUNDER) },
+                                backgroundColor = ProofDigitalLilac,
+                                contentColor = ProofObsidianInk,
+                                modifier = Modifier.weight(1f)
+                            )
+                            NeoButton(
+                                text = "Dr. Sen (Faculty)",
+                                onClick = { viewModel.loginDemo(UserRole.FACULTY) },
+                                backgroundColor = ProofPaper,
+                                contentColor = ProofObsidianInk,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            NeoButton(
+                                text = "Maya (Recruiter)",
+                                onClick = { viewModel.loginDemo(UserRole.RECRUITER) },
+                                backgroundColor = ProofSolarTangerine,
+                                contentColor = ProofWhite,
+                                modifier = Modifier.weight(1f)
+                            )
+                            NeoButton(
+                                text = "Dean (Institution)",
+                                onClick = { viewModel.loginDemo(UserRole.INSTITUTION) },
+                                backgroundColor = ProofWhite,
+                                contentColor = ProofObsidianInk,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Continue with Google Button
             NeoCard(
                 backgroundColor = ProofWhite,
-                shadowOffset = 4.dp,
+                shadowOffset = 2.5.dp,
+                cornerRadius = 8.dp,
+                contentPadding = 9.dp,
                 onClick = {
                     if (!uiState.isLoading) {
                         try {
@@ -329,73 +344,106 @@ fun AuthScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    GoogleColoredIcon(modifier = Modifier.size(24.dp))
-                    Spacer(modifier = Modifier.width(12.dp))
+                    GoogleColoredIcon(modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = "CONTINUE WITH GOOGLE",
-                        style = MaterialTheme.typography.titleMedium.copy(
+                        style = MaterialTheme.typography.titleSmall.copy(
                             fontWeight = FontWeight.Black,
+                            fontSize = 13.sp,
                             letterSpacing = 0.5.sp
                         ),
-                        color = ProofInk
+                        color = ProofObsidianInk
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Divider with Text
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                HorizontalDivider(modifier = Modifier.weight(1f), thickness = 2.dp, color = ProofBorder)
+                HorizontalDivider(modifier = Modifier.weight(1f), thickness = 1.dp, color = ProofBorder)
                 Text(
                     text = "  OR USE EMAIL  ",
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 9.sp
                     ),
-                    color = ProofTextMuted
+                    color = ProofCharcoalMuted
                 )
-                HorizontalDivider(modifier = Modifier.weight(1f), thickness = 2.dp, color = ProofBorder)
+                HorizontalDivider(modifier = Modifier.weight(1f), thickness = 1.dp, color = ProofBorder)
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Mode Selector Tabs (Sign In / Create Account)
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                NeoButton(
-                    text = "Sign In",
-                    onClick = {
-                        isRegisterMode = false
-                        viewModel.clearError()
-                    },
-                    backgroundColor = if (!isRegisterMode) ProofElectricLilac else ProofWhite,
-                    contentColor = ProofInk,
-                    modifier = Modifier.weight(1f)
-                )
-                NeoButton(
-                    text = "Create Account",
-                    onClick = {
-                        isRegisterMode = true
-                        viewModel.clearError()
-                    },
-                    backgroundColor = if (isRegisterMode) ProofElectricLilac else ProofWhite,
-                    contentColor = ProofInk,
-                    modifier = Modifier.weight(1f)
-                )
+                Surface(
+                    shape = RoundedCornerShape(5.dp),
+                    color = if (!isRegisterMode) ProofVoltCitron else ProofPaperLight,
+                    border = androidx.compose.foundation.BorderStroke(1.5.dp, if (!isRegisterMode) ProofObsidianInk else ProofBorder),
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            isRegisterMode = false
+                            viewModel.clearError()
+                        }
+                ) {
+                    Text(
+                        text = "SIGN IN",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 11.sp
+                        ),
+                        color = ProofObsidianInk,
+                        modifier = Modifier
+                            .padding(vertical = 7.dp)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    )
+                }
+
+                Surface(
+                    shape = RoundedCornerShape(5.dp),
+                    color = if (isRegisterMode) ProofVoltCitron else ProofPaperLight,
+                    border = androidx.compose.foundation.BorderStroke(1.5.dp, if (isRegisterMode) ProofObsidianInk else ProofBorder),
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            isRegisterMode = true
+                            viewModel.clearError()
+                        }
+                ) {
+                    Text(
+                        text = "CREATE ACCOUNT",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 11.sp
+                        ),
+                        color = ProofObsidianInk,
+                        modifier = Modifier
+                            .padding(vertical = 7.dp)
+                            .wrapContentWidth(Alignment.CenterHorizontally)
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Email/Password Form Card
             NeoCard(
                 backgroundColor = ProofWhite,
-                shadowOffset = 4.dp
+                shadowOffset = 2.dp,
+                cornerRadius = 8.dp,
+                contentPadding = 10.dp
             ) {
                 if (isRegisterMode) {
                     NeoTextField(
@@ -403,20 +451,20 @@ fun AuthScreen(
                         onValueChange = { name = it },
                         label = "Full Name",
                         placeholder = "e.g. Maya Patel",
-                        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = ProofInk) }
+                        leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, tint = ProofObsidianInk, modifier = Modifier.size(16.dp)) }
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     NeoTextField(
                         value = college,
                         onValueChange = { college = it },
                         label = "College / Institution",
                         placeholder = "e.g. IIIT Delhi",
-                        leadingIcon = { Icon(Icons.Default.School, contentDescription = null, tint = ProofInk) }
+                        leadingIcon = { Icon(Icons.Default.School, contentDescription = null, tint = ProofObsidianInk, modifier = Modifier.size(16.dp)) }
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
                 NeoTextField(
@@ -425,10 +473,10 @@ fun AuthScreen(
                     label = "Email Address",
                     placeholder = "name@university.edu",
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = ProofInk) }
+                    leadingIcon = { Icon(Icons.Default.Email, contentDescription = null, tint = ProofObsidianInk, modifier = Modifier.size(16.dp)) }
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 NeoTextField(
                     value = password,
@@ -437,23 +485,23 @@ fun AuthScreen(
                     placeholder = "••••••••",
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = ProofInk) }
+                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null, tint = ProofObsidianInk, modifier = Modifier.size(16.dp)) }
                 )
 
                 if (uiState.errorMessage != null) {
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     NeoTag(
                         text = uiState.errorMessage ?: "",
-                        backgroundColor = ProofCoral,
+                        backgroundColor = ProofSolarTangerine,
                         contentColor = ProofWhite,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
 
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                NeoButton(
-                    text = if (isRegisterMode) "Register Account" else "Sign In with Email",
+                NeoVoltButton(
+                    text = if (isRegisterMode) "Register Account →" else "Sign In with Email →",
                     onClick = {
                         if (isRegisterMode) {
                             viewModel.register(name, email, password, selectedRole, college)
@@ -461,10 +509,6 @@ fun AuthScreen(
                             viewModel.login(email, password)
                         }
                     },
-                    backgroundColor = ProofElectricLilac,
-                    contentColor = ProofInk,
-                    icon = Icons.AutoMirrored.Filled.ArrowForward,
-                    enabled = !uiState.isLoading,
                     isLoading = uiState.isLoading
                 )
             }

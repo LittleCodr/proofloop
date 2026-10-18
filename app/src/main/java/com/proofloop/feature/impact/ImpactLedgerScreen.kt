@@ -52,45 +52,49 @@ fun ImpactLedgerScreen(
             // Top App Bar
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = ProofPaper,
-                border = BorderStroke(1.dp, ProofBorder)
+                color = ProofPaperLight,
+                border = BorderStroke(1.dp, ProofRecessedMuted)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(horizontal = 12.dp, vertical = 7.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier.size(32.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = ProofInk
+                            tint = ProofObsidianInk,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = "IMPACT LEDGER",
-                            style = MaterialTheme.typography.displayMedium.copy(
-                                fontSize = 20.sp,
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
                                 letterSpacing = (-0.5).sp
                             ),
-                            color = ProofInk
+                            color = ProofObsidianInk
                         )
                         Text(
-                            text = "Institutional Mentorship Telemetry",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = ProofTextMuted
+                            text = "Institutional Telemetry & Verified Outcomes",
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
+                            color = ProofCharcoalMuted
                         )
                     }
                     // Export CTA
                     Surface(
                         shape = RoundedCornerShape(6.dp),
-                        color = ProofElectricLilac,
-                        border = BorderStroke(1.5.dp, ProofBorder),
+                        color = ProofVoltCitron,
+                        border = BorderStroke(1.5.dp, ProofObsidianInk),
                         modifier = Modifier.clickable {
                             exportNotice = "Exported aggregate telemetry CSV (${selectedFilter.label}). Student PII preserved."
                         }
@@ -99,12 +103,12 @@ fun ImpactLedgerScreen(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Default.Download, contentDescription = null, tint = ProofInk, modifier = Modifier.size(14.dp))
+                            Icon(Icons.Default.Download, contentDescription = null, tint = ProofObsidianInk, modifier = Modifier.size(13.dp))
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "EXPORT",
-                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black),
-                                color = ProofInk
+                                text = "EXPORT CSV",
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black, fontSize = 10.sp),
+                                color = ProofObsidianInk
                             )
                         }
                     }
@@ -115,7 +119,7 @@ fun ImpactLedgerScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollState)
-                    .padding(16.dp)
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
             ) {
                 // Export Notice Banner
                 AnimatedVisibility(
@@ -124,7 +128,11 @@ fun ImpactLedgerScreen(
                     exit = shrinkVertically() + fadeOut()
                 ) {
                     Column {
-                        NeoCard(backgroundColor = ProofSignalMint, shadowOffset = 2.dp) {
+                        NeoCard(
+                            backgroundColor = ProofSignalEmerald,
+                            contentPadding = 8.dp,
+                            shadowOffset = 2.dp
+                        ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -132,32 +140,32 @@ fun ImpactLedgerScreen(
                             ) {
                                 Text(
                                     text = exportNotice ?: "",
-                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                                    color = ProofInk
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp),
+                                    color = ProofObsidianInk
                                 )
                                 Text(
                                     text = "✕",
                                     modifier = Modifier.clickable { exportNotice = null },
                                     fontWeight = FontWeight.Black,
-                                    color = ProofInk
+                                    color = ProofObsidianInk
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
 
                 // DATE FILTER CHIPS
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     TimeWindowFilter.values().forEach { filter ->
                         val isSelected = selectedFilter == filter
                         Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = if (isSelected) ProofInk else ProofWhite,
-                            border = BorderStroke(1.5.dp, ProofBorder),
+                            shape = RoundedCornerShape(5.dp),
+                            color = if (isSelected) ProofObsidianInk else ProofPureWhite,
+                            border = BorderStroke(1.5.dp, ProofObsidianInk),
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable { selectedFilter = filter }
@@ -166,59 +174,62 @@ fun ImpactLedgerScreen(
                                 text = filter.label,
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = FontWeight.Bold,
-                                    fontFamily = FontFamily.Monospace
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 10.sp
                                 ),
-                                color = if (isSelected) ProofWhite else ProofInk,
-                                modifier = Modifier.padding(vertical = 8.dp),
+                                color = if (isSelected) ProofPureWhite else ProofObsidianInk,
+                                modifier = Modifier.padding(vertical = 5.dp),
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                // Institutional Telemetry Disclaimer Card
+                // Institutional Telemetry Disclaimer Card (Compact 1-line pill)
                 NeoCard(
                     backgroundColor = ProofPlumSurface,
-                    shadowColor = ProofInk,
-                    shadowOffset = 3.dp
+                    contentPadding = 8.dp,
+                    shadowColor = ProofObsidianInk,
+                    shadowOffset = 2.dp
                 ) {
-                    Row(verticalAlignment = Alignment.Top) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Shield,
                             contentDescription = null,
-                            tint = ProofSignalMint,
-                            modifier = Modifier.size(22.dp)
+                            tint = ProofSignalEmerald,
+                            modifier = Modifier.size(16.dp)
                         )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column(modifier = Modifier.weight(1f)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "PRIVACY-CONSCIOUS AGGREGATION",
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontFamily = FontFamily.Monospace,
                                         fontWeight = FontWeight.Black,
-                                        letterSpacing = 1.sp
+                                        fontSize = 9.sp,
+                                        letterSpacing = 0.5.sp
                                     ),
-                                    color = ProofSignalMint
+                                    color = ProofSignalEmerald
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
-                                NeoTag(text = "k ≥ 3 ANONYMITY", backgroundColor = ProofSignalMint.copy(alpha = 0.3f), contentColor = ProofWhite)
+                                NeoTag(text = "k ≥ 3 ANONYMITY", backgroundColor = ProofSignalEmerald.copy(alpha = 0.25f), contentColor = ProofPureWhite)
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Campus analytics measure workflow completion and response latency across opted-in participants. Private session correspondence is never stored or audited. Student self-reporting is audited separately from 2nd-party alumni confirmation.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = ProofMutedLavender
+                                text = "Aggregate telemetry only. Session chat is never audited. 2nd-party outcomes verified independently.",
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
+                                color = ProofPaperLight
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                // KPI Grid
+                // KPI Grid Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -226,27 +237,28 @@ fun ImpactLedgerScreen(
                 ) {
                     Text(
                         text = "CAMPUS BENCHMARKS (${selectedFilter.label.uppercase()})",
-                        style = MaterialTheme.typography.labelMedium.copy(
+                        style = MaterialTheme.typography.labelSmall.copy(
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Black,
-                            letterSpacing = 1.sp
+                            fontSize = 10.sp,
+                            letterSpacing = 0.5.sp
                         ),
-                        color = ProofInk
+                        color = ProofObsidianInk
                     )
                     Text(
                         text = "Tap metric for formula ⓘ",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = ProofTextMuted
+                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                        color = ProofCharcoalMuted
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     MetricCard(
                         title = "LOOP CLOSURE",
                         value = "${metrics.loopClosureRatePercent}%",
                         subtitle = "Confirmed Outcomes",
-                        backgroundColor = ProofSignalMint,
+                        backgroundColor = ProofSignalEmerald,
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
@@ -256,16 +268,16 @@ fun ImpactLedgerScreen(
                                     description = "Measures the percentage of mentoring engagements where the student submitted a deliverable and the alumnus independently confirmed its completion.",
                                     includedStatuses = "Outcomes where alumniConfirmed == true against connections with status ACCEPTED or COMPLETED.",
                                     timeWindow = selectedFilter.label,
-                                    limitations = "Does not measure external career outcomes (e.g. landing a job); verifies purely that the committed micro-guidance was acted upon."
+                                    limitations = "Does not measure external career outcomes; verifies purely that the committed micro-guidance was acted upon."
                                 )
                             }
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                     MetricCard(
                         title = "ACCEPTANCE",
                         value = "${metrics.acceptanceRatePercent}%",
-                        subtitle = "Capacity-Aware Match",
-                        backgroundColor = ProofElectricLilac,
+                        subtitle = "Capacity Match",
+                        backgroundColor = ProofDigitalLilac,
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
@@ -281,14 +293,14 @@ fun ImpactLedgerScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     MetricCard(
                         title = "AVG RESPONSE",
                         value = "${metrics.meanResponseHours}h",
                         subtitle = "Time to Decision",
-                        backgroundColor = ProofWhite,
+                        backgroundColor = ProofPureWhite,
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
@@ -302,12 +314,12 @@ fun ImpactLedgerScreen(
                                 )
                             }
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                     MetricCard(
                         title = "ACTIVE MENTORS",
                         value = "${metrics.activeMentorsCount}",
                         subtitle = "Opted-In Alumni",
-                        backgroundColor = ProofWhite,
+                        backgroundColor = ProofPureWhite,
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
@@ -323,74 +335,90 @@ fun ImpactLedgerScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // 5-STAGE WORKFLOW FUNNEL
-                Text(
-                    text = "5-STAGE VERIFIABLE FUNNEL",
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 1.sp
-                    ),
-                    color = ProofInk
-                )
-                Text(
-                    text = "Telemetry tracks every stage from initial micro-request to second-party verified closure.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = ProofTextMuted
-                )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                NeoCard(backgroundColor = ProofWhite, shadowOffset = 3.dp) {
+                // 5-STAGE WORKFLOW FUNNEL
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "5-STAGE VERIFIABLE FUNNEL",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 10.sp,
+                            letterSpacing = 0.5.sp
+                        ),
+                        color = ProofObsidianInk
+                    )
+                    Text(
+                        text = "END-TO-END TELEMETRY",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = ProofCharcoalMuted
+                    )
+                }
+                Spacer(modifier = Modifier.height(6.dp))
+
+                NeoCard(
+                    backgroundColor = ProofPureWhite,
+                    contentPadding = 8.dp,
+                    shadowOffset = 2.dp
+                ) {
                     FunnelStageRow(
                         stageNumber = "1",
                         stageName = "REQUESTS SCOPED",
                         detail = "Structured micro-missions submitted",
                         count = "${metrics.totalRequests}",
-                        color = ProofInk
+                        color = ProofObsidianInk
                     )
-                    HorizontalDivider(color = ProofBorder, thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+                    HorizontalDivider(color = ProofRecessedMuted, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
                     FunnelStageRow(
                         stageNumber = "2",
                         stageName = "DETERMINISTIC MATCHES",
                         detail = "Explainable affinity & capacity matches",
                         count = "${metrics.totalConnections}",
-                        color = ProofInk
+                        color = ProofKleinBlue
                     )
-                    HorizontalDivider(color = ProofBorder, thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+                    HorizontalDivider(color = ProofRecessedMuted, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
                     FunnelStageRow(
                         stageNumber = "3",
                         stageName = "MENTOR ACCEPTANCES",
                         detail = "Accepted under 3-connection capacity limit",
                         count = "${metrics.acceptedConnections}",
-                        color = ProofElectricLilac
+                        color = ProofDigitalLilac
                     )
-                    HorizontalDivider(color = ProofBorder, thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+                    HorizontalDivider(color = ProofRecessedMuted, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
                     FunnelStageRow(
                         stageNumber = "4",
                         stageName = "STUDENT ACTION REPORTED",
                         detail = "Self-reported practical task completion",
                         count = "${metrics.studentReportedCount}",
-                        color = ProofCoral
+                        color = ProofSolarTangerine
                     )
-                    HorizontalDivider(color = ProofBorder, thickness = 1.dp, modifier = Modifier.padding(vertical = 10.dp))
+                    HorizontalDivider(color = ProofRecessedMuted, thickness = 1.dp, modifier = Modifier.padding(vertical = 5.dp))
                     FunnelStageRow(
                         stageNumber = "5",
                         stageName = "ALUMNI CONFIRMED OUTCOMES",
-                        detail = "Independent second-party closed loop verification",
+                        detail = "Independent 2nd-party verified closure",
                         count = "${metrics.alumniConfirmedCount}",
-                        color = ProofSignalMint
+                        color = ProofSignalEmerald
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // Multi-Role Ecosystem Participation Card
                 NeoCard(
-                    backgroundColor = ProofPaper,
-                    borderColor = ProofInk,
-                    shadowOffset = 3.dp
+                    backgroundColor = ProofPaperLight,
+                    borderColor = ProofObsidianInk,
+                    contentPadding = 8.dp,
+                    shadowOffset = 2.dp
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -398,52 +426,57 @@ fun ImpactLedgerScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "MULTI-ROLE NETWORK PARTICIPATION",
+                            text = "MULTI-ROLE PARTICIPATION",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Black,
+                                fontSize = 10.sp,
                                 letterSpacing = 0.5.sp
                             ),
-                            color = ProofInk
+                            color = ProofObsidianInk
                         )
-                        NeoTag(text = "6 ROLES ACTIVE", backgroundColor = ProofElectricLilac, contentColor = ProofInk)
+                        NeoTag(text = "6 ROLES ACTIVE", backgroundColor = ProofDigitalLilac, contentColor = ProofObsidianInk)
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        MetricCard(title = "STUDENTS", value = "${metrics.activeStudentsCount}", subtitle = "Missions Created", backgroundColor = ProofElectricLilac, modifier = Modifier.weight(1f))
-                        MetricCard(title = "ALUMNI", value = "${metrics.activeMentorsCount}", subtitle = "Active Mentors", backgroundColor = ProofSignalMint, modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        MetricCard(title = "STUDENTS", value = "${metrics.activeStudentsCount}", subtitle = "Missions Created", backgroundColor = ProofDigitalLilac, modifier = Modifier.weight(1f))
+                        MetricCard(title = "ALUMNI", value = "${metrics.activeMentorsCount}", subtitle = "Active Mentors", backgroundColor = ProofSignalEmerald, modifier = Modifier.weight(1f))
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        MetricCard(title = "FOUNDERS", value = "${metrics.activeFoundersCount}", subtitle = "Co-founder Sprints", backgroundColor = ProofAcidLime, modifier = Modifier.weight(1f))
-                        MetricCard(title = "FACULTY", value = "${metrics.activeFacultyCount}", subtitle = "Research Labs", backgroundColor = ProofLavender, modifier = Modifier.weight(1f))
-                        MetricCard(title = "RECRUITERS", value = "${metrics.activeRecruitersCount}", subtitle = "Hiring Pipelines", backgroundColor = ProofCoral, modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        MetricCard(title = "FOUNDERS", value = "${metrics.activeFoundersCount}", subtitle = "Sprints", backgroundColor = ProofVoltCitron, modifier = Modifier.weight(1f))
+                        MetricCard(title = "FACULTY", value = "${metrics.activeFacultyCount}", subtitle = "Labs", backgroundColor = ProofPureWhite, modifier = Modifier.weight(1f))
+                        MetricCard(title = "RECRUITERS", value = "${metrics.activeRecruitersCount}", subtitle = "Pipelines", backgroundColor = ProofSolarTangerine.copy(alpha = 0.25f), modifier = Modifier.weight(1f))
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
-
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // Institutional Value Thesis
-                NeoCard(backgroundColor = ProofWhite, shadowOffset = 3.dp) {
+                NeoCard(
+                    backgroundColor = ProofPureWhite,
+                    contentPadding = 8.dp,
+                    shadowOffset = 2.dp
+                ) {
                     Text(
                         text = "THE PROOFLOOP INSTITUTIONAL VALUE",
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Black,
-                            letterSpacing = 1.sp
+                            fontSize = 10.sp,
+                            letterSpacing = 0.5.sp
                         ),
-                        color = ProofInk
+                        color = ProofObsidianInk
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Traditional alumni directories track passive member counts, not student outcomes. ProofLoop provides universities with real-time operational visibility into whether advice was delivered, what actionable commitment was agreed upon, and whether it was independently confirmed—without violating student privacy.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = ProofInk
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                        color = ProofObsidianInk
                     )
                 }
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
@@ -454,30 +487,30 @@ fun ImpactLedgerScreen(
         AlertDialog(
             onDismissRequest = { activeMetricDefinition = null },
             title = {
-                Text(def.name, fontWeight = FontWeight.Black, color = ProofInk)
+                Text(def.name, fontWeight = FontWeight.Black, color = ProofObsidianInk)
             },
             text = {
                 Column {
-                    Text("FORMULA:", fontWeight = FontWeight.Bold, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = ProofCobalt)
-                    Text(def.formula, fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = ProofInk)
+                    Text("FORMULA:", fontWeight = FontWeight.Bold, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = ProofKleinBlue)
+                    Text(def.formula, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = ProofObsidianInk)
 
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("EXPLANATION:", fontWeight = FontWeight.Bold, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = ProofTextMuted)
-                    Text(def.description, fontSize = 13.sp, color = ProofInk)
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text("EXPLANATION:", fontWeight = FontWeight.Bold, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = ProofCharcoalMuted)
+                    Text(def.description, fontSize = 12.sp, color = ProofObsidianInk)
 
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("INCLUDED STATUSES:", fontWeight = FontWeight.Bold, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = ProofTextMuted)
-                    Text(def.includedStatuses, fontSize = 12.sp, color = ProofInk)
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text("INCLUDED STATUSES:", fontWeight = FontWeight.Bold, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = ProofCharcoalMuted)
+                    Text(def.includedStatuses, fontSize = 11.sp, color = ProofObsidianInk)
 
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("LIMITATIONS:", fontWeight = FontWeight.Bold, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = ProofCoral)
-                    Text(def.limitations, fontSize = 12.sp, color = ProofInk)
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text("LIMITATIONS:", fontWeight = FontWeight.Bold, fontSize = 11.sp, fontFamily = FontFamily.Monospace, color = ProofSolarTangerine)
+                    Text(def.limitations, fontSize = 11.sp, color = ProofObsidianInk)
                 }
             },
             confirmButton = {
                 Button(
                     onClick = { activeMetricDefinition = null },
-                    colors = ButtonDefaults.buttonColors(containerColor = ProofInk, contentColor = ProofWhite)
+                    colors = ButtonDefaults.buttonColors(containerColor = ProofObsidianInk, contentColor = ProofPureWhite)
                 ) {
                     Text("Close")
                 }
@@ -505,6 +538,7 @@ fun MetricCard(
 ) {
     NeoCard(
         backgroundColor = backgroundColor,
+        contentPadding = 8.dp,
         shadowOffset = 2.dp,
         modifier = modifier
     ) {
@@ -513,24 +547,26 @@ fun MetricCard(
             style = MaterialTheme.typography.labelSmall.copy(
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Black,
+                fontSize = 9.sp,
                 letterSpacing = 0.5.sp
             ),
-            color = ProofInk
+            color = ProofObsidianInk
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = value,
             style = MaterialTheme.typography.displayMedium.copy(
-                fontSize = 28.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Black,
-                letterSpacing = (-1).sp
+                letterSpacing = (-0.5).sp
             ),
-            color = ProofInk
+            color = ProofObsidianInk
         )
         Text(
             text = subtitle,
-            style = MaterialTheme.typography.bodySmall,
-            color = ProofInk.copy(alpha = 0.8f)
+            style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
+            color = ProofObsidianInk.copy(alpha = 0.8f),
+            maxLines = 1
         )
     }
 }
@@ -555,8 +591,8 @@ fun FunnelStageRow(
             Surface(
                 shape = RoundedCornerShape(4.dp),
                 color = color,
-                border = BorderStroke(1.dp, ProofBorder),
-                modifier = Modifier.size(24.dp)
+                border = BorderStroke(1.dp, ProofObsidianInk),
+                modifier = Modifier.size(20.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
@@ -564,26 +600,27 @@ fun FunnelStageRow(
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Black,
                             fontFamily = FontFamily.Monospace,
-                            fontSize = 11.sp
+                            fontSize = 10.sp
                         ),
-                        color = if (color == ProofInk) ProofWhite else ProofInk
+                        color = if (color == ProofObsidianInk) ProofPureWhite else ProofObsidianInk
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(
                     text = stageName,
-                    style = MaterialTheme.typography.labelMedium.copy(
+                    style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 11.sp
                     ),
-                    color = ProofInk
+                    color = ProofObsidianInk
                 )
                 Text(
                     text = detail,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = ProofTextMuted
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
+                    color = ProofCharcoalMuted
                 )
             }
         }
@@ -591,9 +628,10 @@ fun FunnelStageRow(
             text = count,
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Black,
-                fontFamily = FontFamily.Monospace
+                fontFamily = FontFamily.Monospace,
+                fontSize = 14.sp
             ),
-            color = ProofInk
+            color = ProofObsidianInk
         )
     }
 }
